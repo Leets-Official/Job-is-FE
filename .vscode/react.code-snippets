@@ -9,9 +9,9 @@
       "\t\t\t$1",
       "\t\t</div>",
       "\t);",
-      "}"
+      "}",
     ],
-    "description": "리액트 함수 선언식 컴포넌트 만들기"
+    "description": "리액트 함수 선언식 컴포넌트 만들기",
   },
   "React Component with NoName": {
     "scope": "typescriptreact,javascriptreact",
@@ -23,9 +23,9 @@
       "\t\t\t",
       "\t\t</div>",
       "\t);",
-      "}"
+      "}",
     ],
-    "description": "리액트 함수 선언식 컴포넌트 만들기"
+    "description": "리액트 함수 선언식 컴포넌트 만들기",
   },
   "React Default Component with Name": {
     "scope": "typescriptreact,javascriptreact",
@@ -37,9 +37,9 @@
       "\t\t\t$1",
       "\t\t</div>",
       "\t);",
-      "}"
+      "}",
     ],
-    "description": "default export 리액트 함수 선언식 컴포넌트 만들기"
+    "description": "default export 리액트 함수 선언식 컴포넌트 만들기",
   },
   "React Default Component with NoName": {
     "scope": "typescriptreact,javascriptreact",
@@ -51,14 +51,14 @@
       "\t\t\t",
       "\t\t</div>",
       "\t);",
-      "}"
+      "}",
     ],
-    "description": "default export 리액트 함수 선언식 컴포넌트 만들기"
+    "description": "default export 리액트 함수 선언식 컴포넌트 만들기",
   },
   "Arrow Function": {
     "scope": "javascript,typescript,javascriptreact,typescriptreact",
     "prefix": "af",
     "body": ["const $1 = () => {", "\t$0", "};", ""],
-    "description": "화살표 함수 만들기"
-  }
+    "description": "화살표 함수 만들기",
+  },
 }
