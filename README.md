@@ -1,99 +1,30 @@
-# React + TypeScript + Vite
+# Job-is-FE
 
-This repository is set up for a React + TypeScript app using Vite, ESLint, and Prettier.
+Job-is 채용 정보 서비스의 프론트엔드입니다.
 
 ## 시작하기
 
-1. `npm install`
-2. `npm run dev`
-3. `npm run lint`
-4. `npm run format`
+1. `.env.example`을 복사해 `.env.local`을 만들고 값을 채웁니다.
+2. `pnpm install`
+3. `pnpm dev`
 
 ## 주요 스크립트
 
-- `npm run dev`: 개발 서버 실행
-- `npm run build`: 프로덕션 빌드
-- `npm run lint`: ESLint 검사
-- `npm run lint:fix`: ESLint 자동 수정
-- `npm run format`: Prettier로 코드 정리
+- `pnpm dev`: 개발 서버 실행
+- `pnpm build`: 타입 체크 후 프로덕션 빌드
+- `pnpm lint` / `pnpm lint:fix`: ESLint 검사/자동 수정
+- `pnpm format`: Prettier로 코드 정리
+- `pnpm preview`: 프로덕션 빌드 미리보기
 
 ## 개발 환경
 
-- Vite
-- React 19
-- TypeScript
-- ESLint + Prettier
+- React 19 + TypeScript + Vite
+- Tailwind CSS v4
+- TanStack Query, react-router, axios
+- ESLint + Prettier, husky + lint-staged + commitlint
 
----
+## 문서
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
-
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-]);
-```
+- [`docs/ARCHITECTURE.md`](./docs/ARCHITECTURE.md) — 폴더 구조, 레이어 책임
+- [`docs/CONVENTIONS.md`](./docs/CONVENTIONS.md) — 네이밍, 코드 작성 원칙
+- [`docs/GIT_WORKFLOW.md`](./docs/GIT_WORKFLOW.md) — 브랜치, 커밋, PR, 이슈 컨벤션
