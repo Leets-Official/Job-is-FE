@@ -36,7 +36,7 @@ jobs:
 
       - name: TypeScript type check
         id: typecheck
-        run: pnpm exec tsc -b
+        run: pnpm typecheck
 
       - name: ESLint check
         id: lint
@@ -44,7 +44,7 @@ jobs:
 
       - name: Prettier check
         id: prettier
-        run: pnpm exec prettier --check .
+        run: pnpm format:check
 
       - name: Build check
         id: build

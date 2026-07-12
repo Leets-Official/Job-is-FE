@@ -1,3 +1,7 @@
 dist
 node_modules
 pnpm-lock.yaml
+.claude
+.codex
+.omc
+.omx

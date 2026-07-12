@@ -6,10 +6,12 @@
   "packageManager": "pnpm@11.9.0",
   "scripts": {
     "dev": "vite",
+    "typecheck": "tsc -b",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "preview": "vite preview",
     "prepare": "husky"
   },
@@ -59,7 +61,6 @@
     "tailwindcss": "^4.3.2",
     "typescript": "~6.0.2",
     "vite": "^8.1.1",
-    "vite-plugin-svgr": "^5.2.0",
-    "vite-tsconfig-paths": "^6.1.1"
+    "vite-plugin-svgr": "^5.2.0"
   }
 }

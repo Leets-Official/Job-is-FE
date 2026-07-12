@@ -42,7 +42,7 @@ src/
 ## 3. 기술 스택
 
 - **Framework**: React 19 + TypeScript
-- **Bundler**: Vite (`vite-tsconfig-paths`로 `@/*` alias, `vite-plugin-svgr`로 SVG 아이콘 컴포넌트 import)
+- **Bundler**: Vite (`resolve.tsconfigPaths`로 `@/*` alias, `vite-plugin-svgr`로 SVG 아이콘 컴포넌트 import)
 - **Styling**: Tailwind CSS v4 (`@tailwindcss/vite`, 설정 파일 없음, 컬러 토큰은 `src/styles/index.css`의
   `@theme`에 정의), `class-variance-authority`(cva) + `clsx` + `tailwind-merge`(`src/utils/cn.ts`)로
   조건부 클래스 처리
