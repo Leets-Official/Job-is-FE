@@ -123,7 +123,8 @@ UI 변경이 있는 경우 스크린샷을 첨부합니다.
 
 ### Issue 템플릿
 
-`feat`/`refactor`/`bug` 이슈 템플릿은 `.github/ISSUE_TEMPLATE/`에서 관리합니다.
+`feature`/`refactor`/`bug`/`chore` 이슈 템플릿은 `.github/ISSUE_TEMPLATE/`에서 관리합니다.
+기능 작업은 커밋 타입과 Issue 제목에서는 `feat`를 사용하고, 템플릿 파일명은 `feature.md`를 사용합니다.
 
 ## 5. 작업 진행 순서
 

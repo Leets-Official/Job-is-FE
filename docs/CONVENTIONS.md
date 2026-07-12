@@ -121,7 +121,7 @@ const formatDate = (date: Date) => {
 ```text
 컴포넌트 → 화면 표현
 hooks       → 상태 및 이벤트 로직
-apis        → 서버 요청
+api         → 서버 요청
 utils       → 순수 유틸 함수
 ```
 
