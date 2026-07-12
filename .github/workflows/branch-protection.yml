@@ -22,9 +22,11 @@ jobs:
     steps:
       - name: Ensure main only accepts dev
         if: ${{ github.event.pull_request.base.ref == 'main' }}
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          if [ "${{ github.event.pull_request.head.ref }}" != "dev" ]; then
+          if [ "$HEAD_REF" != "dev" ]; then
             echo "main branch only accepts pull requests from dev."
-            echo "Current source branch: ${{ github.event.pull_request.head.ref }}"
+            echo "Current source branch: $HEAD_REF"
             exit 1
           fi
