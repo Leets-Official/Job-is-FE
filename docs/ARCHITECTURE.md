@@ -85,7 +85,7 @@ src/
 - `className`, 필요하면 `ref`를 prop으로 항상 노출한다.
 - variant가 2~3개를 넘으면 `cva`로, 조건부 클래스가 단순하면 `cn()` + 삼항/객체로 처리한다.
 - 상태 전이가 많은 컴포넌트는 `data-*` 속성 + Tailwind 임의 변형자를 쓴다.
-- 상세 규칙은 `docs/CONVENTIONS.md`와 `.claude/rules/component-guide.md`를 따른다.
+- 상세 규칙은 `docs/CONVENTIONS.md`를 따른다.
 
 ## 8. State Policy
 
