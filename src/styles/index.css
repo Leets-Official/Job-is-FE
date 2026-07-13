@@ -111,137 +111,137 @@
   --color-bg-default: #ffffff;
 
   /* Typography - Display */
-  --text-display-small: 3rem; /* 48px */
+  --text-display-small: 48px;
   --text-display-small--line-height: 1.5;
-  --text-display-small--letter-spacing: 0em;
+  --text-display-small--letter-spacing: 0px;
   --text-display-small--font-weight: 700;
 
-  --text-display-medium: 3.5rem; /* 56px */
+  --text-display-medium: 56px;
   --text-display-medium--line-height: 1.5;
-  --text-display-medium--letter-spacing: 0em;
+  --text-display-medium--letter-spacing: 0px;
   --text-display-medium--font-weight: 700;
 
-  --text-display-large: 4rem; /* 64px */
+  --text-display-large: 64px;
   --text-display-large--line-height: 1.5;
-  --text-display-large--letter-spacing: 0em;
+  --text-display-large--letter-spacing: 0px;
   --text-display-large--font-weight: 700;
 
   /* Typography - Heading */
-  --text-heading-xxsmall: 1rem; /* 16px */
+  --text-heading-xxsmall: 16px;
   --text-heading-xxsmall--line-height: 1.5;
-  --text-heading-xxsmall--letter-spacing: 0em;
+  --text-heading-xxsmall--letter-spacing: 0px;
   --text-heading-xxsmall--font-weight: 700;
 
-  --text-heading-xsmall: 1.125rem; /* 18px */
+  --text-heading-xsmall: 18px;
   --text-heading-xsmall--line-height: 1.5;
-  --text-heading-xsmall--letter-spacing: 0em;
+  --text-heading-xsmall--letter-spacing: 0px;
   --text-heading-xsmall--font-weight: 700;
 
-  --text-heading-small: 1.25rem; /* 20px */
+  --text-heading-small: 20px;
   --text-heading-small--line-height: 1.5;
-  --text-heading-small--letter-spacing: 0em;
+  --text-heading-small--letter-spacing: 0px;
   --text-heading-small--font-weight: 700;
 
-  --text-heading-medium: 1.5rem; /* 24px */
+  --text-heading-medium: 24px;
   --text-heading-medium--line-height: 1.5;
-  --text-heading-medium--letter-spacing: 0em;
+  --text-heading-medium--letter-spacing: 0px;
   --text-heading-medium--font-weight: 700;
 
-  --text-heading-large: 2rem; /* 32px */
+  --text-heading-large: 32px;
   --text-heading-large--line-height: 1.5;
-  --text-heading-large--letter-spacing: 0em;
+  --text-heading-large--letter-spacing: 0px;
   --text-heading-large--font-weight: 700;
 
-  --text-heading-xlarge: 2.5rem; /* 40px */
+  --text-heading-xlarge: 40px;
   --text-heading-xlarge--line-height: 1.5;
-  --text-heading-xlarge--letter-spacing: 0em;
+  --text-heading-xlarge--letter-spacing: 0px;
   --text-heading-xlarge--font-weight: 700;
 
   /* Typography - Body */
-  --text-body-xsmall: 0.75rem; /* 12px */
+  --text-body-xsmall: 12px;
   --text-body-xsmall--line-height: 1.5;
-  --text-body-xsmall--letter-spacing: 0em;
+  --text-body-xsmall--letter-spacing: 0px;
   --text-body-xsmall--font-weight: 700;
 
-  --text-body-small: 0.875rem; /* 14px */
+  --text-body-small: 14px;
   --text-body-small--line-height: 1.5;
-  --text-body-small--letter-spacing: 0em;
+  --text-body-small--letter-spacing: 0px;
   --text-body-small--font-weight: 700;
 
-  --text-body-medium: 1rem; /* 16px */
+  --text-body-medium: 16px;
   --text-body-medium--line-height: 1.5;
-  --text-body-medium--letter-spacing: 0em;
+  --text-body-medium--letter-spacing: 0px;
   --text-body-medium--font-weight: 700;
 
-  --text-body-large: 1.125rem; /* 18px */
+  --text-body-large: 18px;
   --text-body-large--line-height: 1.5;
-  --text-body-large--letter-spacing: 0em;
+  --text-body-large--letter-spacing: 0px;
   --text-body-large--font-weight: 700;
 
   /* Typography - Label */
-  --text-label-xsmall: 0.625rem; /* 10px */
+  --text-label-xsmall: 10px;
   --text-label-xsmall--line-height: 1.5;
-  --text-label-xsmall--letter-spacing: 0em;
+  --text-label-xsmall--letter-spacing: 0px;
   --text-label-xsmall--font-weight: 700;
 
-  --text-label-small: 0.75rem; /* 12px */
+  --text-label-small: 12px;
   --text-label-small--line-height: 1.5;
-  --text-label-small--letter-spacing: 0em;
+  --text-label-small--letter-spacing: 0px;
   --text-label-small--font-weight: 700;
 
-  --text-label-medium: 0.875rem; /* 14px */
+  --text-label-medium: 14px;
   --text-label-medium--line-height: 1.5;
-  --text-label-medium--letter-spacing: 0em;
+  --text-label-medium--letter-spacing: 0px;
   --text-label-medium--font-weight: 700;
 
-  --text-label-large: 1rem; /* 16px */
+  --text-label-large: 16px;
   --text-label-large--line-height: 1.5;
-  --text-label-large--letter-spacing: 0em;
+  --text-label-large--letter-spacing: 0px;
   --text-label-large--font-weight: 700;
 
   /* Typography - Navigation */
-  --text-nav-small: 0.875rem; /* 14px */
+  --text-nav-small: 14px;
   --text-nav-small--line-height: 1.5;
-  --text-nav-small--letter-spacing: 0em;
+  --text-nav-small--letter-spacing: 0px;
   --text-nav-small--font-weight: 700;
 
-  --text-nav-medium: 1rem; /* 16px */
+  --text-nav-medium: 16px;
   --text-nav-medium--line-height: 1.5;
-  --text-nav-medium--letter-spacing: 0em;
+  --text-nav-medium--letter-spacing: 0px;
   --text-nav-medium--font-weight: 700;
 
-  --text-nav-large: 1.125rem; /* 18px */
+  --text-nav-large: 18px;
   --text-nav-large--line-height: 1.5;
-  --text-nav-large--letter-spacing: 0em;
+  --text-nav-large--letter-spacing: 0px;
   --text-nav-large--font-weight: 700;
 
   /* Shape - Radius */
-  --radius-xs: 0.25rem; /* 4px */
-  --radius-sm: 0.5rem; /* 8px */
-  --radius-md: 0.75rem; /* 12px */
-  --radius-lg: 1rem; /* 16px */
-  --radius-xl: 1.5rem; /* 24px */
-  --radius-2xl: 2rem; /* 32px */
+  --radius-xs: 4px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
 
   /* Layout - Gap */
-  --gap-2xs: 0.25rem; /* 4px */
-  --gap-xs: 0.5rem; /* 8px */
-  --gap-sm: 0.75rem; /* 12px */
-  --gap-md: 1rem; /* 16px */
-  --gap-lg: 1.5rem; /* 24px */
-  --gap-xl: 2rem; /* 32px */
-  --gap-2xl: 2.5rem; /* 40px */
-  --gap-3xl: 3rem; /* 48px */
+  --gap-2xs: 4px;
+  --gap-xs: 8px;
+  --gap-sm: 12px;
+  --gap-md: 16px;
+  --gap-lg: 24px;
+  --gap-xl: 32px;
+  --gap-2xl: 40px;
+  --gap-3xl: 48px;
 
   /* Layout - Padding */
-  --padding-2xs: 0.25rem; /* 4px */
-  --padding-xs: 0.5rem; /* 8px */
-  --padding-sm: 0.75rem; /* 12px */
-  --padding-md: 1rem; /* 16px */
-  --padding-lg: 1.25rem; /* 20px */
-  --padding-xl: 1.5rem; /* 24px */
-  --padding-2xl: 2rem; /* 32px */
-  --padding-3xl: 2.5rem; /* 40px */
+  --padding-2xs: 4px;
+  --padding-xs: 8px;
+  --padding-sm: 12px;
+  --padding-md: 16px;
+  --padding-lg: 20px;
+  --padding-xl: 24px;
+  --padding-2xl: 32px;
+  --padding-3xl: 40px;
 
   /* Elevation - Shadow */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -250,10 +250,10 @@
   --shadow-xl: 0 8px 24px 0 rgba(0, 0, 0, 0.12);
 
   /* Icon - Size */
-  --icon-xs: 0.75rem; /* 12px */
-  --icon-sm: 1rem; /* 16px */
-  --icon-md: 1.25rem; /* 20px */
-  --icon-lg: 1.5rem; /* 24px */
-  --icon-xl: 2rem; /* 32px */
-  --icon-2xl: 2.5rem; /* 40px */
+  --icon-xs: 12px;
+  --icon-sm: 16px;
+  --icon-md: 20px;
+  --icon-lg: 24px;
+  --icon-xl: 32px;
+  --icon-2xl: 40px;
 }
