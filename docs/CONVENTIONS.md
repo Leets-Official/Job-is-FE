@@ -52,6 +52,21 @@ const MAX_COUNT = 10;
 const DEFAULT_PAGE_SIZE = 20;
 ```
 
+### 아이콘 파일
+
+`src/assets/icons`의 SVG 파일명은 `kebab-case`를 사용합니다.
+
+```text
+icon-home.svg
+icon-chevron-left.svg
+```
+
+컴포넌트로 import할 때 이름만 PascalCase로 붙입니다.
+
+```ts
+import HomeIcon from '@/assets/icons/icon-home.svg?react';
+```
+
 ## 2. 주석 작성 기준
 
 주석은 "무엇을 하는 코드인지"보다 **왜 이렇게 작성했는지** 중심으로 작성합니다.
