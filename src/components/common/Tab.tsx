@@ -16,7 +16,7 @@ const tabVariants = cva(
       },
     },
     compoundVariants: [
-      { variant: 'filled', active: true, className: 'bg-primary-400' },
+      { variant: 'filled', active: true, className: 'bg-primary-400 text-white' },
       { variant: 'underline', active: true, className: 'border-primary-400' },
     ],
     defaultVariants: {
@@ -42,8 +42,6 @@ export default function Tab({
     <button
       ref={ref}
       type={type}
-      role="tab"
-      aria-selected={active ?? false}
       className={cn(tabVariants({ variant, active }), className)}
       {...props}
     >
