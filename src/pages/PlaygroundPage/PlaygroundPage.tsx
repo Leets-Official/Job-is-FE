@@ -1,25 +1,28 @@
 import { useState } from 'react';
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import CheckCircleIcon from '@/assets/icons/icon-check-circle.svg?react';
-import Badge from '@/components/common/Badge';
-import Button from '@/components/common/Button';
-import CarouselArrow from '@/components/common/CarouselArrow';
-import CarouselIndicator from '@/components/common/CarouselIndicator';
-import Checkbox from '@/components/common/Checkbox';
-import DetailListCard from '@/components/common/DetailListCard';
-import FileUpload, { type FileUploadItem } from '@/components/common/FileUpload';
-import Input from '@/components/common/Input';
-import Link from '@/components/common/Link';
-import ListCard from '@/components/common/ListCard';
-import Modal from '@/components/common/Modal';
-import RadioButton from '@/components/common/RadioButton';
-import Rate from '@/components/common/Rate';
-import Select from '@/components/common/Select';
-import Tab from '@/components/common/Tab';
-import TableCell from '@/components/common/TableCell';
-import Tag from '@/components/common/Tag';
-import TextInput from '@/components/common/TextInput';
-import ToggleSwitch from '@/components/common/ToggleSwitch';
+import {
+  Badge,
+  Button,
+  CarouselArrow,
+  CarouselIndicator,
+  Checkbox,
+  ModalCheckbox,
+  DetailListCard,
+  FileUpload,
+  type FileUploadItem,
+  Link,
+  ListCard,
+  RadioButton,
+  Rate,
+  Select,
+  Tab,
+  TableCell,
+  Tag,
+  ModalTagComment,
+  TextInput,
+  ToggleSwitch,
+} from '@/components/common';
 import JobCard from '@/features/jobs/components/JobCard';
 
 const placeholderImage =
@@ -219,36 +222,52 @@ export default function PlaygroundPage() {
       </section>
 
       <section>
-        <h2 className="mb-2 text-sm font-semibold text-gray-500">Modal</h2>
-        <Modal
+        <h2 className="mb-2 text-sm font-semibold text-gray-500">ModalTagComment</h2>
+        <ModalTagComment
           title="Title"
+          tagLabel="Recommend"
+          tags={tags}
+          onRemoveTag={handleRemoveTag}
+          commentLabel="Comment"
+          commentValue={comment}
+          onCommentChange={setComment}
+          commentPlaceholder="내용을 입력하세요"
           footer={
             <>
               <Button variant="outline">버튼</Button>
               <Button variant="solid">버튼</Button>
             </>
           }
-        >
-          <p className="w-full text-base font-medium text-text-secondary">Recommend</p>
-          <div className="flex w-full gap-2.5">
-            {tags.map((tag, index) => (
-              <Tag
-                key={`${tag}-${index}`}
-                variant="removable"
-                label={tag}
-                onClick={() => handleRemoveTag(index)}
-              />
-            ))}
-          </div>
-          <label className="flex w-full flex-col gap-2 text-base font-medium text-text-secondary">
-            Comment
-            <Input
-              value={comment}
-              onChange={(event) => setComment(event.target.value)}
-              placeholder="내용을 입력하세요"
-            />
-          </label>
-        </Modal>
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-gray-500">ModalCheckbox</h2>
+        <div className="flex flex-col gap-2">
+          <ModalCheckbox
+            title="Title"
+            description="Source"
+            checkboxLabel="Indication of intent to apply"
+            footer={
+              <>
+                <Button variant="outline">버튼</Button>
+                <Button variant="solid">버튼</Button>
+              </>
+            }
+          />
+          <ModalCheckbox
+            title="Title"
+            description="Description Description Description Description Description Description Description Description Description Description Description Description Description Description Description"
+            checkboxLabel="Checkbox"
+            defaultChecked
+            footer={
+              <>
+                <Button variant="outline">버튼</Button>
+                <Button variant="solid">버튼</Button>
+              </>
+            }
+          />
+        </div>
       </section>
 
       <section>

@@ -1,10 +1,7 @@
 import { useId, useRef, type ChangeEvent, type DragEvent } from 'react';
 import CloseIcon from '@/assets/icons/icon-close.svg?react';
-import FileUploadRow, {
-  FileActionButton,
-  type FileUploadItem,
-} from '@/components/common/FileUploadRow';
 import { cn } from '@/utils/cn';
+import FileUploadRow, { FileActionButton, type FileUploadItem } from './FileUploadRow';
 
 export type { FileUploadItem };
 

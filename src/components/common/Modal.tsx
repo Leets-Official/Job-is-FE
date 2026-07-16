@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { type ComponentProps, type ComponentPropsWithRef, type ReactNode } from 'react';
 import CloseIcon from '@/assets/icons/icon-close.svg?react';
 import { cn } from '@/utils/cn';
 
@@ -44,3 +44,8 @@ export default function Modal({
     </div>
   );
 }
+
+export type ModalPresetProps = Pick<
+  ComponentProps<typeof Modal>,
+  'title' | 'onClose' | 'footer' | 'className' | 'ref'
+>;

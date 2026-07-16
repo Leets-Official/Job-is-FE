@@ -1,5 +1,5 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
-import ExternalLinkIcon from '@/assets/icons/icon-external-link.svg?react';
+import Link from '@/components/common/Link';
 import { cn } from '@/utils/cn';
 
 interface ListCardProps extends ComponentPropsWithRef<'div'> {
@@ -61,13 +61,9 @@ export default function ListCard({
         )}
       </div>
       {linkLabel && linkHref && (
-        <a
-          href={linkHref}
-          className="flex items-center gap-1 px-0.5 text-[14px] leading-normal font-medium text-primary-400 underline decoration-from-font [text-underline-position:from-font]"
-        >
+        <Link href={linkHref} className="px-0.5 text-[14px]" iconClassName="size-5">
           {linkLabel}
-          <ExternalLinkIcon className="size-5" />
-        </a>
+        </Link>
       )}
     </div>
   );
