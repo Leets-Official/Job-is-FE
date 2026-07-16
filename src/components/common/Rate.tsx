@@ -1,25 +1,18 @@
+import StarIcon from '@/assets/icons/icon-star.svg?react';
 import { cn } from '@/utils/cn';
 
 type RateProps = {
   value: number;
-  max?: number;
-  label?: string;
   className?: string;
 };
 
-export default function Rate({ value, max = 5, label = 'percentage', className }: RateProps) {
+export default function Rate({ value, className }: RateProps) {
   return (
-    <div className={cn('inline-flex items-center gap-1', className)}>
-      {Array.from({ length: max }, (_, index) => (
-        <span
-          key={index}
-          className={cn(
-            'size-2 shrink-0 rounded-full',
-            index < value ? 'bg-primary-400' : 'bg-gray-300',
-          )}
-        />
-      ))}
-      <span className="text-label-xsmall leading-[15px] font-medium text-black">{label}</span>
-    </div>
+    <span className={cn('inline-flex items-center gap-1', className)}>
+      <StarIcon className="size-4 shrink-0" />
+      <span className="flex h-5 w-[53px] flex-col items-start justify-center text-label-xsmall font-medium leading-[15px] text-gray-900">
+        {value.toFixed(1)}
+      </span>
+    </span>
   );
 }

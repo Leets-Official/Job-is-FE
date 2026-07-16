@@ -125,12 +125,11 @@ export default function PlaygroundPage() {
 
       <section>
         <h2 className="mb-3 text-sm font-semibold text-gray-500">Rate (비율)</h2>
-        <div className="flex flex-col gap-3 rounded-lg border border-gray-200 p-6">
-          <Rate value={1} />
-          <Rate value={2} />
-          <Rate value={3} />
-          <Rate value={4} />
-          <Rate value={5} />
+        <div className="flex flex-col gap-4 rounded-lg border border-gray-200 p-6">
+          <Rate value={0} />
+          <span className="text-label-small text-gray-400">
+            원티드 · 2026. 6. 28. 게시 <Rate value={4} className="text-gray-400" />
+          </span>
         </div>
       </section>
 
