@@ -26,16 +26,18 @@ export default function Modal({
       )}
       {...props}
     >
-      <div className="flex h-6 w-full items-end justify-end">
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="닫기"
-          className="flex size-6 items-center justify-center"
-        >
-          <CloseIcon className="size-6" />
-        </button>
-      </div>
+      {onClose && (
+        <div className="flex h-6 w-full items-end justify-end">
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="닫기"
+            className="flex size-6 items-center justify-center"
+          >
+            <CloseIcon className="size-6" />
+          </button>
+        </div>
+      )}
       <div className="flex w-full flex-1 flex-col gap-4 px-4 py-2">
         <p className="w-full text-2xl leading-normal font-bold text-text-primary">{title}</p>
         {children}

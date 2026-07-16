@@ -57,14 +57,16 @@ export default function JobCard({
           <p className="truncate text-sm font-medium text-text-secondary">{companyName}</p>
           <p className="truncate text-sm font-medium text-text-secondary">{employmentInfo}</p>
         </div>
-        <button
-          type="button"
-          onClick={onMoreClick}
-          aria-label="더보기"
-          className="flex size-6 shrink-0 items-center justify-center"
-        >
-          <MoreVerticalIcon className="size-6" />
-        </button>
+        {onMoreClick && (
+          <button
+            type="button"
+            onClick={onMoreClick}
+            aria-label="더보기"
+            className="flex size-6 shrink-0 items-center justify-center"
+          >
+            <MoreVerticalIcon className="size-6" />
+          </button>
+        )}
       </div>
     </article>
   );
