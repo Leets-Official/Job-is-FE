@@ -3,13 +3,19 @@ import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import CheckCircleIcon from '@/assets/icons/icon-check-circle.svg?react';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
+import Chip from '@/components/common/Chip';
 import FileUpload, { type FileUploadItem } from '@/components/common/FileUpload';
+import Breadcrumb from '@/components/common/Breadcrumb';
+import Identity from '@/components/common/Identity';
 import Link from '@/components/common/Link';
+import Pagination from '@/components/common/Pagination';
+import Search from '@/components/common/Search';
 import RadioButton from '@/components/common/RadioButton';
 import Rate from '@/components/common/Rate';
 import Select from '@/components/common/Select';
 import Tag from '@/components/common/Tag';
 import TextInput from '@/components/common/TextInput';
+import TopButton from '@/components/common/TopButton';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
 
 const INITIAL_FILES: FileUploadItem[] = [
@@ -58,6 +64,69 @@ export default function PlaygroundPage() {
             Subtle_none
           </Link>
         </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Breadcrumb (브레드크럼)</h2>
+        <Breadcrumb
+          items={[
+            { label: '1Depth', to: '/depth/1' },
+            { label: '2Depth', to: '/depth/2' },
+            { label: '3Depth', to: '/depth/3' },
+            { label: '4Depth', to: '/depth/4' },
+            { label: '5Depth', current: true },
+          ]}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Pagination (페이지네이션)</h2>
+        <Pagination
+          currentPage={3}
+          totalPages={5}
+          onPrevious={() => console.info('previous clicked')}
+          onNext={() => console.info('next clicked')}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Chip (칩)</h2>
+        <div className="flex flex-wrap gap-3">
+          <Chip label="Unchecked" />
+          <Chip label="Checked" selected />
+          <Chip label="Disabled" disabled />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Search (서치)</h2>
+        <Search
+          label="레이블"
+          helperText="입력시 필요한 정보를 입력해 주세요"
+          onSubmit={(query) => console.info('search query', query)}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Top button (탑 버튼)</h2>
+        <div className="flex gap-4">
+          <TopButton />
+          <TopButton label="위로" />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Identity (아이덴티티)</h2>
+        <Identity
+          name="김다현"
+          title="Product Designer"
+          description="사용자 중심의 서비스 흐름과 인터랙션을 설계하며, 브랜드와 기능을 하나의 경험으로 연결합니다."
+          avatarLabel="김다"
+          tags={["UX", 'Design System', 'Accessibility']}
+          statusLabel="Available"
+          actionLabel="프로필 보기"
+          onAction={() => console.info('Identity action clicked')}
+        />
       </section>
 
       <section>
