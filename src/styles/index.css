@@ -1,6 +1,10 @@
 @import 'tailwindcss';
+@import 'pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css';
 
 @theme {
+  /* Typography - Font Family */
+  --font-sans: 'Pretendard Variable', sans-serif;
+
   /* Primary - Emerald Mint Green */
   --color-primary-50: #f3fcf8;
   --color-primary-100: #ddf7ec;
@@ -107,6 +111,8 @@
 
   /* Semantic */
   --color-text-primary: #212529;
+  --color-text-secondary: #495057;
+  --color-text-tertiary: #adb5bd;
   --color-divider-gray: #8a949e;
   --color-bg-default: #ffffff;
 
