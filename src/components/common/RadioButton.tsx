@@ -1,7 +1,7 @@
 import { type ComponentPropsWithRef } from 'react';
 import { cn } from '@/utils/cn';
 
-type RadioButtonProps = ComponentPropsWithRef<'input'> & {
+type RadioButtonProps = Omit<ComponentPropsWithRef<'input'>, 'type'> & {
   label?: string;
 };
 
@@ -28,6 +28,7 @@ export default function RadioButton({
             'absolute inset-0 rounded-full border border-gray-400 bg-white',
             'peer-checked:border-primary-400',
             'peer-disabled:border-gray-400 peer-disabled:bg-gray-200',
+            'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-500',
           )}
         />
         <span

@@ -2,7 +2,7 @@ import { type ComponentPropsWithRef } from 'react';
 import CheckIcon from '@/assets/icons/icon-check.svg?react';
 import { cn } from '@/utils/cn';
 
-type CheckboxProps = ComponentPropsWithRef<'input'> & {
+type CheckboxProps = Omit<ComponentPropsWithRef<'input'>, 'type'> & {
   label?: string;
 };
 
@@ -24,6 +24,7 @@ export default function Checkbox({ className, id, label, disabled, ...props }: C
             'peer-checked:border-primary-400 peer-checked:bg-primary-400',
             'peer-disabled:border-gray-400 peer-disabled:bg-gray-200',
             'peer-disabled:peer-checked:border-gray-400 peer-disabled:peer-checked:bg-gray-200',
+            'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-500',
           )}
         />
         <CheckIcon

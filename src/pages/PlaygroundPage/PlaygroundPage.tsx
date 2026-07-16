@@ -32,6 +32,15 @@ export default function PlaygroundPage() {
     setFiles((prev) => prev.filter((file) => file.id !== id));
   };
 
+  const handleSelectFiles = (fileList: FileList) => {
+    const newItems: FileUploadItem[] = Array.from(fileList).map((file, index) => ({
+      id: `${Date.now()}-${index}`,
+      name: `${file.name} [${Math.ceil(file.size / 1024)}KB]`,
+      status: 'idle',
+    }));
+    setFiles((prev) => [...prev, ...newItems]);
+  };
+
   return (
     <div className="flex flex-col gap-8 p-6">
       <h1 className="text-xl font-bold">Component Playground</h1>
@@ -161,12 +170,12 @@ export default function PlaygroundPage() {
         <h2 className="mb-3 text-sm font-semibold text-gray-500">Toggle switch (토글 스위치)</h2>
         <div className="flex flex-col gap-4 rounded-lg border border-gray-200 p-6">
           <div className="flex gap-4">
-            <ToggleSwitch id="toggle-off" />
-            <ToggleSwitch id="toggle-off-disabled" disabled />
+            <ToggleSwitch id="toggle-off" label="Off" />
+            <ToggleSwitch id="toggle-off-disabled" label="Off disabled" disabled />
           </div>
           <div className="flex gap-4">
-            <ToggleSwitch id="toggle-on" defaultChecked />
-            <ToggleSwitch id="toggle-on-disabled" disabled defaultChecked />
+            <ToggleSwitch id="toggle-on" label="On" defaultChecked />
+            <ToggleSwitch id="toggle-on-disabled" label="On disabled" disabled defaultChecked />
           </div>
         </div>
       </section>
@@ -189,6 +198,7 @@ export default function PlaygroundPage() {
           title="타이틀영역"
           description="컨텐츠 영역"
           files={files}
+          onSelectFiles={handleSelectFiles}
           onRemove={handleRemove}
           onClearAll={() => setFiles([])}
         />

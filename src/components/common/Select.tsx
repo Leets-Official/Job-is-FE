@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef } from 'react';
+import { useId, type ComponentPropsWithRef } from 'react';
 import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg?react';
 import FormField from '@/components/common/FormField';
 import { cn } from '@/utils/cn';
@@ -18,15 +18,19 @@ export default function Select({
   children,
   ...props
 }: SelectProps) {
+  const generatedId = useId();
+  const selectId = id ?? generatedId;
+
   return (
-    <FormField label={label} helperText={helperText} htmlFor={id}>
+    <FormField id={selectId} label={label} helperText={helperText}>
       <div className="relative">
         <select
-          id={id}
+          id={selectId}
           required
           defaultValue=""
+          aria-describedby={helperText ? `${selectId}-helper-text` : undefined}
           className={cn(
-            'h-14 w-full appearance-none rounded-sm border border-gray-700 bg-white px-4 text-body-large font-medium text-gray-900 invalid:text-gray-600 focus:border-primary-500 focus:outline-none disabled:bg-gray-200 disabled:text-gray-600',
+            'h-14 w-full appearance-none rounded-sm border border-gray-700 bg-white px-4 pr-12 text-body-large font-medium text-gray-900 invalid:text-gray-600 focus:border-primary-500 focus:outline-none disabled:bg-gray-200 disabled:text-gray-600',
             className,
           )}
           {...props}
