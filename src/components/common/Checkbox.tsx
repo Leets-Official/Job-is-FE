@@ -20,11 +20,11 @@ export default function Checkbox({ className, id, label, disabled, ...props }: C
         <input id={id} type="checkbox" disabled={disabled} className="peer sr-only" {...props} />
         <span
           className={cn(
-            'absolute inset-0 rounded-xs border border-gray-400 bg-white',
+            'absolute inset-0 rounded-xs border border-gray-300 bg-white',
             'peer-checked:border-primary-400 peer-checked:bg-primary-400',
-            'peer-disabled:border-gray-400 peer-disabled:bg-gray-200',
-            'peer-disabled:peer-checked:border-gray-400 peer-disabled:peer-checked:bg-gray-200',
-            'peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-500',
+            'peer-disabled:border-gray-300 peer-disabled:bg-gray-200',
+            'peer-disabled:peer-checked:border-gray-300 peer-disabled:peer-checked:bg-gray-200',
+            'peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-500',
           )}
         />
         <CheckIcon

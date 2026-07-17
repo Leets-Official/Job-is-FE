@@ -19,13 +19,16 @@ const linkVariants = cva(
   },
 );
 
-type LinkProps = ComponentPropsWithRef<'a'> & VariantProps<typeof linkVariants>;
+type LinkProps = ComponentPropsWithRef<'a'> &
+  VariantProps<typeof linkVariants> & {
+    iconClassName?: string;
+  };
 
-export default function Link({ className, variant, children, ...props }: LinkProps) {
+export default function Link({ className, variant, iconClassName, children, ...props }: LinkProps) {
   return (
     <a className={cn(linkVariants({ variant }), className)} {...props}>
       {children}
-      <ExternalLinkIcon className="size-4" />
+      <ExternalLinkIcon className={cn('size-4', iconClassName)} />
     </a>
   );
 }
