@@ -3,7 +3,7 @@ import ArrowLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import ArrowRightIcon from '@/assets/icons/icon-chevron-right.svg?react';
 import { cn } from '@/utils/cn';
 
-type PaginationProps = ComponentPropsWithoutRef<'div'> & {
+type PaginationProps = ComponentPropsWithoutRef<'nav'> & {
   currentPage: number;
   totalPages: number;
   onPrevious: () => void;
@@ -19,7 +19,8 @@ export default function Pagination({
   ...props
 }: PaginationProps) {
   return (
-    <div
+    <nav
+      aria-label="페이지 네비게이션"
       className={cn(
         'flex flex-col items-center justify-between gap-4 rounded-2xl border border-gray-200 bg-white p-6 text-sm text-gray-700 sm:flex-row',
         className,
@@ -35,7 +36,9 @@ export default function Pagination({
         <ArrowLeftIcon className="size-4" /> 이전
       </button>
 
-      <span className="text-body-medium font-medium text-gray-900">오늘 도착 · {currentPage}/{totalPages}</span>
+      <span className="text-body-medium font-medium text-gray-900">
+        오늘 도착 · {currentPage}/{totalPages}
+      </span>
 
       <button
         type="button"
@@ -45,6 +48,6 @@ export default function Pagination({
       >
         다음 <ArrowRightIcon className="size-4" />
       </button>
-    </div>
+    </nav>
   );
 }

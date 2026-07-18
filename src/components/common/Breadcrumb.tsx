@@ -24,7 +24,7 @@ export default function Breadcrumb({ className, items, ...props }: BreadcrumbPro
           </Link>
         </li>
 
-        {items.map((item, index) => (
+        {items.map((item) => (
           <li key={item.label} className="inline-flex items-center gap-2">
             <ChevronRightIcon className="size-4 text-gray-300" />
             {item.to && !item.current ? (
@@ -32,7 +32,9 @@ export default function Breadcrumb({ className, items, ...props }: BreadcrumbPro
                 {item.label}
               </Link>
             ) : (
-              <span className="font-semibold text-gray-900">{item.label}</span>
+              <span aria-current="page" className="font-semibold text-gray-900">
+                {item.label}
+              </span>
             )}
           </li>
         ))}

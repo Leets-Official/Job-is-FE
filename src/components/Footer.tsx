@@ -13,21 +13,25 @@ export default function Footer({ className }: FooterProps) {
       <div className="mx-auto flex max-w-7xl flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <p className="text-heading-xsmall text-gray-900">Job.is</p>
-          <p className="mt-2 max-w-xl text-body-medium leading-7 text-gray-600">
-            채용 과정과 사용자 경험을 더 자연스럽게 연결하는 서비스입니다.
+          <p className="mt-2 text-body-medium leading-7 text-gray-600">
+            Job.is 매일 아침 3분, 맞춤 취업 뉴스레터
           </p>
         </div>
 
-        <div className="flex flex-wrap gap-4 text-sm">
-          <Link to="/" className="text-gray-700 hover:text-primary-500">
-            회사소개
+        <div className="flex flex-wrap items-center gap-4 text-sm text-gray-700">
+          <Link to="/about" className="hover:text-primary-500">
+            서비스소개
           </Link>
-          <Link to="/" className="text-gray-700 hover:text-primary-500">
+          <Link to="/terms" className="hover:text-primary-500">
             이용약관
           </Link>
-          <Link to="/" className="text-gray-700 hover:text-primary-500">
+          <Link to="/privacy" className="hover:text-primary-500">
             개인정보처리방침
           </Link>
+          <Link to="/contact" className="hover:text-primary-500">
+            문의하기
+          </Link>
+          <span className="text-gray-500">© 2026 Job.is All rights reserved.</span>
         </div>
       </div>
     </footer>

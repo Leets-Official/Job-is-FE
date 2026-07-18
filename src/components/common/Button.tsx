@@ -3,7 +3,7 @@ import { type ComponentPropsWithRef } from 'react';
 import { cn } from '@/utils/cn';
 
 const buttonVariants = cva(
-  'inline-flex h-14 items-center justify-center gap-1 rounded-md px-5 text-base font-medium transition-colors disabled:cursor-not-allowed',
+  'inline-flex h-14 items-center justify-center gap-1 rounded-sm px-5 text-base font-medium transition-colors disabled:cursor-not-allowed',
   {
     variants: {
       variant: {

@@ -6,12 +6,7 @@ type TopButtonProps = ComponentPropsWithRef<'button'> & {
   label?: string;
 };
 
-export default function TopButton({
-  className,
-  label,
-  type = 'button',
-  ...props
-}: TopButtonProps) {
+export default function TopButton({ className, label, type = 'button', ...props }: TopButtonProps) {
   return (
     <button
       type={type}

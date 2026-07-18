@@ -1,7 +1,7 @@
 import { type ComponentPropsWithoutRef } from 'react';
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
+import HashIcon from '@/assets/icons/icon-hash.svg?react';
 import Button from '@/components/common/Button';
-import Tag from '@/components/common/Tag';
 import { cn } from '@/utils/cn';
 
 type IdentityProps = ComponentPropsWithoutRef<'section'> & {
@@ -33,10 +33,7 @@ export default function Identity({
 
   return (
     <section
-      className={cn(
-        'rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-sm',
-        className,
-      )}
+      className={cn('rounded-2xl border border-gray-200 bg-gray-50 p-6 shadow-sm', className)}
       {...props}
     >
       <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
@@ -65,7 +62,13 @@ export default function Identity({
           {tags.length > 0 && (
             <div className="mt-4 flex flex-wrap gap-2">
               {tags.map((tag) => (
-                <Tag key={tag} variant="hash" label={tag} />
+                <span
+                  key={tag}
+                  className="inline-flex h-10 items-center justify-center gap-0.5 rounded-full border border-gray-200 bg-white px-3 text-base leading-6 font-normal text-gray-900"
+                >
+                  <HashIcon className="size-4" />
+                  {tag}
+                </span>
               ))}
             </div>
           )}
