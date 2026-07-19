@@ -120,7 +120,11 @@ export default function PlaygroundPage() {
 
       <section>
         <h2 className="mb-3 text-sm font-semibold text-gray-500">Search (서치)</h2>
-        <Search label="레이블" helperText="입력시 필요한 정보를 입력해 주세요" onSearchSubmit={() => {}} />
+        <Search
+          label="레이블"
+          helperText="입력시 필요한 정보를 입력해 주세요"
+          onSearchSubmit={() => {}}
+        />
       </section>
 
       <section>
