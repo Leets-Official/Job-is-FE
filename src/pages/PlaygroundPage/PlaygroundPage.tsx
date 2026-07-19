@@ -25,7 +25,6 @@ import {
 } from '@/components/common';
 import Breadcrumb from '@/components/common/Breadcrumb';
 import Chip from '@/components/common/Chip';
-import Identity from '@/components/common/Identity';
 import Pagination from '@/components/common/Pagination';
 import Search from '@/components/common/Search';
 import TopButton from '@/components/common/TopButton';
@@ -133,20 +132,6 @@ export default function PlaygroundPage() {
           <TopButton />
           <TopButton label="위로" />
         </div>
-      </section>
-
-      <section>
-        <h2 className="mb-3 text-sm font-semibold text-gray-500">Identity (아이덴티티)</h2>
-        <Identity
-          name="김다현"
-          title="Product Designer"
-          description="사용자 중심의 서비스 흐름과 인터랙션을 설계하며, 브랜드와 기능을 하나의 경험으로 연결합니다."
-          avatarLabel="김다"
-          tags={['UX', 'Design System', 'Accessibility']}
-          statusLabel="Available"
-          actionLabel="프로필 보기"
-          onAction={() => {}}
-        />
       </section>
 
       <section>
