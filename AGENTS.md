@@ -23,4 +23,6 @@ React 19 + TypeScript · Vite · Tailwind CSS v4 · pnpm
 
 ## 문서
 
-- `docs/ARCHITECTURE.md`, `docs/CONVENTIONS.md`, `docs/GIT_WORKFLOW.md`
+- [ARCHITECTURE.md](docs/ARCHITECTURE.md)
+- [CONVENTIONS.md](docs/CONVENTIONS.md)
+- [GIT_WORKFLOW.md](docs/GIT_WORKFLOW.md)
