@@ -7,22 +7,27 @@ import {
   CarouselArrow,
   CarouselIndicator,
   Checkbox,
-  ModalCheckbox,
   DetailListCard,
   FileUpload,
   type FileUploadItem,
   Link,
   ListCard,
+  ModalCheckbox,
+  ModalTagComment,
   RadioButton,
   Rate,
   Select,
   Tab,
   TableCell,
   Tag,
-  ModalTagComment,
   TextInput,
   ToggleSwitch,
 } from '@/components/common';
+import Breadcrumb from '@/components/common/Breadcrumb';
+import Chip from '@/components/common/Chip';
+import Pagination from '@/components/common/Pagination';
+import Search from '@/components/common/Search';
+import TopButton from '@/components/common/TopButton';
 import JobCard from '@/features/jobs/components/JobCard';
 
 const placeholderImage =
@@ -69,6 +74,65 @@ export default function PlaygroundPage() {
   return (
     <div className="flex flex-col gap-8 p-6">
       <h1 className="text-xl font-bold">Component Playground</h1>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Link (링크)</h2>
+        <div className="flex gap-6">
+          <Link href="#" variant="default">
+            Default
+          </Link>
+          <Link href="#" variant="subtle">
+            Subtle
+          </Link>
+          <Link href="#" variant="subtleNone">
+            Subtle_none
+          </Link>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Breadcrumb (브레드크럼)</h2>
+        <Breadcrumb
+          items={[
+            { label: '1Depth', to: '/depth/1' },
+            { label: '2Depth', to: '/depth/2' },
+            { label: '3Depth', to: '/depth/3' },
+            { label: '4Depth', to: '/depth/4' },
+            { label: '5Depth', current: true },
+          ]}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Pagination (페이지네이션)</h2>
+        <Pagination currentPage={3} totalPages={5} onPrevious={() => {}} onNext={() => {}} />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Chip (칩)</h2>
+        <div className="flex flex-wrap gap-3">
+          <Chip label="Unchecked" />
+          <Chip label="Checked" selected />
+          <Chip label="Disabled" disabled />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Search (서치)</h2>
+        <Search
+          label="레이블"
+          helperText="입력시 필요한 정보를 입력해 주세요"
+          onSearchSubmit={() => {}}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-3 text-sm font-semibold text-gray-500">Top button (탑 버튼)</h2>
+        <div className="flex gap-4">
+          <TopButton />
+          <TopButton label="위로" />
+        </div>
+      </section>
 
       <section>
         <h2 className="mb-3 text-sm font-semibold text-gray-500">Button (버튼)</h2>
