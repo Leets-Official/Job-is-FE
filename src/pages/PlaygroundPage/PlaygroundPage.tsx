@@ -2,6 +2,7 @@ import { useState } from 'react';
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import CheckCircleIcon from '@/assets/icons/icon-check-circle.svg?react';
 import {
+  Alert,
   Badge,
   Button,
   CarouselArrow,
@@ -14,9 +15,12 @@ import {
   ListCard,
   ModalCheckbox,
   ModalTagComment,
+  ProgressStepper,
   RadioButton,
   Rate,
+  ResultIcon,
   Select,
+  Spinner,
   Tab,
   TableCell,
   Tag,
@@ -474,6 +478,65 @@ export default function PlaygroundPage() {
           onRemove={handleRemove}
           onClearAll={() => setFiles([])}
         />
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-gray-500">Alert</h2>
+        <div className="flex flex-col gap-2">
+          <Alert variant="success" title="메시지 타이틀">
+            콘텐츠 내 얼럿은 최대 2줄 이내로 작성합니다. 콘텐츠 내 얼럿은 최대 2줄 이내로
+            작성합니다.
+          </Alert>
+          <Alert variant="warning" title="메시지 타이틀">
+            콘텐츠 내 얼럿은 최대 2줄 이내로 작성합니다.
+          </Alert>
+          <Alert variant="info" title="메시지 타이틀">
+            콘텐츠 내 얼럿은 최대 2줄 이내로 작성합니다.
+          </Alert>
+          <Alert variant="danger" title="메시지 타이틀">
+            콘텐츠 내 얼럿은 최대 2줄 이내로 작성합니다.
+          </Alert>
+          <Alert size="slim" variant="success">
+            메시지 내용 최대 1줄
+          </Alert>
+          <Alert size="slim" variant="warning">
+            메시지 내용 최대 1줄
+          </Alert>
+          <Alert size="slim" variant="info">
+            메시지 내용 최대 1줄
+          </Alert>
+          <Alert size="slim" variant="danger">
+            메시지 내용 최대 1줄
+          </Alert>
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-gray-500">ProgressStepper</h2>
+        <ProgressStepper
+          className="max-w-[400px]"
+          steps={[
+            { label: 'Progress', progress: 60 },
+            { label: 'Progress', progress: 60 },
+            { label: 'Progress', progress: 60 },
+          ]}
+        />
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-gray-500">ResultIcon</h2>
+        <div className="flex gap-2">
+          <ResultIcon variant="success" />
+          <ResultIcon variant="warning" />
+          <ResultIcon variant="danger" />
+          <ResultIcon variant="loading" />
+          <ResultIcon variant="quiz" />
+        </div>
+      </section>
+
+      <section>
+        <h2 className="mb-2 text-sm font-semibold text-gray-500">Spinner</h2>
+        <Spinner />
       </section>
 
       <section>
