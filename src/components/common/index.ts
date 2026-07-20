@@ -1,3 +1,4 @@
+export { default as Alert } from './Alert';
 export { default as Badge } from './Badge';
 export { default as Button } from './Button';
 export { default as CarouselArrow } from './CarouselArrow';
@@ -13,9 +14,12 @@ export { default as Modal } from './Modal';
 export type { ModalPresetProps } from './Modal';
 export { default as ModalCheckbox } from './ModalCheckbox';
 export { default as ModalTagComment } from './ModalTagComment';
+export { default as ProgressStepper } from './ProgressStepper';
 export { default as RadioButton } from './RadioButton';
 export { default as Rate } from './Rate';
+export { default as ResultIcon } from './ResultIcon';
 export { default as Select } from './Select';
+export { default as Spinner } from './Spinner';
 export { default as Tab } from './Tab';
 export { default as TableCell } from './TableCell';
 export { default as Tag } from './Tag';
