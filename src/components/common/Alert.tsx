@@ -34,12 +34,19 @@ type AlertProps =
   | (AlertBaseProps & { size: 'slim'; children: ReactNode });
 
 export default function Alert(props: AlertProps) {
-  const { className, variant = 'success' } = props;
-  const Icon = ALERT_ICONS[variant ?? 'success'];
+  const { className } = props;
+  const resolvedVariant = props.variant ?? 'success';
+  const Icon = ALERT_ICONS[resolvedVariant];
 
   if (props.size === 'slim') {
     return (
-      <div className={cn(alertVariants({ variant }), 'flex-row items-center gap-2', className)}>
+      <div
+        className={cn(
+          alertVariants({ variant: resolvedVariant }),
+          'flex-row items-center gap-2',
+          className,
+        )}
+      >
         <Icon className="size-6 shrink-0" />
         <p className="flex-1 truncate text-[16px] leading-normal font-medium text-text-primary">
           {props.children}
@@ -51,7 +58,7 @@ export default function Alert(props: AlertProps) {
   return (
     <div
       className={cn(
-        alertVariants({ variant }),
+        alertVariants({ variant: resolvedVariant }),
         'flex-col items-start justify-center gap-2',
         className,
       )}
@@ -61,7 +68,9 @@ export default function Alert(props: AlertProps) {
         <p className="flex-1 truncate text-[18px] leading-normal font-bold">{props.title}</p>
       </div>
       <div className="w-full pl-8">
-        <p className="text-[16px] leading-normal font-medium text-text-primary">{props.children}</p>
+        <p className="line-clamp-2 text-[16px] leading-normal font-medium text-text-primary">
+          {props.children}
+        </p>
       </div>
     </div>
   );

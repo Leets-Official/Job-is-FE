@@ -41,7 +41,7 @@ export default function ResultIcon({ className, variant = 'success' }: ResultIco
 
   return (
     <span className={cn(resultIconVariants({ variant }), className)}>
-      <Icon className="size-8" />
+      <Icon className="size-8" aria-hidden="true" />
     </span>
   );
 }

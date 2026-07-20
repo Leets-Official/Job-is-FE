@@ -15,6 +15,7 @@ export default function ProgressStepper({ className, ref, steps, ...props }: Pro
     <div ref={ref} className={cn('flex w-full flex-col', className)} {...props}>
       {steps.map((step, index) => {
         const isLast = index === steps.length - 1;
+        const clampedProgress = Math.min(100, Math.max(0, step.progress));
 
         return (
           <div key={`${step.label}-${index}`} className="flex gap-4">
@@ -29,13 +30,14 @@ export default function ProgressStepper({ className, ref, steps, ...props }: Pro
               <div
                 className="h-1 w-full overflow-hidden rounded-full bg-gray-300"
                 role="progressbar"
-                aria-valuenow={step.progress}
+                aria-label={step.label}
+                aria-valuenow={clampedProgress}
                 aria-valuemin={0}
                 aria-valuemax={100}
               >
                 <div
                   className="h-full rounded-full bg-primary-400"
-                  style={{ width: `${step.progress}%` }}
+                  style={{ width: `${clampedProgress}%` }}
                 />
               </div>
             </div>
