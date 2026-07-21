@@ -42,9 +42,7 @@ function HeaderShell({ className, children }: { className?: string; children: Re
         className,
       )}
     >
-      <div className="flex w-full max-w-[1200px] items-center justify-between gap-10">
-        {children}
-      </div>
+      <div className="flex w-full max-w-300 items-center justify-between gap-10">{children}</div>
     </header>
   );
 }
@@ -91,7 +89,7 @@ export default function Header(props: HeaderProps) {
       <HeaderShell className={className}>
         <HeaderLogo>Job.is</HeaderLogo>
         <CarouselIndicator variant="dot" total={props.totalSteps} activeIndex={props.activeIndex} />
-        <Button variant="outline" className="h-[50px] w-24" onClick={props.onExit}>
+        <Button variant="outline" className="h-12.5 w-24" onClick={props.onExit}>
           나가기
         </Button>
       </HeaderShell>
@@ -148,7 +146,7 @@ export default function Header(props: HeaderProps) {
   return (
     <HeaderShell className={className}>
       <HeaderLogo>Job.is</HeaderLogo>
-      <Button className="h-[50px]">시작하기</Button>
+      <Button className="h-12.5">시작하기</Button>
     </HeaderShell>
   );
 }
