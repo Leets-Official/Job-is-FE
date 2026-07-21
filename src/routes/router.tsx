@@ -1,10 +1,20 @@
 import { createBrowserRouter } from 'react-router';
-import HomePage from '@/pages/HomePage/HomePage';
+import AuthLayout from '@/components/layout/AuthLayout';
+import LandingLayout from '@/components/layout/LandingLayout';
+import LandingPage from '@/pages/LandingPage/LandingPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import PlaygroundPage from '@/pages/PlaygroundPage/PlaygroundPage';
 
 export const router = createBrowserRouter([
-  { path: '/', element: <HomePage /> },
-  { path: '/playground', element: <PlaygroundPage /> },
-  { path: '*', element: <NotFoundPage /> },
+  {
+    element: <LandingLayout />,
+    children: [{ path: '/', element: <LandingPage /> }],
+  },
+  {
+    element: <AuthLayout />,
+    children: [
+      { path: '/playground', element: <PlaygroundPage /> },
+      { path: '*', element: <NotFoundPage /> },
+    ],
+  },
 ]);
