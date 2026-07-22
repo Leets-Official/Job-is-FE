@@ -112,6 +112,10 @@ html:has(.landing-layout)::-webkit-scrollbar {
     opacity: 1;
   }
 
+  .landing-reveal--from-top {
+    transform: translateY(0);
+  }
+
   .landing-reveal--visible,
   .landing-typing-cursor::after {
     animation: none;
