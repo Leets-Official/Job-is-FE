@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
 import AppShell from '@/components/layout/AppShell';
 import RecommendationLetterCard from '@/features/recommendations/components/RecommendationLetterCard';
@@ -17,16 +17,24 @@ const DECK = [
 export default function RecommendationBriefingDeckPage() {
   const navigate = useNavigate();
   const setStatus = useRecommendationDeckStore((state) => state.setStatus);
-  const [index, setIndex] = useState(0);
+  const markViewed = useRecommendationDeckStore((state) => state.markViewed);
+  const index = useRecommendationDeckStore((state) => state.deckIndex);
+  const setIndex = useRecommendationDeckStore((state) => state.setDeckIndex);
   const step = DECK[index];
   const isLastStep = index === DECK.length - 1;
+
+  useEffect(() => {
+    if (step.type === 'card') {
+      markViewed(step.letter.id);
+    }
+  }, [step, markViewed]);
 
   function goNext() {
     if (isLastStep) {
       navigate('/today/complete');
       return;
     }
-    setIndex((prev) => prev + 1);
+    setIndex(index + 1);
   }
 
   function handleSave(letterId: string) {
@@ -44,7 +52,7 @@ export default function RecommendationBriefingDeckPage() {
       <RecommendationLetterCarousel
         current={index + 1}
         total={DECK.length}
-        onPrev={() => setIndex((prev) => Math.max(prev - 1, 0))}
+        onPrev={() => setIndex(Math.max(index - 1, 0))}
         onNext={goNext}
         prevDisabled={index === 0}
         footNote={step.type === 'news' ? '' : undefined}

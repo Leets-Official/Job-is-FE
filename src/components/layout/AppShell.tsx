@@ -7,7 +7,7 @@ import { cn } from '@/utils/cn';
 const NAV_TABS = [
   { key: 'today', label: '오늘의 추천', path: '/today' },
   { key: 'explore', label: '탐색', path: '/explore' },
-  { key: 'saved', label: '저장 목록', path: '/saved' },
+  { key: 'saved', label: '저장 목록', path: '/today/revisit' },
 ] as const;
 
 type NavTabKey = (typeof NAV_TABS)[number]['key'];

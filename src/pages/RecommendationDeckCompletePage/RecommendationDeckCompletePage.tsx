@@ -10,6 +10,7 @@ import {
 export default function RecommendationDeckCompletePage() {
   const navigate = useNavigate();
   const statusByLetterId = useRecommendationDeckStore((state) => state.statusByLetterId);
+  const viewedLetterIds = useRecommendationDeckStore((state) => state.viewedLetterIds);
 
   const savedCount = RECOMMENDATION_LETTERS.filter(
     (letter) => getRecommendationLetterStatus(statusByLetterId, letter.id) === 'saved',
@@ -17,13 +18,14 @@ export default function RecommendationDeckCompletePage() {
   const dismissedCount = RECOMMENDATION_LETTERS.filter(
     (letter) => getRecommendationLetterStatus(statusByLetterId, letter.id) === 'dismissed',
   ).length;
+  const viewedCount = RECOMMENDATION_LETTERS.filter((letter) => viewedLetterIds[letter.id]).length;
 
   return (
     <AppShell activeTab="today">
       <RecommendationCompletion
         savedCount={savedCount}
         dismissedCount={dismissedCount}
-        viewedCount={RECOMMENDATION_LETTERS.length}
+        viewedCount={viewedCount}
         nextLetterNotice="내일 오전 7시 30분경, 다음 레터가 도착해요."
         onViewSaved={() => navigate('/today/revisit')}
         onExplore={() => navigate('/explore')}

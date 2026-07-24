@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import AppShell from '@/components/layout/AppShell';
 import RecommendationLetterCard from '@/features/recommendations/components/RecommendationLetterCard';
@@ -27,8 +27,10 @@ export default function RecommendationRevisitPage() {
   const navigate = useNavigate();
   const statusByLetterId = useRecommendationDeckStore((state) => state.statusByLetterId);
   const setStatus = useRecommendationDeckStore((state) => state.setStatus);
-  const [statusIndex, setStatusIndex] = useState(0);
-  const [cardIndex, setCardIndex] = useState(0);
+  const statusIndex = useRecommendationDeckStore((state) => state.revisitStatusIndex);
+  const setStatusIndex = useRecommendationDeckStore((state) => state.setRevisitStatusIndex);
+  const cardIndex = useRecommendationDeckStore((state) => state.revisitCardIndex);
+  const setCardIndex = useRecommendationDeckStore((state) => state.setRevisitCardIndex);
 
   const activeStatus = STATUS_TABS[statusIndex].status;
   const filteredLetters = useMemo(
