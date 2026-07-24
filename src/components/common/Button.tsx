@@ -10,7 +10,7 @@ const buttonVariants = cva(
         solid:
           'bg-primary-400 text-gray-900 hover:bg-primary-500 active:bg-primary-600 disabled:bg-gray-200 disabled:text-gray-600',
         outline:
-          'border border-primary-400 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100 disabled:border-gray-200 disabled:text-gray-300',
+          'border border-primary-400 bg-white text-gray-900 hover:bg-gray-50 active:bg-gray-100 disabled:border-gray-200 disabled:text-gray-600',
       },
     },
     defaultVariants: {

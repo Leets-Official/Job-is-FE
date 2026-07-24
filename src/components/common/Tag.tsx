@@ -4,7 +4,7 @@ import HashIcon from '@/assets/icons/icon-hash.svg?react';
 import PlusIcon from '@/assets/icons/icon-plus.svg?react';
 import { cn } from '@/utils/cn';
 
-type TagVariant = 'removable' | 'add' | 'hash';
+type TagVariant = 'removable' | 'add' | 'hash' | 'plain';
 
 type TagProps = ComponentPropsWithRef<'button'> & {
   variant?: TagVariant;

@@ -99,20 +99,22 @@ export default function Header(props: HeaderProps) {
   if (props.variant === 'tab') {
     return (
       <HeaderShell className={className}>
-        <HeaderLogo>Job.is</HeaderLogo>
-        <HeaderTabNav
-          tabs={props.tabs}
-          activeIndex={props.activeIndex}
-          onTabChange={props.onTabChange}
-        />
+        <div className="flex items-center gap-10">
+          <HeaderLogo>Job.is</HeaderLogo>
+          <HeaderTabNav
+            tabs={props.tabs}
+            activeIndex={props.activeIndex}
+            onTabChange={props.onTabChange}
+          />
+        </div>
         {props.profileImageUrl ? (
           <img
             src={props.profileImageUrl}
             alt=""
-            className="size-9 shrink-0 rounded-full object-cover"
+            className="mr-2 size-9 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="size-9 shrink-0 rounded-full bg-gray-100" />
+          <span className="mr-2 size-9 shrink-0 rounded-full bg-gray-100" />
         )}
       </HeaderShell>
     );
