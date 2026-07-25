@@ -45,7 +45,7 @@ export default function RecommendationGreeting({
             'flex items-center gap-1 text-heading-medium font-semibold text-text-secondary',
           )}
         >
-          <SunIcon className="size-5" />
+          <SunIcon aria-hidden="true" className="size-5" />
           좋은 아침 입니다
         </p>
         <p
