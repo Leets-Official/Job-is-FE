@@ -1,5 +1,6 @@
 import { type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
+import LogoIcon from '@/assets/icons/logo.svg?react';
 import Button from '@/components/common/Button';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
 import Tab from '@/components/common/Tab';
@@ -56,17 +57,20 @@ function HeaderTabShell({ className, children }: { className?: string; children:
         className,
       )}
     >
-      <div className="flex h-10 w-full items-center justify-center">{children}</div>
+      <div className="flex h-15 w-full items-center justify-center">{children}</div>
     </header>
   );
 }
 
-function HeaderLogo({ children }: { children: ReactNode }) {
+function HeaderLogo({ suffix }: { suffix?: ReactNode }) {
   return (
-    <Link to="/" className="flex h-10 shrink-0 items-center">
-      <p className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
-        {children}
-      </p>
+    <Link to="/" className="flex h-15 shrink-0 items-center gap-1">
+      <LogoIcon className="h-15 w-auto" role="img" aria-label="Job.is" />
+      {suffix && (
+        <span className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
+          {suffix}
+        </span>
+      )}
     </Link>
   );
 }
@@ -104,7 +108,7 @@ export default function Header(props: HeaderProps) {
   if (props.variant === 'carousel') {
     return (
       <HeaderShell className={className}>
-        <HeaderLogo>Job.is</HeaderLogo>
+        <HeaderLogo />
         <CarouselIndicator variant="dot" total={props.totalSteps} activeIndex={props.activeIndex} />
         <Button variant="outline" className="h-12.5 w-24" onClick={props.onExit}>
           나가기
@@ -116,7 +120,7 @@ export default function Header(props: HeaderProps) {
   if (props.variant === 'tab') {
     return (
       <HeaderTabShell className={className}>
-        <HeaderLogo>Job.is</HeaderLogo>
+        <HeaderLogo />
         <HeaderTabNav
           tabs={props.tabs}
           activeIndex={props.activeIndex}
@@ -139,7 +143,7 @@ export default function Header(props: HeaderProps) {
   if (props.variant === 'adm') {
     return (
       <HeaderShell className={className}>
-        <HeaderLogo>Job.is ADM</HeaderLogo>
+        <HeaderLogo suffix="ADM" />
         <HeaderTabNav
           tabs={props.tabs}
           activeIndex={props.activeIndex}
@@ -163,7 +167,7 @@ export default function Header(props: HeaderProps) {
 
   return (
     <HeaderShell className={className}>
-      <HeaderLogo>Job.is</HeaderLogo>
+      <HeaderLogo />
       <Button className="h-12.5" onClick={() => navigate('/login')}>
         시작하기
       </Button>
