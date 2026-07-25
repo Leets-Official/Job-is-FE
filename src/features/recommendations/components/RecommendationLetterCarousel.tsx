@@ -46,6 +46,7 @@ export default function RecommendationLetterCarousel({
     const nextContent = { key: contentKey, node: children };
     const direction = current >= previousCurrentRef.current ? 'forward' : 'backward';
     previousCurrentRef.current = current;
+    setIsAnimating(true);
     let transitionTimer: number | undefined;
     const animationFrame = window.requestAnimationFrame(() => {
       setTransitionDirection(direction);
@@ -90,7 +91,11 @@ export default function RecommendationLetterCarousel({
         {enableStackTransition ? (
           <div className="relative flex min-h-[524px] w-196 items-center overflow-x-clip">
             {leavingContent && (
-              <div className="pointer-events-none absolute top-1/2 left-0 z-10 w-full -translate-y-1/2">
+              <div
+                aria-hidden="true"
+                inert
+                className="pointer-events-none absolute top-1/2 left-0 z-10 w-full -translate-y-1/2"
+              >
                 <div
                   className={cn(
                     transitionDirection === 'forward'

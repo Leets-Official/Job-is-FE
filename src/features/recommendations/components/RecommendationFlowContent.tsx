@@ -240,6 +240,19 @@ export default function RecommendationFlowContent({
       primary: '새로고침',
     },
   }[screen];
+  const handlePrimaryAction = () => {
+    if (screen === 'empty-candidates') {
+      navigate('/explore');
+      return;
+    }
+
+    if (screen === 'empty-signup') {
+      navigate('/onboarding');
+      return;
+    }
+
+    window.location.reload();
+  };
 
   return (
     <ScreenLayout>
@@ -249,10 +262,7 @@ export default function RecommendationFlowContent({
         description={notice.description}
         footNote={notice.footNote}
       >
-        <Button
-          className="w-[414px]"
-          onClick={screen === 'empty-candidates' ? () => navigate('/explore') : undefined}
-        >
+        <Button className="w-[414px]" onClick={handlePrimaryAction}>
           {notice.primary}
         </Button>
         <Button className="w-[414px]" variant="outline" onClick={() => navigate('/explore')}>
