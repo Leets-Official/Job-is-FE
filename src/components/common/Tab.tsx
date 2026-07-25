@@ -3,7 +3,7 @@ import { type ComponentPropsWithRef } from 'react';
 import { cn } from '@/utils/cn';
 
 const tabVariants = cva(
-  'flex items-center justify-center text-[18px] leading-normal font-bold text-text-primary',
+  'flex cursor-pointer items-center justify-center text-[18px] leading-normal font-bold text-text-primary',
   {
     variants: {
       variant: {
