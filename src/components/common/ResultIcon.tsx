@@ -11,11 +11,11 @@ const resultIconVariants = cva(
   {
     variants: {
       variant: {
-        success: 'border-primary-400 text-primary-400',
-        warning: 'border-warning-400 text-warning-400',
-        danger: 'border-danger-400 text-danger-400',
-        loading: 'border-info-400 text-info-400',
-        quiz: 'border-[#5917b8] text-[#5917b8]',
+        success: 'border-primary-400 text-gray-900',
+        warning: 'border-warning-400 text-gray-900',
+        danger: 'border-danger-400 text-gray-900',
+        loading: 'border-info-400 text-gray-900',
+        quiz: 'border-[#5917b8] text-gray-900',
       },
     },
     defaultVariants: {
