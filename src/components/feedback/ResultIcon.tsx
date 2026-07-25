@@ -18,9 +18,7 @@ const resultIconVariants = cva(
         quiz: 'border-[#5917b8] text-[#5917b8]',
       },
     },
-    defaultVariants: {
-      variant: 'success',
-    },
+    defaultVariants: { variant: 'success' },
   },
 );
 
