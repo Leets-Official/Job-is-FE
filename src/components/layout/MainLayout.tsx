@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Outlet, useMatches, useNavigate } from 'react-router';
+import { Outlet, useLocation, useMatches, useNavigate } from 'react-router';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
+import { cn } from '@/utils/cn';
 
 type MainLayoutTab = {
   label: string;
@@ -27,6 +28,7 @@ export interface MainLayoutOutletContext {
 
 export default function MainLayout() {
   const navigate = useNavigate();
+  const location = useLocation();
   const matches = useMatches();
   const headerHandle = (matches.at(-1)?.handle as MainLayoutRouteHandle | undefined)?.header;
   const initialCarouselActiveIndex =
@@ -53,13 +55,21 @@ export default function MainLayout() {
         <Header />
       )}
       <main className="flex min-h-0 flex-1 flex-col">
-        <Outlet
-          context={
-            headerHandle?.variant === 'carousel'
-              ? ({ setCarouselActiveIndex } satisfies MainLayoutOutletContext)
-              : undefined
-          }
-        />
+        <div
+          key={location.pathname}
+          className={cn(
+            'flex min-h-0 flex-1 flex-col',
+            location.pathname === '/onboarding' && 'page-content-enter',
+          )}
+        >
+          <Outlet
+            context={
+              headerHandle?.variant === 'carousel'
+                ? ({ setCarouselActiveIndex } satisfies MainLayoutOutletContext)
+                : undefined
+            }
+          />
+        </div>
       </main>
       <Footer />
     </div>
