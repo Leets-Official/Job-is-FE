@@ -28,7 +28,7 @@ export default function OnboardingProfileStep({
   onNext,
 }: OnboardingProfileStepProps) {
   return (
-    <div className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-gray-50 px-3">
+    <div className="flex w-full flex-1 items-start justify-center bg-gray-50 px-3 py-30">
       <div className="flex w-full max-w-190 flex-col items-start gap-5 rounded-md border border-gray-200 bg-white p-6">
         <p className="text-heading-medium font-bold text-text-primary">
           지금은 IT•개발 직군을 우선 큐레이션해요
