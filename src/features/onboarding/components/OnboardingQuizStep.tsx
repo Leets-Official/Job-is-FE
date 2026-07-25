@@ -50,6 +50,14 @@ export default function OnboardingQuizStep({
   const pendingOption =
     pendingSelection?.index === currentIndex ? pendingSelection.option : undefined;
   const activeOption = pendingOption ?? selectedOption;
+  const cancelPendingSelection = () => {
+    if (selectionTimerRef.current) {
+      clearTimeout(selectionTimerRef.current);
+      selectionTimerRef.current = undefined;
+    }
+    setPendingSelection(undefined);
+  };
+
   const handleSelect = (option: string) => {
     if (pendingOption) {
       return;
@@ -57,6 +65,7 @@ export default function OnboardingQuizStep({
 
     setPendingSelection({ index: currentIndex, option });
     selectionTimerRef.current = setTimeout(() => {
+      selectionTimerRef.current = undefined;
       onSelect(option, currentIndex === QUESTIONS.length - 1);
     }, 180);
   };
@@ -66,7 +75,13 @@ export default function OnboardingQuizStep({
       <div className="flex w-190 flex-col items-center gap-5 overflow-hidden rounded-md border border-gray-200 bg-white p-6">
         <div className="flex w-174 items-center justify-center overflow-hidden rounded-xs">
           <div className="flex w-157 items-center gap-[205px] rounded-xs bg-white p-2.5">
-            <CarouselArrow direction="left" onClick={onBack} />
+            <CarouselArrow
+              direction="left"
+              onClick={() => {
+                cancelPendingSelection();
+                onBack();
+              }}
+            />
             <p className="text-heading-medium font-semibold whitespace-nowrap text-text-primary">
               Q&A {currentIndex + 1}
             </p>
@@ -100,7 +115,10 @@ export default function OnboardingQuizStep({
             <CarouselIndicator variant="dot" total={TOTAL_QUESTIONS} activeIndex={currentIndex} />
             <button
               type="button"
-              onClick={onSkip}
+              onClick={() => {
+                cancelPendingSelection();
+                onSkip();
+              }}
               className="cursor-pointer text-label-large font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
             >
               건너뛰기
