@@ -40,7 +40,11 @@ export default function CarouselArrow({
       ref={ref}
       type={type}
       aria-label={ariaLabel ?? (direction === 'left' ? '이전' : '다음')}
-      className={cn('flex items-center justify-center', button, className)}
+      className={cn(
+        'flex items-center justify-center rounded-full transition-transform duration-150 motion-reduce:transition-none enabled:hover:scale-[1.02] enabled:focus-visible:ring-2 enabled:focus-visible:ring-primary-300 enabled:focus-visible:ring-offset-2 enabled:focus-visible:outline-none enabled:active:scale-[0.97] disabled:cursor-not-allowed',
+        button,
+        className,
+      )}
       {...props}
     >
       <img alt="" aria-hidden="true" src={arrowIcons[size][direction]} className={icon} />
