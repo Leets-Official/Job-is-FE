@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import CarouselArrow from '@/components/common/CarouselArrow';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
 import { cn } from '@/utils/cn';
@@ -27,10 +28,38 @@ export default function OnboardingQuizStep({
   onSkip,
 }: OnboardingQuizStepProps) {
   const question = QUESTIONS[currentIndex];
+  const [pendingSelection, setPendingSelection] = useState<{
+    index: number;
+    option: string;
+  }>();
+  const selectionTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
+  useEffect(
+    () => () => {
+      if (selectionTimerRef.current) {
+        clearTimeout(selectionTimerRef.current);
+      }
+    },
+    [],
+  );
 
   if (!question) {
     return null;
   }
+
+  const pendingOption =
+    pendingSelection?.index === currentIndex ? pendingSelection.option : undefined;
+  const activeOption = pendingOption ?? selectedOption;
+  const handleSelect = (option: string) => {
+    if (pendingOption) {
+      return;
+    }
+
+    setPendingSelection({ index: currentIndex, option });
+    selectionTimerRef.current = setTimeout(() => {
+      onSelect(option, currentIndex === QUESTIONS.length - 1);
+    }, 180);
+  };
 
   return (
     <div className="flex min-h-0 w-full flex-1 items-center justify-center overflow-hidden bg-gray-50">
@@ -52,12 +81,13 @@ export default function OnboardingQuizStep({
           <button
             key={option}
             type="button"
-            aria-pressed={selectedOption === option}
-            onClick={() => onSelect(option, currentIndex === QUESTIONS.length - 1)}
+            aria-pressed={activeOption === option}
+            disabled={Boolean(pendingOption)}
+            onClick={() => handleSelect(option)}
             className={cn(
-              'flex w-144 cursor-pointer items-center justify-center overflow-hidden rounded-xs border border-solid p-6 text-center text-label-medium font-medium transition-colors',
-              selectedOption === option
-                ? 'border-primary-400 bg-primary-50 text-text-primary'
+              'flex w-144 cursor-pointer items-center justify-center overflow-hidden rounded-xs border border-solid p-6 text-center text-label-medium font-medium transition-[border-color,background-color,box-shadow,transform] duration-150 motion-reduce:transition-none enabled:hover:border-primary-400 enabled:hover:bg-primary-50 enabled:hover:shadow-sm enabled:focus-visible:border-primary-400 enabled:focus-visible:ring-2 enabled:focus-visible:ring-primary-200 enabled:focus-visible:outline-none enabled:active:scale-[0.99] disabled:cursor-default',
+              activeOption === option
+                ? 'border-primary-400 bg-primary-50 text-text-primary shadow-sm'
                 : 'border-gray-400 bg-white text-text-secondary',
             )}
           >
