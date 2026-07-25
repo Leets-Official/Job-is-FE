@@ -5,7 +5,6 @@ import LandingLayout from '@/components/layout/LandingLayout';
 import MainLayout from '@/components/layout/MainLayout';
 import CallbackPage from '@/pages/CallbackPage/CallbackPage';
 import LandingPage from '@/pages/LandingPage/LandingPage';
-import LoginFailPage from '@/pages/LoginFailPage/LoginFailPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
@@ -24,7 +23,8 @@ export const router = createBrowserRouter([
     element: <AuthLayout />,
     children: [
       { path: '/login', element: <LoginPage /> },
-      { path: '/login/fail', element: <LoginFailPage /> },
+      { path: '/login/fail', element: <LoginPage state="failed" /> },
+      { path: '/login/email-required', element: <LoginPage state="email-required" /> },
       { path: '/policy', element: <PolicyPage /> },
       { path: '/oauth/callback', element: <CallbackPage /> },
       { path: '/playground', element: <PlaygroundPage /> },
