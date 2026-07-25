@@ -127,10 +127,10 @@ export default function Header(props: HeaderProps) {
           <img
             src={props.profileImageUrl}
             alt=""
-            className="size-9 shrink-0 rounded-full object-cover"
+            className="mr-2 size-9 shrink-0 rounded-full object-cover"
           />
         ) : (
-          <span className="size-9 shrink-0 rounded-full bg-gray-100" />
+          <span className="mr-2 size-9 shrink-0 rounded-full bg-gray-100" />
         )}
       </HeaderTabShell>
     );

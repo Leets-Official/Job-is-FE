@@ -6,6 +6,7 @@ import { cn } from '@/utils/cn';
 
 type MainLayoutTab = {
   label: string;
+  path?: string;
 };
 
 type MainLayoutHeaderHandle =
@@ -49,6 +50,10 @@ export default function MainLayout() {
           variant="tab"
           tabs={headerHandle.tabs}
           activeIndex={headerHandle.activeIndex}
+          onTabChange={(index) => {
+            const path = headerHandle.tabs[index]?.path;
+            if (path) navigate(path);
+          }}
           profileImageUrl={headerHandle.profileImageUrl}
         />
       ) : (
