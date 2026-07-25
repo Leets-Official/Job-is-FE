@@ -15,9 +15,7 @@ const alertVariants = cva('flex w-full rounded-md border border-solid p-4', {
       danger: 'bg-danger-50 border-danger-100 text-danger-500',
     },
   },
-  defaultVariants: {
-    variant: 'success',
-  },
+  defaultVariants: { variant: 'success' },
 });
 
 const ALERT_ICONS = {
