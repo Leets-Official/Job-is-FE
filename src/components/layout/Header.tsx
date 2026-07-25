@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router';
 import Button from '@/components/common/Button';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
 import Tab from '@/components/common/Tab';
@@ -47,13 +48,26 @@ function HeaderShell({ className, children }: { className?: string; children: Re
   );
 }
 
+function HeaderTabShell({ className, children }: { className?: string; children: ReactNode }) {
+  return (
+    <header
+      className={cn(
+        'sticky top-0 z-10 flex w-full items-center justify-center bg-white px-3 pt-3 pb-4',
+        className,
+      )}
+    >
+      <div className="flex h-10 w-full items-center justify-center">{children}</div>
+    </header>
+  );
+}
+
 function HeaderLogo({ children }: { children: ReactNode }) {
   return (
-    <div className="flex h-10 shrink-0 items-center">
+    <Link to="/" className="flex h-10 shrink-0 items-center">
       <p className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
         {children}
       </p>
-    </div>
+    </Link>
   );
 }
 
@@ -61,13 +75,15 @@ function HeaderTabNav({
   tabs,
   activeIndex,
   onTabChange,
+  className,
 }: {
   tabs: HeaderTabItem[];
   activeIndex: number;
   onTabChange?: (index: number) => void;
+  className?: string;
 }) {
   return (
-    <nav className="flex items-center gap-10">
+    <nav className={cn('flex items-center gap-10', className)}>
       {tabs.map((tab, index) => (
         <Tab
           key={tab.label}
@@ -83,6 +99,7 @@ function HeaderTabNav({
 
 export default function Header(props: HeaderProps) {
   const { className } = props;
+  const navigate = useNavigate();
 
   if (props.variant === 'carousel') {
     return (
@@ -98,12 +115,13 @@ export default function Header(props: HeaderProps) {
 
   if (props.variant === 'tab') {
     return (
-      <HeaderShell className={className}>
+      <HeaderTabShell className={className}>
         <HeaderLogo>Job.is</HeaderLogo>
         <HeaderTabNav
           tabs={props.tabs}
           activeIndex={props.activeIndex}
           onTabChange={props.onTabChange}
+          className="h-10 w-251 shrink-0 px-12.5"
         />
         {props.profileImageUrl ? (
           <img
@@ -114,7 +132,7 @@ export default function Header(props: HeaderProps) {
         ) : (
           <span className="size-9 shrink-0 rounded-full bg-gray-100" />
         )}
-      </HeaderShell>
+      </HeaderTabShell>
     );
   }
 
@@ -134,7 +152,7 @@ export default function Header(props: HeaderProps) {
           <button
             type="button"
             onClick={props.onLogout}
-            className="text-label-medium font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
+            className="cursor-pointer text-label-medium font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
           >
             로그아웃
           </button>
@@ -146,7 +164,9 @@ export default function Header(props: HeaderProps) {
   return (
     <HeaderShell className={className}>
       <HeaderLogo>Job.is</HeaderLogo>
-      <Button className="h-12.5">시작하기</Button>
+      <Button className="h-12.5" onClick={() => navigate('/login')}>
+        시작하기
+      </Button>
     </HeaderShell>
   );
 }
