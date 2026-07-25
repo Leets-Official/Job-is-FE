@@ -92,6 +92,7 @@ export default function OnboardingPage() {
         region={draft.region}
         careerLevel={draft.careerLevel}
         onBack={() => changeStep('quiz', 'backward')}
+        onEdit={() => changeStep('profile', 'backward')}
         onStart={() => navigate('/recommendations')}
       />
     );

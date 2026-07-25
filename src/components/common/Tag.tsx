@@ -31,6 +31,7 @@ export default function Tag({
         className,
       )}
       {...props}
+      aria-pressed={variant === 'select' ? selected : undefined}
     >
       {variant === 'add' && <PlusIcon className="size-4" />}
       {variant === 'hash' && <HashIcon className="size-4" />}

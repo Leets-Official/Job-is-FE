@@ -5,6 +5,7 @@ interface OnboardingConfirmStepProps {
   region: string;
   careerLevel: string;
   onBack: () => void;
+  onEdit: () => void;
   onStart: () => void;
 }
 
@@ -14,6 +15,7 @@ export default function OnboardingConfirmStep({
   region,
   careerLevel,
   onBack,
+  onEdit,
   onStart,
 }: OnboardingConfirmStepProps) {
   const summaryItems = [
@@ -39,6 +41,7 @@ export default function OnboardingConfirmStep({
               </div>
               <button
                 type="button"
+                onClick={onEdit}
                 className="cursor-pointer text-label-large font-medium text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
               >
                 수정
