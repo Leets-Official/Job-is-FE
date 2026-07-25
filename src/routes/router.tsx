@@ -12,20 +12,12 @@ import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
 import PlaygroundPage from '@/pages/PlaygroundPage/PlaygroundPage';
 import PolicyPage from '@/pages/PolicyPage/PolicyPage';
-import RecommendationBriefingDeckPage from '@/pages/RecommendationBriefingDeckPage/RecommendationBriefingDeckPage';
-import RecommendationDeckCompletePage from '@/pages/RecommendationDeckCompletePage/RecommendationDeckCompletePage';
-import RecommendationEmptyBeforeSendPage from '@/pages/RecommendationEmptyBeforeSendPage/RecommendationEmptyBeforeSendPage';
-import RecommendationEmptyCandidatesPage from '@/pages/RecommendationEmptyCandidatesPage/RecommendationEmptyCandidatesPage';
-import RecommendationEmptySignupPage from '@/pages/RecommendationEmptySignupPage/RecommendationEmptySignupPage';
-import RecommendationIntroPage from '@/pages/RecommendationIntroPage/RecommendationIntroPage';
-import RecommendationNewsPage from '@/pages/RecommendationNewsPage/RecommendationNewsPage';
-import RecommendationRevisitPage from '@/pages/RecommendationRevisitPage/RecommendationRevisitPage';
 import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
 
 const MAIN_NAVIGATION_TABS = [
-  { label: '오늘의 추천', path: '/today' },
+  { label: '오늘의 추천', path: '/recommendations' },
   { label: '탐색', path: '/explore' },
-  { label: '저장 목록', path: '/today/revisit' },
+  { label: '저장 목록', path: '/recommendations/revisit' },
 ];
 
 const MAIN_TAB_HEADER = {
@@ -71,43 +63,38 @@ export const router = createBrowserRouter([
         },
       },
       {
-        path: '/today',
-        element: <RecommendationIntroPage />,
+        path: '/recommendations/deck',
+        element: <RecommendationsPage screen="deck" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/today/deck',
-        element: <RecommendationBriefingDeckPage />,
+        path: '/recommendations/news',
+        element: <RecommendationsPage screen="news" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/today/news',
-        element: <RecommendationNewsPage />,
+        path: '/recommendations/complete',
+        element: <RecommendationsPage screen="complete" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/today/complete',
-        element: <RecommendationDeckCompletePage />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
-      },
-      {
-        path: '/today/revisit',
-        element: <RecommendationRevisitPage />,
+        path: '/recommendations/revisit',
+        element: <RecommendationsPage screen="revisit" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
       },
       {
-        path: '/today/empty-candidates',
-        element: <RecommendationEmptyCandidatesPage />,
+        path: '/recommendations/empty-candidates',
+        element: <RecommendationsPage screen="empty-candidates" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/today/empty-signup',
-        element: <RecommendationEmptySignupPage />,
+        path: '/recommendations/empty-signup',
+        element: <RecommendationsPage screen="empty-signup" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/today/empty-before-send',
-        element: <RecommendationEmptyBeforeSendPage />,
+        path: '/recommendations/empty-before-send',
+        element: <RecommendationsPage screen="empty-before-send" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {

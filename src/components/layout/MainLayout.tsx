@@ -35,6 +35,12 @@ export default function MainLayout() {
   const initialCarouselActiveIndex =
     headerHandle?.variant === 'carousel' ? headerHandle.activeIndex : 0;
   const [carouselActiveIndex, setCarouselActiveIndex] = useState(initialCarouselActiveIndex);
+  const isRecommendationIntroPreview =
+    location.pathname === '/recommendations' &&
+    new URLSearchParams(location.search).get('preview') === 'intro';
+  const shouldAnimateContent =
+    location.pathname === '/onboarding' ||
+    (location.state as { transition?: string } | null)?.transition === 'recommendation-flow';
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -55,16 +61,17 @@ export default function MainLayout() {
             if (path) navigate(path);
           }}
           profileImageUrl={headerHandle.profileImageUrl}
+          className={isRecommendationIntroPreview ? 'recommendation-intro-header-enter' : undefined}
         />
       ) : (
         <Header />
       )}
-      <main className="flex min-h-0 flex-1 flex-col">
+      <main className="flex min-h-0 flex-1 flex-col overflow-x-clip">
         <div
           key={location.pathname}
           className={cn(
             'flex min-h-0 flex-1 flex-col',
-            location.pathname === '/onboarding' && 'page-content-enter',
+            shouldAnimateContent && 'page-content-enter',
           )}
         >
           <Outlet

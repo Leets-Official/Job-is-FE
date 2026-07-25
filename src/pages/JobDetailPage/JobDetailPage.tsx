@@ -12,7 +12,7 @@ export default function JobDetailPage() {
     <div className="flex min-h-0 w-full flex-1 justify-center bg-gray-50 px-3 py-8">
       <div className="flex w-full max-w-300 flex-col gap-4">
         <Link
-          to="/today"
+          to="/recommendations"
           className="inline-flex w-fit items-center gap-1 rounded-full border border-gray-300 bg-white px-4 py-2 text-body-small font-medium text-text-secondary hover:bg-gray-50"
         >
           <ChevronLeftIcon className="size-4" />

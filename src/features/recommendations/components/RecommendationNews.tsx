@@ -12,7 +12,7 @@ export default function RecommendationNews({ items, className }: RecommendationN
   return (
     <section
       className={cn(
-        'flex w-full max-w-180 flex-col gap-4 rounded-sm border border-gray-200 bg-white p-6',
+        'mx-auto flex w-full max-w-180 flex-col gap-4 rounded-sm border border-gray-200 bg-white p-6',
         className,
       )}
     >
