@@ -20,12 +20,12 @@ export default function JobDetailPage() {
             <ChevronLeftIcon className="size-4" />
             오늘의 추천으로
           </Link>
-          <div className="flex w-full items-start gap-6">
-            <div className="min-w-0 flex-1">
+          <div className="flex w-full flex-col items-start gap-6 lg:flex-row">
+            <div className="min-w-0 w-full flex-1">
               <JobDetailMain job={job} />
             </div>
-            <div className="w-90 shrink-0">
-              <div className="sticky top-24">
+            <div className="w-full lg:w-90 lg:shrink-0">
+              <div className="lg:sticky lg:top-24">
                 <JobDetailSidebar job={job} />
               </div>
             </div>

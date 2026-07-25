@@ -1,6 +1,6 @@
 import Badge from '@/components/common/Badge';
 import ListCard from '@/components/common/ListCard';
-import type { RecommendationNewsItem } from '@/features/recommendations/data/recommendationNews';
+import type { RecommendationNewsItem } from '@/features/recommendations/mocks/recommendationNews';
 import { cn } from '@/utils/cn';
 
 interface RecommendationNewsProps {

@@ -10,7 +10,7 @@ const STATUS_STYLE: Record<
   { icon: string; label: string; badgeColor: 'ok' | 'est' | 'warn'; boxClassName: string }
 > = {
   met: { icon: '✓', label: '충족', badgeColor: 'ok', boxClassName: 'bg-primary-50' },
-  estimated: { icon: '~', label: '주의', badgeColor: 'est', boxClassName: 'bg-info-50' },
+  estimated: { icon: '~', label: '추정', badgeColor: 'est', boxClassName: 'bg-info-50' },
   caution: { icon: '!', label: '주의', badgeColor: 'warn', boxClassName: 'bg-warning-50' },
 };
 

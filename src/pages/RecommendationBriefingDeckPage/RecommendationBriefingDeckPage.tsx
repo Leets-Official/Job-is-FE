@@ -1,12 +1,12 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import AppShell from '@/components/layout/AppShell';
 import RecommendationLetterCard from '@/features/recommendations/components/RecommendationLetterCard';
 import RecommendationLetterCarousel from '@/features/recommendations/components/RecommendationLetterCarousel';
 import RecommendationNews from '@/features/recommendations/components/RecommendationNews';
-import { RECOMMENDATION_LETTERS } from '@/features/recommendations/data/recommendationLetters';
-import { RECOMMENDATION_NEWS_ITEMS } from '@/features/recommendations/data/recommendationNews';
-import { useRecommendationDeckStore } from '@/features/recommendations/hooks/useRecommendationDeckStore';
+import { RECOMMENDATION_LETTERS } from '@/features/recommendations/mocks/recommendationLetters';
+import { RECOMMENDATION_NEWS_ITEMS } from '@/features/recommendations/mocks/recommendationNews';
+import { useRecommendationDeckStore } from '@/features/recommendations/store/useRecommendationDeckStore';
 
 // 공고 5건을 모두 본 뒤 마지막 6번째 슬라이드로 오늘의 소식(REC-04)을 보여준다.
 const DECK = [
@@ -18,8 +18,7 @@ export default function RecommendationBriefingDeckPage() {
   const navigate = useNavigate();
   const setStatus = useRecommendationDeckStore((state) => state.setStatus);
   const markViewed = useRecommendationDeckStore((state) => state.markViewed);
-  const index = useRecommendationDeckStore((state) => state.deckIndex);
-  const setIndex = useRecommendationDeckStore((state) => state.setDeckIndex);
+  const [index, setIndex] = useState(0);
   const step = DECK[index];
   const isLastStep = index === DECK.length - 1;
 
@@ -34,7 +33,7 @@ export default function RecommendationBriefingDeckPage() {
       navigate('/today/complete');
       return;
     }
-    setIndex(index + 1);
+    setIndex((prev) => prev + 1);
   }
 
   function handleSave(letterId: string) {
@@ -52,7 +51,7 @@ export default function RecommendationBriefingDeckPage() {
       <RecommendationLetterCarousel
         current={index + 1}
         total={DECK.length}
-        onPrev={() => setIndex(Math.max(index - 1, 0))}
+        onPrev={() => setIndex((prev) => Math.max(prev - 1, 0))}
         onNext={goNext}
         prevDisabled={index === 0}
         footNote={step.type === 'news' ? '' : undefined}

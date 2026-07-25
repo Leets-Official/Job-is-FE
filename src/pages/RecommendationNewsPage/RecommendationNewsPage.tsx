@@ -1,6 +1,6 @@
 import AppShell from '@/components/layout/AppShell';
 import RecommendationNews from '@/features/recommendations/components/RecommendationNews';
-import { RECOMMENDATION_NEWS_ITEMS } from '@/features/recommendations/data/recommendationNews';
+import { RECOMMENDATION_NEWS_ITEMS } from '@/features/recommendations/mocks/recommendationNews';
 
 export default function RecommendationNewsPage() {
   return (

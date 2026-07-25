@@ -25,17 +25,19 @@ export default function JobDetailContent({ sections, techStack }: JobDetailConte
             </ul>
           </div>
         ))}
-        <p className="text-body-small font-bold text-text-primary">기술 스택</p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {techStack.map((tech) => (
-          <span
-            key={tech}
-            className="inline-flex h-8 items-center rounded-full border border-gray-200 bg-white px-3 text-body-small font-medium text-text-secondary"
-          >
-            {tech}
-          </span>
-        ))}
+        <div className="flex flex-col gap-1">
+          <p className="text-body-small font-bold text-text-primary">기술 스택</p>
+          <div className="flex flex-wrap gap-2">
+            {techStack.map((tech) => (
+              <span
+                key={tech}
+                className="inline-flex h-8 items-center rounded-full border border-gray-200 bg-white px-3 text-body-small font-medium text-text-secondary"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

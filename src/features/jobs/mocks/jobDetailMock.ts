@@ -63,6 +63,6 @@ export const mockJobDetail: JobDetail = {
     siteName: '원티드',
     collectedDate: '2026. 07. 05',
     notice: '마감 · 상세 조건은 원문에서 최종 확인 하세요',
-    originalUrl: 'https://www.wanted.co.kr',
+    originalUrl: 'https://www.wanted.co.kr/wd/123456',
   },
 };

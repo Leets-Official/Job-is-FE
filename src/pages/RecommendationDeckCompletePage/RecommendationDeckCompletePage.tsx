@@ -1,11 +1,11 @@
 import { useNavigate } from 'react-router';
 import AppShell from '@/components/layout/AppShell';
 import RecommendationCompletion from '@/features/recommendations/components/RecommendationCompletion';
-import { RECOMMENDATION_LETTERS } from '@/features/recommendations/data/recommendationLetters';
+import { RECOMMENDATION_LETTERS } from '@/features/recommendations/mocks/recommendationLetters';
 import {
   getRecommendationLetterStatus,
   useRecommendationDeckStore,
-} from '@/features/recommendations/hooks/useRecommendationDeckStore';
+} from '@/features/recommendations/store/useRecommendationDeckStore';
 
 export default function RecommendationDeckCompletePage() {
   const navigate = useNavigate();
