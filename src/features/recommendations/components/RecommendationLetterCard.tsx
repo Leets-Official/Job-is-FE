@@ -86,7 +86,9 @@ export default function RecommendationLetterCard({
 
         <div className="flex w-full flex-col gap-1 rounded-sm bg-gray-200 p-4">
           <p className="text-label-small font-bold text-text-tertiary">{noteTitle}</p>
-          <p className="text-body-small leading-[1.5] font-medium text-text-secondary">{note}</p>
+          <p className="min-h-[42px] text-body-small leading-normal font-medium text-text-secondary">
+            {note}
+          </p>
         </div>
 
         <div className="h-0 w-full border-t border-gray-500" />

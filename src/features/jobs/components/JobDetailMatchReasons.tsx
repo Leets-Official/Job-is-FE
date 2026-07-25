@@ -1,4 +1,5 @@
-import { Badge, ProgressStepper } from '@/components/common';
+import { Badge } from '@/components/common';
+import { ProgressStepper } from '@/components/feedback';
 import type { JobDetailMatchReason } from '@/features/jobs/types/jobDetail';
 
 interface JobDetailMatchReasonsProps {
