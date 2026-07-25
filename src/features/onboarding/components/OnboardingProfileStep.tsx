@@ -5,6 +5,12 @@ import Tag from '@/components/common/Tag';
 const INTEREST_JOBS = ['백엔드 엔지니어', '데이터 엔지니어'];
 const REGIONS = ['서울 강남', '서울 전체', '경기', '원격 가능만'];
 const CAREER_LEVELS = ['신입', '1~3년', '4년 이상'];
+const PREFERENCE_ITEMS = [
+  '선호: 재택 근무 가능',
+  '제외: 야근 잦은 곳',
+  '기술 스택: Python, Go',
+  '이력서_김민준.pdf 업로드(선택)',
+];
 
 interface OnboardingProfileStepProps {
   region: string;
@@ -77,6 +83,21 @@ export default function OnboardingProfileStep({
         </div>
 
         <hr className="w-full border-t border-gray-200" />
+
+        <div className="flex min-h-76 w-full flex-col items-start gap-2.5 rounded-xs border border-dashed border-gray-300 bg-gray-200 p-6 text-text-tertiary">
+          <p className="text-label-medium font-medium">선호 조건(선택)</p>
+          {PREFERENCE_ITEMS.map((item) => (
+            <span
+              key={item}
+              className="inline-flex h-10 items-center rounded-full bg-white px-3 text-label-large font-medium"
+            >
+              {item}
+            </span>
+          ))}
+          <span className="text-label-large font-medium underline decoration-from-font [text-underline-position:from-font]">
+            건너뛰기
+          </span>
+        </div>
 
         <div className="flex w-full items-center gap-3">
           <Button variant="outline">이전</Button>
