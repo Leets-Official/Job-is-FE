@@ -16,10 +16,15 @@ const LIST_TABS = [
 
 type SavedJobsTab = (typeof LIST_TABS)[number]['value'];
 
-export default function SavedJobsList() {
+interface SavedJobsListProps {
+  isEmptyPreview?: boolean;
+}
+
+export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListProps) {
   const [activeTab, setActiveTab] = useState<SavedJobsTab>('saved');
   const [activeFilter, setActiveFilter] = useState<SavedJobHistoryStatus | 'all'>('all');
   const navigate = useNavigate();
+  const savedJobs = isEmptyPreview ? [] : SAVED_JOBS;
   const handleBrowseRecommendations = () => navigate('/recommendations');
   const handleExplore = () => navigate('/explore');
 
@@ -27,7 +32,7 @@ export default function SavedJobsList() {
     <div className="flex min-h-225 w-full flex-1 justify-center bg-gray-50 px-3 py-12.5">
       <div className="flex w-full max-w-300 flex-col items-start gap-5">
         <p className="text-heading-medium font-bold text-text-primary">저장 목록</p>
-        {SAVED_JOBS.length > 0 && (
+        {savedJobs.length > 0 && (
           <p className="text-label-medium font-medium text-text-secondary">
             저장 12건 · 지원 의향 3건
           </p>
@@ -48,7 +53,7 @@ export default function SavedJobsList() {
         <div key={activeTab} className="saved-jobs-tab-content-enter flex w-full flex-col gap-5">
           {activeTab === 'saved' ? (
             <SavedJobsSavedContent
-              jobs={SAVED_JOBS}
+              jobs={savedJobs}
               onBrowseRecommendations={handleBrowseRecommendations}
               onExplore={handleExplore}
             />
