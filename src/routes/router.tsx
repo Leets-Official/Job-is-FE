@@ -13,11 +13,12 @@ import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
 import PlaygroundPage from '@/pages/PlaygroundPage/PlaygroundPage';
 import PolicyPage from '@/pages/PolicyPage/PolicyPage';
 import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
+import SavedJobsPage from '@/pages/SavedJobsPage/SavedJobsPage';
 
 const MAIN_NAVIGATION_TABS = [
   { label: '오늘의 추천', path: '/recommendations' },
   { label: '탐색', path: '/explore' },
-  { label: '저장 목록', path: '/recommendations/revisit' },
+  { label: '저장 목록', path: '/saved' },
 ];
 
 const MAIN_TAB_HEADER = {
@@ -78,8 +79,8 @@ export const router = createBrowserRouter([
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/recommendations/revisit',
-        element: <RecommendationsPage screen="revisit" />,
+        path: '/recommendations/archive',
+        element: <RecommendationsPage screen="archive" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
       },
       {
@@ -101,6 +102,11 @@ export const router = createBrowserRouter([
         path: '/explore',
         element: <ExplorePage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 1 } },
+      },
+      {
+        path: '/saved',
+        element: <SavedJobsPage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
       },
       {
         path: '/jobs/:id',
