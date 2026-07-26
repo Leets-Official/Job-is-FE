@@ -24,7 +24,7 @@ export type RecommendationScreen =
   | 'deck'
   | 'news'
   | 'complete'
-  | 'revisit'
+  | 'archive'
   | 'empty-candidates'
   | 'empty-signup'
   | 'empty-before-send';
@@ -168,21 +168,25 @@ export default function RecommendationFlowContent({
           dismissedCount={dismissedCount}
           viewedCount={viewedCount}
           nextLetterNotice="내일 오전 7시 30분경, 다음 레터가 도착해요."
-          onViewSaved={() => navigate('/recommendations/revisit')}
+          onViewSaved={() => navigate('/recommendations/archive')}
           onExplore={() => navigate('/explore')}
         />
       </ScreenLayout>
     );
   }
 
-  if (screen === 'revisit') {
+  if (screen === 'archive') {
     const displayIndex = Math.min(cardIndex, Math.max(filteredLetters.length - 1, 0));
     const letter = filteredLetters[displayIndex];
     return (
       <ScreenLayout>
         <RecommendationLetterCarousel
+          key={activeStatus}
+          className="gap-5"
           current={filteredLetters.length === 0 ? 0 : displayIndex + 1}
           total={filteredLetters.length}
+          contentKey={displayIndex}
+          enableStackTransition
           onPrev={() => setCardIndex(Math.max(displayIndex - 1, 0))}
           onNext={() => setCardIndex(Math.min(displayIndex + 1, filteredLetters.length - 1))}
           prevDisabled={displayIndex === 0}
@@ -198,20 +202,22 @@ export default function RecommendationFlowContent({
             />
           }
         >
-          {letter ? (
-            <RecommendationLetterCard
-              {...letter}
-              onExpand={() => navigate(`/jobs/${letter.id}`)}
-              onSave={() => setStatus(letter.id, 'saved')}
-              onDismiss={() => setStatus(letter.id, 'dismissed')}
-            />
-          ) : (
-            <div className="flex w-full max-w-130 flex-col items-center gap-2 rounded-sm border border-gray-200 bg-white p-10 text-center">
-              <p className="text-body-large font-medium text-text-secondary">
-                {EMPTY_MESSAGE[activeStatus]}
-              </p>
-            </div>
-          )}
+          <div key={activeStatus} className="page-content-enter">
+            {letter ? (
+              <RecommendationLetterCard
+                {...letter}
+                onExpand={() => navigate(`/jobs/${letter.id}`)}
+                onSave={() => setStatus(letter.id, 'saved')}
+                onDismiss={() => setStatus(letter.id, 'dismissed')}
+              />
+            ) : (
+              <div className="flex min-h-142 w-190 items-center justify-center rounded-md border border-gray-200 bg-white p-6 text-center">
+                <p className="text-heading-small font-medium text-text-secondary">
+                  {EMPTY_MESSAGE[activeStatus]}
+                </p>
+              </div>
+            )}
+          </div>
         </RecommendationLetterCarousel>
       </ScreenLayout>
     );
@@ -262,10 +268,10 @@ export default function RecommendationFlowContent({
         description={notice.description}
         footNote={notice.footNote}
       >
-        <Button className="w-[414px]" onClick={handlePrimaryAction}>
+        <Button className="w-103.5" onClick={handlePrimaryAction}>
           {notice.primary}
         </Button>
-        <Button className="w-[414px]" variant="outline" onClick={() => navigate('/explore')}>
+        <Button className="w-103.5" variant="outline" onClick={() => navigate('/explore')}>
           탐색 둘러보기
         </Button>
       </RecommendationNoticePanel>
