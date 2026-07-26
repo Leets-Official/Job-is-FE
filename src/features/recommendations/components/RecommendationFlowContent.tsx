@@ -178,6 +178,7 @@ export default function RecommendationFlowContent({
   if (screen === 'archive') {
     const displayIndex = Math.min(cardIndex, Math.max(filteredLetters.length - 1, 0));
     const letter = filteredLetters[displayIndex];
+    const contentKey = letter?.id ?? `empty-${activeStatus}`;
     return (
       <ScreenLayout>
         <RecommendationLetterCarousel
@@ -185,7 +186,7 @@ export default function RecommendationFlowContent({
           className="gap-5"
           current={filteredLetters.length === 0 ? 0 : displayIndex + 1}
           total={filteredLetters.length}
-          contentKey={displayIndex}
+          contentKey={contentKey}
           enableStackTransition
           onPrev={() => setCardIndex(Math.max(displayIndex - 1, 0))}
           onNext={() => setCardIndex(Math.min(displayIndex + 1, filteredLetters.length - 1))}

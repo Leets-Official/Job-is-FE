@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router';
+import { Navigate, createBrowserRouter } from 'react-router';
 import avatarDefaultProfile from '@/assets/images/avatar-default-profile.png';
 import AuthLayout from '@/components/layout/AuthLayout';
 import LandingLayout from '@/components/layout/LandingLayout';
@@ -81,7 +81,12 @@ export const router = createBrowserRouter([
       {
         path: '/recommendations/archive',
         element: <RecommendationsPage screen="archive" />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
+      },
+      {
+        path: '/recommendations/revisit',
+        element: <Navigate to="/recommendations/archive" replace />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
         path: '/recommendations/empty-candidates',

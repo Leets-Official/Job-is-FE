@@ -25,6 +25,9 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
   const [activeFilter, setActiveFilter] = useState<SavedJobHistoryStatus | 'all'>('all');
   const navigate = useNavigate();
   const savedJobs = isEmptyPreview ? [] : SAVED_JOBS;
+  const intendedJobCount = savedJobs.filter((job) =>
+    job.badges.some((badge) => badge.label === '지원 의향'),
+  ).length;
   const handleBrowseRecommendations = () => navigate('/recommendations');
   const handleExplore = () => navigate('/explore');
 
@@ -34,7 +37,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
         <p className="text-heading-medium font-bold text-text-primary">저장 목록</p>
         {savedJobs.length > 0 && (
           <p className="text-label-medium font-medium text-text-secondary">
-            저장 12건 · 지원 의향 3건
+            저장 {savedJobs.length}건 · 지원 의향 {intendedJobCount}건
           </p>
         )}
 
