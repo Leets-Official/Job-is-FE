@@ -3,6 +3,9 @@ import avatarDefaultProfile from '@/assets/images/avatar-default-profile.png';
 import AuthLayout from '@/components/layout/AuthLayout';
 import LandingLayout from '@/components/layout/LandingLayout';
 import MainLayout from '@/components/layout/MainLayout';
+import AccountRecoveryPage from '@/pages/AccountRecoveryPage/AccountRecoveryPage';
+import AccountWithdrawalCompletePage from '@/pages/AccountWithdrawalCompletePage/AccountWithdrawalCompletePage';
+import AccountWithdrawalPage from '@/pages/AccountWithdrawalPage/AccountWithdrawalPage';
 import CallbackPage from '@/pages/CallbackPage/CallbackPage';
 import ExplorePage from '@/pages/ExplorePage/ExplorePage';
 import JobDetailPage from '@/pages/JobDetailPage/JobDetailPage';
@@ -12,8 +15,12 @@ import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
 import PlaygroundPage from '@/pages/PlaygroundPage/PlaygroundPage';
 import PolicyPage from '@/pages/PolicyPage/PolicyPage';
+import ProfileAptitudeTestPage from '@/pages/ProfileAptitudeTestPage/ProfileAptitudeTestPage';
+import ProfileDocumentsPage from '@/pages/ProfileDocumentsPage/ProfileDocumentsPage';
+import ProfilePage from '@/pages/ProfilePage/ProfilePage';
 import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
 import SavedJobsPage from '@/pages/SavedJobsPage/SavedJobsPage';
+import SettingsPage from '@/pages/SettingsPage/SettingsPage';
 
 const MAIN_NAVIGATION_TABS = [
   { label: '오늘의 추천', path: '/recommendations' },
@@ -112,6 +119,54 @@ export const router = createBrowserRouter([
         path: '/saved',
         element: <SavedJobsPage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
+      },
+      {
+        path: '/profile',
+        element: <ProfilePage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/profile/documents',
+        element: <ProfileDocumentsPage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/profile/aptitude-test',
+        element: <ProfileAptitudeTestPage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/settings',
+        element: <Navigate to="/settings/notifications" replace />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/settings/notifications',
+        element: <SettingsPage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/settings/account',
+        element: <SettingsPage screen="account" />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/settings/account/withdraw',
+        element: <AccountWithdrawalPage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/settings/account/withdraw/complete',
+        element: <AccountWithdrawalCompletePage />,
+      },
+      {
+        path: '/account/recovery',
+        element: <AccountRecoveryPage />,
+      },
+      {
+        path: '/settings/privacy',
+        element: <SettingsPage screen="privacy" />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
       },
       {
         path: '/jobs/:id',

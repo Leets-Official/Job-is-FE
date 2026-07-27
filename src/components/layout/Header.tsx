@@ -26,6 +26,7 @@ type HeaderProps =
       activeIndex: number;
       onTabChange?: (index: number) => void;
       profileImageUrl?: string;
+      onProfileClick?: () => void;
     })
   | (HeaderBaseProps & {
       variant: 'adm';
@@ -127,15 +128,22 @@ export default function Header(props: HeaderProps) {
           onTabChange={props.onTabChange}
           className="h-10 w-251 shrink-0 px-12.5"
         />
-        {props.profileImageUrl ? (
-          <img
-            src={props.profileImageUrl}
-            alt=""
-            className="mr-2 size-9 shrink-0 rounded-full object-cover"
-          />
-        ) : (
-          <span className="mr-2 size-9 shrink-0 rounded-full bg-gray-100" />
-        )}
+        <button
+          type="button"
+          className="mr-2 size-9 shrink-0 cursor-pointer rounded-full"
+          onClick={props.onProfileClick}
+          aria-label="프로필 설정 열기"
+        >
+          {props.profileImageUrl ? (
+            <img
+              src={props.profileImageUrl}
+              alt=""
+              className="size-full rounded-full object-cover"
+            />
+          ) : (
+            <span className="block size-full rounded-full bg-gray-100" />
+          )}
+        </button>
       </HeaderTabShell>
     );
   }
