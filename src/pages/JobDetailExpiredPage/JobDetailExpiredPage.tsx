@@ -1,17 +1,16 @@
 import { Link, useNavigate } from 'react-router';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import { Button, NoticePanel } from '@/components/common';
-import AppShell from '@/components/layout/AppShell';
 
 export default function JobDetailExpiredPage() {
   const navigate = useNavigate();
 
   return (
-    <AppShell activeTab="saved" className="items-center gap-4">
+    <div className="flex min-h-0 w-full flex-1 items-center justify-center gap-4 bg-gray-50 px-3 py-10">
       <NoticePanel
         headerLeft={
           <Link
-            to="/today"
+            to="/recommendations"
             className="inline-flex w-fit items-center gap-1 rounded-full border border-primary-200 bg-white px-4 py-2 text-body-small font-medium text-text-secondary hover:bg-primary-50"
           >
             <ChevronLeftIcon className="size-4" />
@@ -23,7 +22,7 @@ export default function JobDetailExpiredPage() {
         description="원티드에서 삭제·수정되어 지금은 열 수 없어요."
       >
         <div className="flex w-full flex-wrap items-center justify-center gap-3">
-          <Button variant="outline" onClick={() => navigate('/today/revisit')}>
+          <Button variant="outline" onClick={() => navigate('/saved')}>
             저장 목록으로
           </Button>
           <Button variant="outline" onClick={() => navigate('/explore')}>
@@ -43,6 +42,6 @@ export default function JobDetailExpiredPage() {
           </Button>
         </div>
       </NoticePanel>
-    </AppShell>
+    </div>
   );
 }

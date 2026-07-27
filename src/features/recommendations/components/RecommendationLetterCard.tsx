@@ -42,11 +42,11 @@ export default function RecommendationLetterCard({
     <div className={cn('relative w-190', className)}>
       <div
         aria-hidden="true"
-        className="absolute inset-0 translate-x-6 rounded-md border border-gray-200 bg-white"
+        className="absolute inset-0 translate-x-10.5 rounded-md border border-gray-200 bg-white"
       />
       <div
         aria-hidden="true"
-        className="absolute inset-0 translate-x-3 rounded-md border border-gray-200 bg-white"
+        className="absolute inset-0 translate-x-5.25 rounded-md border border-gray-200 bg-white"
       />
       <article
         ref={ref}
@@ -86,7 +86,9 @@ export default function RecommendationLetterCard({
 
         <div className="flex w-full flex-col gap-1 rounded-sm bg-gray-200 p-4">
           <p className="text-label-small font-bold text-text-tertiary">{noteTitle}</p>
-          <p className="text-body-small leading-[1.5] font-medium text-text-secondary">{note}</p>
+          <p className="min-h-10.5 text-body-small leading-normal font-medium text-text-secondary">
+            {note}
+          </p>
         </div>
 
         <div className="h-0 w-full border-t border-gray-500" />

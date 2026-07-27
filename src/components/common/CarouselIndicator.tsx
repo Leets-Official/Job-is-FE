@@ -37,7 +37,7 @@ export default function CarouselIndicator({ className, ref, ...rest }: CarouselI
         <span
           key={index}
           className={cn(
-            'h-2 rounded-full',
+            'h-2 rounded-full transition-[width,background-color] duration-200 ease-out',
             index === activeIndex ? 'w-5 bg-primary-400' : 'w-2 bg-gray-300',
           )}
         />

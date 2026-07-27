@@ -1,4 +1,5 @@
 import { type ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router';
 import LogoIcon from '@/assets/icons/logo.svg?react';
 import Button from '@/components/common/Button';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
@@ -48,16 +49,29 @@ function HeaderShell({ className, children }: { className?: string; children: Re
   );
 }
 
+function HeaderTabShell({ className, children }: { className?: string; children: ReactNode }) {
+  return (
+    <header
+      className={cn(
+        'sticky top-0 z-10 flex w-full items-center justify-center bg-white px-3 pt-3 pb-4',
+        className,
+      )}
+    >
+      <div className="flex h-15 w-full items-center justify-center">{children}</div>
+    </header>
+  );
+}
+
 function HeaderLogo({ suffix }: { suffix?: ReactNode }) {
   return (
-    <div className="flex h-10 shrink-0 items-center gap-1">
-      <LogoIcon className="h-10 w-auto" role="img" aria-label="Job.is" />
+    <Link to="/" className="flex h-15 shrink-0 items-center gap-1">
+      <LogoIcon className="h-15 w-auto" role="img" aria-label="Job.is" />
       {suffix && (
         <span className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
           {suffix}
         </span>
       )}
-    </div>
+    </Link>
   );
 }
 
@@ -65,13 +79,15 @@ function HeaderTabNav({
   tabs,
   activeIndex,
   onTabChange,
+  className,
 }: {
   tabs: HeaderTabItem[];
   activeIndex: number;
   onTabChange?: (index: number) => void;
+  className?: string;
 }) {
   return (
-    <nav className="flex items-center gap-10">
+    <nav className={cn('flex items-center gap-10', className)}>
       {tabs.map((tab, index) => (
         <Tab
           key={tab.label}
@@ -87,6 +103,7 @@ function HeaderTabNav({
 
 export default function Header(props: HeaderProps) {
   const { className } = props;
+  const navigate = useNavigate();
 
   if (props.variant === 'carousel') {
     return (
@@ -102,15 +119,14 @@ export default function Header(props: HeaderProps) {
 
   if (props.variant === 'tab') {
     return (
-      <HeaderShell className={className}>
-        <div className="flex items-center gap-10">
-          <HeaderLogo />
-          <HeaderTabNav
-            tabs={props.tabs}
-            activeIndex={props.activeIndex}
-            onTabChange={props.onTabChange}
-          />
-        </div>
+      <HeaderTabShell className={className}>
+        <HeaderLogo />
+        <HeaderTabNav
+          tabs={props.tabs}
+          activeIndex={props.activeIndex}
+          onTabChange={props.onTabChange}
+          className="h-10 w-251 shrink-0 px-12.5"
+        />
         {props.profileImageUrl ? (
           <img
             src={props.profileImageUrl}
@@ -120,7 +136,7 @@ export default function Header(props: HeaderProps) {
         ) : (
           <span className="mr-2 size-9 shrink-0 rounded-full bg-gray-100" />
         )}
-      </HeaderShell>
+      </HeaderTabShell>
     );
   }
 
@@ -140,7 +156,7 @@ export default function Header(props: HeaderProps) {
           <button
             type="button"
             onClick={props.onLogout}
-            className="text-label-medium font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
+            className="cursor-pointer text-label-medium font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
           >
             로그아웃
           </button>
@@ -152,7 +168,9 @@ export default function Header(props: HeaderProps) {
   return (
     <HeaderShell className={className}>
       <HeaderLogo />
-      <Button className="h-12.5">시작하기</Button>
+      <Button className="h-12.5" onClick={() => navigate('/login')}>
+        시작하기
+      </Button>
     </HeaderShell>
   );
 }

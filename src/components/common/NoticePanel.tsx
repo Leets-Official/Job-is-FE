@@ -1,5 +1,5 @@
 import { type ReactNode } from 'react';
-import ResultIcon from '@/components/common/ResultIcon';
+import { ResultIcon } from '@/components/feedback';
 import { cn } from '@/utils/cn';
 
 type NoticeIconVariant = 'success' | 'warning' | 'danger' | 'loading' | 'quiz';

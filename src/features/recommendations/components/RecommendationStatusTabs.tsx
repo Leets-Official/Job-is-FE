@@ -14,7 +14,12 @@ export default function RecommendationStatusTabs({
   className,
 }: RecommendationStatusTabsProps) {
   return (
-    <div className={cn('inline-flex items-center gap-3', className)}>
+    <div
+      className={cn(
+        'flex w-190 items-center justify-center gap-2.5 overflow-hidden rounded-xs p-2.5',
+        className,
+      )}
+    >
       {tabs.map((label, index) => {
         const active = index === activeIndex;
 
@@ -24,10 +29,10 @@ export default function RecommendationStatusTabs({
             type="button"
             onClick={() => onChange?.(index)}
             className={cn(
-              'flex h-12 items-center justify-center rounded-full px-6 text-[18px] font-bold whitespace-nowrap',
+              'flex h-10 items-center justify-center rounded-full border border-transparent px-3 text-label-large font-medium whitespace-nowrap transition-[background-color,border-color] duration-150 motion-reduce:transition-none',
               active
                 ? 'bg-primary-600 text-gray-900'
-                : 'border border-gray-200 bg-white text-text-primary hover:bg-gray-50',
+                : 'border-gray-200 bg-white text-text-primary hover:bg-gray-50',
             )}
           >
             {label}

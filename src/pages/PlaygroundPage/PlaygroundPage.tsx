@@ -2,7 +2,6 @@ import { useState } from 'react';
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import CheckCircleIcon from '@/assets/icons/icon-check-circle.svg?react';
 import {
-  Alert,
   Badge,
   Button,
   CarouselArrow,
@@ -15,12 +14,9 @@ import {
   ListCard,
   ModalCheckbox,
   ModalTagComment,
-  ProgressStepper,
   RadioButton,
   Rate,
-  ResultIcon,
   Select,
-  Spinner,
   Tab,
   TableCell,
   Tag,
@@ -32,6 +28,7 @@ import Chip from '@/components/common/Chip';
 import Pagination from '@/components/common/Pagination';
 import Search from '@/components/common/Search';
 import TopButton from '@/components/common/TopButton';
+import { Alert, ProgressStepper, ResultIcon, Spinner } from '@/components/feedback';
 import JobCard from '@/features/jobs/components/JobCard';
 
 const placeholderImage =
@@ -284,8 +281,12 @@ export default function PlaygroundPage() {
       <section>
         <h2 className="mb-2 text-sm font-semibold text-gray-500">CarouselArrow</h2>
         <div className="flex gap-2">
-          <CarouselArrow direction="left" />
-          <CarouselArrow direction="right" />
+          <CarouselArrow direction="left" size="large" />
+          <CarouselArrow direction="right" size="large" />
+          <CarouselArrow direction="left" size="medium" />
+          <CarouselArrow direction="right" size="medium" />
+          <CarouselArrow direction="left" size="small" />
+          <CarouselArrow direction="right" size="small" />
         </div>
       </section>
 

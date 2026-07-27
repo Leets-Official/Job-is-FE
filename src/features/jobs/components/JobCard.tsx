@@ -34,15 +34,15 @@ export default function JobCard({
   return (
     <article
       ref={ref}
-      className={cn('flex w-[350px] flex-col items-start gap-3', className)}
+      className={cn('flex w-87.5 flex-col items-start gap-3', className)}
       {...props}
     >
-      <div className="relative h-[197px] w-full overflow-hidden rounded-md border border-white">
+      <div className="relative h-49.25 w-full overflow-hidden rounded-md border border-white">
         <img src={thumbnailUrl} alt={thumbnailAlt} className="size-full object-cover" />
         <Badge type="outline" color="primary" className="absolute top-2 left-2.5">
           {dDayLabel}
         </Badge>
-        <Badge type="solid" color="primary" className="absolute right-2.5 bottom-[7px]">
+        <Badge type="solid" color="primary" className="absolute right-2.5 bottom-1.75">
           {matchScoreLabel}
         </Badge>
       </div>
