@@ -20,6 +20,10 @@ export default function ExploreJobGrid({ jobs }: ExploreJobGridProps) {
             title={job.title}
             companyName={job.companyName}
             employmentInfo={job.employmentInfo}
+            onMoreClick={(event) => {
+              event.preventDefault();
+              event.stopPropagation();
+            }}
           />
         </Link>
       ))}

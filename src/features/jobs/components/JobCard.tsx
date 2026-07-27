@@ -1,4 +1,4 @@
-import { type ComponentPropsWithRef } from 'react';
+import { type ComponentPropsWithRef, type MouseEvent } from 'react';
 import MoreVerticalIcon from '@/assets/icons/icon-more-vertical.svg?react';
 import { Badge } from '@/components/common';
 import { cn } from '@/utils/cn';
@@ -13,7 +13,7 @@ interface JobCardProps extends ComponentPropsWithRef<'article'> {
   title: string;
   companyName: string;
   employmentInfo: string;
-  onMoreClick?: () => void;
+  onMoreClick?: (event: MouseEvent<HTMLButtonElement>) => void;
 }
 
 export default function JobCard({
