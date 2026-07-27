@@ -5,12 +5,14 @@ import type { JobDetail } from '@/features/jobs/types/jobDetail';
 
 interface JobDetailSidebarProps {
   job: JobDetail;
+  onApply?: () => void;
+  onNotInterested?: () => void;
 }
 
-export default function JobDetailSidebar({ job }: JobDetailSidebarProps) {
+export default function JobDetailSidebar({ job, onApply, onNotInterested }: JobDetailSidebarProps) {
   return (
     <div className="flex w-full flex-col gap-4">
-      <JobDetailApplyPanel />
+      <JobDetailApplyPanel onApply={onApply} onNotInterested={onNotInterested} />
       <DetailListCard
         title="기업 정보"
         rows={[

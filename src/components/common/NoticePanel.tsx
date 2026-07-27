@@ -4,7 +4,8 @@ import { cn } from '@/utils/cn';
 
 type NoticeIconVariant = 'success' | 'warning' | 'danger' | 'loading' | 'quiz';
 
-interface RecommendationNoticePanelProps {
+interface NoticePanelProps {
+  headerLeft?: ReactNode;
   resultIconVariant: NoticeIconVariant;
   title: string;
   description: string;
@@ -13,14 +14,15 @@ interface RecommendationNoticePanelProps {
   className?: string;
 }
 
-export default function RecommendationNoticePanel({
+export default function NoticePanel({
+  headerLeft,
   resultIconVariant,
   title,
   description,
   footNote,
   children,
   className,
-}: RecommendationNoticePanelProps) {
+}: NoticePanelProps) {
   return (
     <div
       className={cn(
@@ -28,6 +30,7 @@ export default function RecommendationNoticePanel({
         className,
       )}
     >
+      {headerLeft && <div className="flex w-full justify-start">{headerLeft}</div>}
       <ResultIcon variant={resultIconVariant} />
       <div className="flex flex-col items-center gap-2">
         <h1 className="text-heading-medium font-semibold text-text-primary">{title}</h1>

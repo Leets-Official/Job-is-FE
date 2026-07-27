@@ -1,13 +1,23 @@
+import { useState } from 'react';
 import { Link, useParams } from 'react-router';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import AppShell from '@/components/layout/AppShell';
+import JobDetailApplyInterstitialModal from '@/features/jobs/components/JobDetailApplyInterstitialModal';
 import JobDetailMain from '@/features/jobs/components/JobDetailMain';
 import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
+import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkipFeedbackModal';
 import { mockJobDetail } from '@/features/jobs/mocks/jobDetailMock';
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
   const job = { ...mockJobDetail, id: id ?? mockJobDetail.id };
+  const [isSkipModalOpen, setIsSkipModalOpen] = useState(false);
+  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+
+  function handleConfirmApply() {
+    window.open(job.source.originalUrl, '_blank', 'noopener,noreferrer');
+    setIsApplyModalOpen(false);
+  }
 
   return (
     <AppShell activeTab="today" className="items-stretch justify-start p-0">
@@ -26,12 +36,29 @@ export default function JobDetailPage() {
             </div>
             <div className="w-full lg:w-90 lg:shrink-0">
               <div className="lg:sticky lg:top-24">
-                <JobDetailSidebar job={job} />
+                <JobDetailSidebar
+                  job={job}
+                  onApply={() => setIsApplyModalOpen(true)}
+                  onNotInterested={() => setIsSkipModalOpen(true)}
+                />
               </div>
             </div>
           </div>
         </div>
       </div>
+      {isSkipModalOpen && (
+        <JobDetailSkipFeedbackModal
+          onClose={() => setIsSkipModalOpen(false)}
+          onSubmit={() => setIsSkipModalOpen(false)}
+        />
+      )}
+      {isApplyModalOpen && (
+        <JobDetailApplyInterstitialModal
+          sourceName={job.source.siteName}
+          onClose={() => setIsApplyModalOpen(false)}
+          onConfirm={handleConfirmApply}
+        />
+      )}
     </AppShell>
   );
 }

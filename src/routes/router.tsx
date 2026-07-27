@@ -2,6 +2,7 @@ import { createBrowserRouter } from 'react-router';
 import AuthLayout from '@/components/layout/AuthLayout';
 import LandingLayout from '@/components/layout/LandingLayout';
 import ExplorePage from '@/pages/ExplorePage/ExplorePage';
+import JobDetailExpiredPage from '@/pages/JobDetailExpiredPage/JobDetailExpiredPage';
 import JobDetailPage from '@/pages/JobDetailPage/JobDetailPage';
 import LandingPage from '@/pages/LandingPage/LandingPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
@@ -12,6 +13,7 @@ import RecommendationEmptyBeforeSendPage from '@/pages/RecommendationEmptyBefore
 import RecommendationEmptyCandidatesPage from '@/pages/RecommendationEmptyCandidatesPage/RecommendationEmptyCandidatesPage';
 import RecommendationEmptySignupPage from '@/pages/RecommendationEmptySignupPage/RecommendationEmptySignupPage';
 import RecommendationIntroPage from '@/pages/RecommendationIntroPage/RecommendationIntroPage';
+import RecommendationNewsDetailPage from '@/pages/RecommendationNewsDetailPage/RecommendationNewsDetailPage';
 import RecommendationNewsPage from '@/pages/RecommendationNewsPage/RecommendationNewsPage';
 import RecommendationRevisitPage from '@/pages/RecommendationRevisitPage/RecommendationRevisitPage';
 
@@ -26,6 +28,7 @@ export const router = createBrowserRouter([
       { path: '/today', element: <RecommendationIntroPage /> },
       { path: '/today/deck', element: <RecommendationBriefingDeckPage /> },
       { path: '/today/news', element: <RecommendationNewsPage /> },
+      { path: '/today/news/:id', element: <RecommendationNewsDetailPage /> },
       { path: '/today/complete', element: <RecommendationDeckCompletePage /> },
       { path: '/today/revisit', element: <RecommendationRevisitPage /> },
       { path: '/today/empty-candidates', element: <RecommendationEmptyCandidatesPage /> },
@@ -33,6 +36,7 @@ export const router = createBrowserRouter([
       { path: '/today/empty-before-send', element: <RecommendationEmptyBeforeSendPage /> },
       { path: '/explore', element: <ExplorePage /> },
       { path: '/jobs/:id', element: <JobDetailPage /> },
+      { path: '/jobs/:id/expired', element: <JobDetailExpiredPage /> },
       { path: '/playground', element: <PlaygroundPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],

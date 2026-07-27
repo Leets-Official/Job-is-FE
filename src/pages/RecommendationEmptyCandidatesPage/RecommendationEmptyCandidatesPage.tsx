@@ -1,14 +1,14 @@
 import { useNavigate } from 'react-router';
 import Button from '@/components/common/Button';
+import NoticePanel from '@/components/common/NoticePanel';
 import AppShell from '@/components/layout/AppShell';
-import RecommendationNoticePanel from '@/features/recommendations/components/RecommendationNoticePanel';
 
 export default function RecommendationEmptyCandidatesPage() {
   const navigate = useNavigate();
 
   return (
     <AppShell variant="guest">
-      <RecommendationNoticePanel
+      <NoticePanel
         resultIconVariant="warning"
         title="오늘은 딱 맞는 공고가 적어요"
         description={'오늘은 조건에 맞는 공고를 찾지 못했어요.\n내일 아침 다시 골라 보내 드릴게요.'}
@@ -20,7 +20,7 @@ export default function RecommendationEmptyCandidatesPage() {
         <Button className="w-[414px]" variant="outline" onClick={() => navigate('/explore')}>
           탐색 둘러보기
         </Button>
-      </RecommendationNoticePanel>
+      </NoticePanel>
     </AppShell>
   );
 }

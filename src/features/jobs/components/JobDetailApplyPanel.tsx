@@ -5,17 +5,19 @@ interface JobDetailApplyPanelProps {
   onApply?: () => void;
   onIntendToApply?: () => void;
   onSave?: () => void;
+  onNotInterested?: () => void;
 }
 
 export default function JobDetailApplyPanel({
   onApply,
   onIntendToApply,
   onSave,
+  onNotInterested,
 }: JobDetailApplyPanelProps) {
   const secondaryActions = [
     { label: '지원 의향', onClick: onIntendToApply },
     { label: '저장', onClick: onSave },
-    { label: '관심없음', onClick: undefined },
+    { label: '관심없음', onClick: onNotInterested },
   ];
 
   return (

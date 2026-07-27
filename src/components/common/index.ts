@@ -14,6 +14,7 @@ export { default as Modal } from './Modal';
 export type { ModalPresetProps } from './Modal';
 export { default as ModalCheckbox } from './ModalCheckbox';
 export { default as ModalTagComment } from './ModalTagComment';
+export { default as NoticePanel } from './NoticePanel';
 export { default as ProgressStepper } from './ProgressStepper';
 export { default as RadioButton } from './RadioButton';
 export { default as Rate } from './Rate';
