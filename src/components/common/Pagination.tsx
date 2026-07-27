@@ -8,6 +8,7 @@ type PaginationProps = ComponentPropsWithoutRef<'nav'> & {
   totalPages: number;
   onPrevious: () => void;
   onNext: () => void;
+  label?: string;
 };
 
 export default function Pagination({
@@ -16,6 +17,7 @@ export default function Pagination({
   totalPages,
   onPrevious,
   onNext,
+  label,
   ...props
 }: PaginationProps) {
   return (
@@ -37,7 +39,7 @@ export default function Pagination({
       </button>
 
       <span className="text-body-medium font-medium text-gray-900">
-        오늘 도착 · {currentPage}/{totalPages}
+        {label ?? `오늘 도착 · ${currentPage}/${totalPages}`}
       </span>
 
       <button
