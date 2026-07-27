@@ -32,6 +32,7 @@ export default function RecommendationLetterCarousel({
   enableStackTransition = false,
   className,
 }: RecommendationLetterCarouselProps) {
+  const hasItems = total > 0;
   const [activeContent, setActiveContent] = useState({ key: contentKey, node: children });
   const activeContentRef = useRef(activeContent);
   const previousCurrentRef = useRef(current);
@@ -80,16 +81,14 @@ export default function RecommendationLetterCarousel({
   };
 
   return (
-    <div className={cn('flex flex-col items-center gap-4', className)}>
+    <div aria-busy={isAnimating} className={cn('flex flex-col items-center gap-4', className)}>
       {filterSlot}
       <div className="flex items-center gap-16">
-        <CarouselArrow
-          direction="left"
-          onClick={handlePrev}
-          disabled={prevDisabled || isAnimating}
-        />
+        {hasItems && (
+          <CarouselArrow direction="left" onClick={handlePrev} disabled={prevDisabled} />
+        )}
         {enableStackTransition ? (
-          <div className="relative flex min-h-[524px] w-196 items-center overflow-x-clip">
+          <div className="relative flex min-h-[524px] w-[802px] translate-x-[21px] items-center overflow-x-clip">
             {leavingContent && (
               <div
                 aria-hidden="true"
@@ -123,22 +122,29 @@ export default function RecommendationLetterCarousel({
         ) : (
           children
         )}
-        <CarouselArrow
-          direction="right"
-          onClick={handleNext}
-          disabled={nextDisabled || isAnimating}
-        />
+        {hasItems && (
+          <CarouselArrow direction="right" onClick={handleNext} disabled={nextDisabled} />
+        )}
       </div>
-      <div className="flex items-center gap-2">
-        <CarouselIndicator variant="number" current={current} total={total} />
-        <CarouselIndicator variant="dot" total={total} activeIndex={current - 1} />
-      </div>
-      <p
-        aria-hidden={!footNote}
-        className="min-h-6 text-body-medium font-medium text-text-tertiary"
-      >
-        {footNote}
-      </p>
+      {hasItems ? (
+        <>
+          <div className="flex items-center gap-2">
+            <CarouselIndicator variant="number" current={current} total={total} />
+            <CarouselIndicator variant="dot" total={total} activeIndex={current - 1} />
+          </div>
+          <p
+            aria-hidden={!footNote}
+            className="min-h-6 text-heading-medium font-medium text-text-tertiary"
+          >
+            {footNote}
+          </p>
+        </>
+      ) : (
+        <>
+          <div aria-hidden="true" className="h-10" />
+          <div aria-hidden="true" className="h-9" />
+        </>
+      )}
     </div>
   );
 }
