@@ -26,7 +26,9 @@ export default function ModalCheckbox({
 
   return (
     <Modal ref={ref} title={title} onClose={onClose} footer={footer} className={className}>
-      <p className="w-full text-base font-medium text-text-secondary">{description}</p>
+      <p className="w-full whitespace-pre-line text-base font-medium text-text-secondary">
+        {description}
+      </p>
       <Checkbox id={checkboxId} label={checkboxLabel} {...checkboxProps} />
     </Modal>
   );

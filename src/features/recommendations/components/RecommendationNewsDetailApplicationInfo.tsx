@@ -12,7 +12,7 @@ export default function RecommendationNewsDetailApplicationInfo({
 }: RecommendationNewsDetailApplicationInfoProps) {
   return (
     <div className="flex w-full flex-col gap-2">
-      <p className="text-heading-xxsmall font-bold text-text-primary">신청 정보</p>
+      <p className="text-label-small font-medium text-text-tertiary">신청 정보</p>
       <DetailListCard title={title} rows={rows} />
     </div>
   );

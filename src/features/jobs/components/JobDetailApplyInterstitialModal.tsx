@@ -5,7 +5,7 @@ import { Button, ModalCheckbox } from '@/components/common';
 interface JobDetailApplyInterstitialModalProps {
   sourceName: string;
   onClose: () => void;
-  onConfirm: (dontShowAgain: boolean) => void;
+  onConfirm: (intendToApply: boolean) => void;
 }
 
 export default function JobDetailApplyInterstitialModal({
@@ -13,7 +13,7 @@ export default function JobDetailApplyInterstitialModal({
   onClose,
   onConfirm,
 }: JobDetailApplyInterstitialModalProps) {
-  const [dontShowAgain, setDontShowAgain] = useState(false);
+  const [intendToApply, setIntendToApply] = useState(false);
 
   return (
     <div
@@ -23,18 +23,18 @@ export default function JobDetailApplyInterstitialModal({
       <div onClick={(event) => event.stopPropagation()}>
         <ModalCheckbox
           title={`원문(${sourceName})에서 지원해요`}
-          description="Job.is 웹은 원문 페이지로 이동해요. 지원 진행 결과는 원문에서 확인하세요."
-          checkboxLabel="다시 안 보기"
-          checked={dontShowAgain}
-          onChange={(event) => setDontShowAgain(event.target.checked)}
+          description={'Job.is 웹은 원문 페이지로 이동해요.\n지원 진행 결과는 원문에서 확인하세요.'}
+          checkboxLabel="지원 의향"
+          checked={intendToApply}
+          onChange={(event) => setIntendToApply(event.target.checked)}
           onClose={onClose}
-          className="w-full max-w-100"
+          className="w-[760px]"
           footer={
             <>
               <Button variant="outline" onClick={onClose}>
                 취소
               </Button>
-              <Button onClick={() => onConfirm(dontShowAgain)}>
+              <Button onClick={() => onConfirm(intendToApply)}>
                 {sourceName}에서 보기
                 <ArrowRightIcon className="size-5" />
               </Button>

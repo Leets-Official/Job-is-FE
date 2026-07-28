@@ -1,5 +1,6 @@
-import { Link } from 'react-router';
+import { useNavigate } from 'react-router';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
+import { Button } from '@/components/common';
 import RecommendationNewsDetailApplicationInfo from '@/features/recommendations/components/RecommendationNewsDetailApplicationInfo';
 import RecommendationNewsDetailOverview from '@/features/recommendations/components/RecommendationNewsDetailOverview';
 import RecommendationNewsDetailSourceCard from '@/features/recommendations/components/RecommendationNewsDetailSourceCard';
@@ -17,15 +18,18 @@ export default function RecommendationNewsDetailMain({
   backTo,
   backLabel,
 }: RecommendationNewsDetailMainProps) {
+  const navigate = useNavigate();
+
   return (
     <div className="flex w-full flex-col gap-6 rounded-sm border border-gray-300 bg-white p-6">
-      <Link
-        to={backTo}
-        className="inline-flex w-fit items-center gap-1 rounded-full border border-primary-200 bg-transparent px-4 py-2 text-body-small font-medium text-text-secondary hover:bg-primary-50"
+      <Button
+        variant="outline"
+        onClick={() => navigate(backTo)}
+        className="h-[35px] w-fit gap-1 rounded-sm border-primary-400 bg-white px-5 text-body-small font-medium text-text-secondary hover:bg-primary-50"
       >
         <ChevronLeftIcon className="size-4" />
         {backLabel}
-      </Link>
+      </Button>
       <RecommendationNewsDetailSummary newsDetail={newsDetail} />
       <RecommendationNewsDetailOverview summary={newsDetail.summary} />
       <RecommendationNewsDetailApplicationInfo

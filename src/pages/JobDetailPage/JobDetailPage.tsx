@@ -1,6 +1,5 @@
 import { useState } from 'react';
-import { Link, useParams } from 'react-router';
-import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
+import { useParams } from 'react-router';
 import JobDetailApplyInterstitialModal from '@/features/jobs/components/JobDetailApplyInterstitialModal';
 import JobDetailMain from '@/features/jobs/components/JobDetailMain';
 import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
@@ -21,16 +20,9 @@ export default function JobDetailPage() {
   return (
     <div className="flex min-h-0 w-full flex-1 justify-center bg-gray-50 px-3 py-8">
       <div className="flex w-full max-w-300 flex-col gap-4">
-        <Link
-          to="/recommendations"
-          className="inline-flex w-fit items-center gap-1 rounded-full border border-gray-300 bg-white px-4 py-2 text-body-small font-medium text-text-secondary hover:bg-gray-50"
-        >
-          <ChevronLeftIcon className="size-4" />
-          오늘의 추천으로
-        </Link>
         <div className="flex w-full flex-col items-start gap-6 lg:flex-row">
           <div className="min-w-0 w-full flex-1">
-            <JobDetailMain job={job} />
+            <JobDetailMain job={job} backTo="/recommendations" backLabel="오늘의 추천으로" />
           </div>
           <div className="w-full lg:w-90 lg:shrink-0">
             <div className="lg:sticky lg:top-24">

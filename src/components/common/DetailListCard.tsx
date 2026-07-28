@@ -38,7 +38,12 @@ export default function DetailListCard({
               <span className="text-[14px] leading-normal font-medium text-text-tertiary">
                 {row.label}
               </span>
-              <span className="text-[14px] leading-normal font-medium text-text-primary">
+              <span
+                className={cn(
+                  'text-[14px] leading-normal font-medium',
+                  row.value === '정보 없음' ? 'text-text-tertiary' : 'text-text-primary',
+                )}
+              >
                 {row.value}
               </span>
             </div>

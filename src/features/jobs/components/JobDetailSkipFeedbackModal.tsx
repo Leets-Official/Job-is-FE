@@ -6,15 +6,21 @@ const SKIP_REASONS = ['직무 불일치', '지역', '이미 지원함'];
 
 interface JobDetailSkipFeedbackModalProps {
   onClose: () => void;
-  onSubmit: (reason: string | null, note: string) => void;
+  onSubmit: (reasons: string[], note: string) => void;
 }
 
 export default function JobDetailSkipFeedbackModal({
   onClose,
   onSubmit,
 }: JobDetailSkipFeedbackModalProps) {
-  const [selectedReason, setSelectedReason] = useState<string | null>(null);
+  const [selectedReasons, setSelectedReasons] = useState<string[]>([]);
   const [note, setNote] = useState('');
+
+  function toggleReason(reason: string) {
+    setSelectedReasons((prev) =>
+      prev.includes(reason) ? prev.filter((item) => item !== reason) : [...prev, reason],
+    );
+  }
 
   return (
     <div
@@ -24,33 +30,36 @@ export default function JobDetailSkipFeedbackModal({
       <Modal
         title="왜 관심이 없으신가요?"
         onClose={onClose}
-        className="w-full max-w-100"
+        className="w-[760px]"
         onClick={(event) => event.stopPropagation()}
         footer={
           <>
             <Button variant="outline" onClick={onClose}>
               닫기
             </Button>
-            <Button onClick={() => onSubmit(selectedReason, note)}>사유보내기</Button>
+            <Button onClick={() => onSubmit(selectedReasons, note)}>사유보내기</Button>
           </>
         }
       >
+        <p className="text-body-medium leading-[1.5] font-medium text-text-secondary">
+          맞는 추천을 위해 참고할게요 · 사유는 선택이에요
+        </p>
         <div className="flex w-full flex-wrap gap-2">
           {SKIP_REASONS.map((reason) => (
             <Chip
               key={reason}
               label={reason}
-              selected={selectedReason === reason}
-              onClick={() => setSelectedReason(reason)}
+              selected={selectedReasons.includes(reason)}
+              onClick={() => toggleReason(reason)}
             />
           ))}
         </div>
         <TextInput
-          label="기타 (선택)"
-          placeholder="내용을 입력해주세요"
+          label="코멘트 (선택)"
+          placeholder="내용을 입력하세요"
           value={note}
           onChange={(event) => setNote(event.target.value)}
-          className="w-full"
+          className="h-12 w-[360px] rounded-[6px]"
         />
       </Modal>
     </div>

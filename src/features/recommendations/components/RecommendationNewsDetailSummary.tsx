@@ -18,7 +18,7 @@ export default function RecommendationNewsDetailSummary({
           {newsDetail.badgeLabel}
         </Badge>
         <h1 className="text-heading-medium font-bold text-text-primary">{newsDetail.title}</h1>
-        <div className="flex flex-col gap-0.5 text-body-small font-medium text-text-tertiary">
+        <div className="flex flex-col gap-0.5 text-label-medium font-medium text-text-primary">
           <p>출처 {newsDetail.sourceName}</p>
           <p>등록 {newsDetail.registeredDate}</p>
           <p>신청기간 {newsDetail.applicationPeriod}</p>

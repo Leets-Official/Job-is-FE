@@ -8,12 +8,12 @@ interface JobDetailContentProps {
 export default function JobDetailContent({ sections, techStack }: JobDetailContentProps) {
   return (
     <div className="flex w-full flex-col gap-3">
-      <p className="text-heading-xxsmall font-bold text-text-primary">상세 내용</p>
-      <div className="flex w-full flex-col gap-4 rounded-sm border border-gray-200 bg-white p-4">
+      <p className="text-label-small font-medium text-text-tertiary">상세 내용</p>
+      <div className="mx-auto flex w-[740px] flex-col items-start justify-center gap-2.5 rounded-xs border border-gray-200 bg-white p-6">
         {sections.map((section) => (
           <div key={section.heading} className="flex flex-col gap-1">
             <p className="text-body-small font-bold text-text-primary">{section.heading}</p>
-            <ul className="flex flex-col gap-0.5 pl-4">
+            <ul className="flex flex-col gap-0.5 pl-6">
               {section.items.map((item, index) => (
                 <li
                   key={`${section.heading}-${index}`}
