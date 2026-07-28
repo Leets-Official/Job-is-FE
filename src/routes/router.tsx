@@ -4,7 +4,6 @@ import AuthLayout from '@/components/layout/AuthLayout';
 import LandingLayout from '@/components/layout/LandingLayout';
 import MainLayout from '@/components/layout/MainLayout';
 import AccountRecoveryPage from '@/pages/AccountRecoveryPage/AccountRecoveryPage';
-import AccountWithdrawalCompletePage from '@/pages/AccountWithdrawalCompletePage/AccountWithdrawalCompletePage';
 import AccountWithdrawalPage from '@/pages/AccountWithdrawalPage/AccountWithdrawalPage';
 import CallbackPage from '@/pages/CallbackPage/CallbackPage';
 import ExplorePage from '@/pages/ExplorePage/ExplorePage';
@@ -154,10 +153,6 @@ export const router = createBrowserRouter([
         path: '/settings/account/withdraw',
         element: <AccountWithdrawalPage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
-      },
-      {
-        path: '/settings/account/withdraw/complete',
-        element: <AccountWithdrawalCompletePage />,
       },
       {
         path: '/account/recovery',

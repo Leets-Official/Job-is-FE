@@ -6,6 +6,7 @@ const DELIVERY_TIMES = ['07:30', '12:30', '18:30'];
 
 export default function DailyBriefingSettingsCard() {
   const toggleId = useId();
+  const deliveryTimeGroupName = useId();
   const [isEnabled, setIsEnabled] = useState(true);
   const [deliveryTime, setDeliveryTime] = useState('12:30');
 
@@ -26,28 +27,43 @@ export default function DailyBriefingSettingsCard() {
       <div className="border-t border-gray-400 pt-5">
         <div className="flex items-center justify-between gap-5 max-sm:flex-col max-sm:items-start">
           <h3 className="text-label-medium font-medium text-text-primary">받을 시간</h3>
-          <div
-            className="flex flex-wrap gap-2.5 px-2.5"
-            role="radiogroup"
-            aria-label="브리핑 받을 시간"
-          >
-            {DELIVERY_TIMES.map((time) => (
-              <button
-                key={time}
-                type="button"
-                role="radio"
-                aria-checked={deliveryTime === time}
-                disabled={!isEnabled}
-                onClick={() => setDeliveryTime(time)}
-                className={cn(
-                  'h-10 cursor-pointer rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-500',
-                  deliveryTime === time && 'border-primary-600 bg-primary-600',
-                )}
-              >
-                {time}
-              </button>
-            ))}
-          </div>
+          <fieldset className="flex flex-wrap gap-2.5 px-2.5">
+            <legend className="sr-only">브리핑 받을 시간</legend>
+            {DELIVERY_TIMES.map((time) => {
+              const inputId = `${deliveryTimeGroupName}-${time.replace(':', '')}`;
+
+              return (
+                <label
+                  key={time}
+                  htmlFor={inputId}
+                  className={cn(
+                    'rounded-full',
+                    isEnabled ? 'cursor-pointer' : 'cursor-not-allowed',
+                  )}
+                >
+                  <input
+                    id={inputId}
+                    type="radio"
+                    name={deliveryTimeGroupName}
+                    value={time}
+                    checked={deliveryTime === time}
+                    disabled={!isEnabled}
+                    onChange={() => setDeliveryTime(time)}
+                    className="peer sr-only"
+                  />
+                  <span
+                    className={cn(
+                      'inline-flex h-10 items-center justify-center rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-500',
+                      isEnabled ? 'hover:bg-gray-50' : 'text-gray-500',
+                      deliveryTime === time && 'border-primary-600 bg-primary-600',
+                    )}
+                  >
+                    {time}
+                  </span>
+                </label>
+              );
+            })}
+          </fieldset>
         </div>
         <p className="mt-5 text-label-small font-medium text-text-tertiary">
           바꾸면 내일 아침부터 새 시간에 보내드려요.

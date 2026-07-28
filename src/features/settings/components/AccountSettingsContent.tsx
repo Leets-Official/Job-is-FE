@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import Badge from '@/components/common/Badge';
 
 const SMALL_OUTLINE_BUTTON_CLASS_NAME =
-  'inline-flex h-7.5 cursor-pointer items-center justify-center rounded-sm border border-primary-400 bg-white px-3 text-label-small font-normal text-text-primary transition-colors hover:bg-primary-50';
+  'inline-flex h-7.5 cursor-pointer items-center justify-center rounded-sm border border-primary-400 bg-white px-3 text-label-small font-normal text-text-primary transition-colors hover:bg-primary-50 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-600 disabled:hover:bg-gray-100';
 
 function AccountSettingsCard({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -33,7 +33,13 @@ export default function AccountSettingsContent() {
               확인됨
             </Badge>
           </div>
-          <button type="button" className={SMALL_OUTLINE_BUTTON_CLASS_NAME}>
+          <button
+            type="button"
+            className={SMALL_OUTLINE_BUTTON_CLASS_NAME}
+            disabled
+            title="이메일 변경 기능 준비 중"
+            aria-label="이메일 변경 기능 준비 중"
+          >
             변경
           </button>
         </div>
@@ -41,7 +47,13 @@ export default function AccountSettingsContent() {
 
       <AccountSettingsCard title="세션">
         <div>
-          <button type="button" className={SMALL_OUTLINE_BUTTON_CLASS_NAME}>
+          <button
+            type="button"
+            className={SMALL_OUTLINE_BUTTON_CLASS_NAME}
+            disabled
+            title="로그아웃 기능 준비 중"
+            aria-label="로그아웃 기능 준비 중"
+          >
             로그아웃
           </button>
         </div>

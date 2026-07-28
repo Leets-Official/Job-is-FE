@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
@@ -12,16 +12,69 @@ export default function WithdrawalConfirmModal({
   onConfirm: () => void;
 }) {
   const agreementId = useId();
-  const [isAgreed, setIsAgreed] = useState(true);
+  const modalRef = useRef<HTMLDivElement>(null);
+  const [isAgreed, setIsAgreed] = useState(false);
 
   useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') onClose();
+    const previouslyFocusedElement =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const modalElement = modalRef.current;
+
+    const getFocusableElements = () => {
+      if (!modalElement) return [];
+
+      return Array.from(
+        modalElement.querySelectorAll<HTMLElement>(
+          'button:not([disabled]), input:not([disabled]), [href], [tabindex]:not([tabindex="-1"])',
+        ),
+      );
     };
 
-    document.addEventListener('keydown', closeOnEscape);
+    getFocusableElements()[0]?.focus();
 
-    return () => document.removeEventListener('keydown', closeOnEscape);
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab') return;
+
+      const focusableElements = getFocusableElements();
+      const firstFocusableElement = focusableElements[0];
+      const lastFocusableElement = focusableElements.at(-1);
+
+      if (!firstFocusableElement || !lastFocusableElement) {
+        event.preventDefault();
+        return;
+      }
+
+      const isFocusOutsideModal = !modalElement?.contains(document.activeElement);
+
+      if (
+        event.shiftKey &&
+        (document.activeElement === firstFocusableElement || isFocusOutsideModal)
+      ) {
+        event.preventDefault();
+        lastFocusableElement.focus();
+        return;
+      }
+
+      if (
+        !event.shiftKey &&
+        (document.activeElement === lastFocusableElement || isFocusOutsideModal)
+      ) {
+        event.preventDefault();
+        firstFocusableElement.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+      previouslyFocusedElement?.focus();
+    };
   }, [onClose]);
 
   return createPortal(
@@ -32,6 +85,7 @@ export default function WithdrawalConfirmModal({
       }}
     >
       <Modal
+        ref={modalRef}
         role="dialog"
         aria-modal="true"
         aria-label="회원 탈퇴 확인"

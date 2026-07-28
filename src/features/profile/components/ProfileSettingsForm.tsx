@@ -1,59 +1,12 @@
 import { useState } from 'react';
-import ChevronRightIcon from '@/assets/icons/icon-chevron-right.svg?react';
-import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import Tag from '@/components/common/Tag';
-import { cn } from '@/utils/cn';
+import ProfileBasicInfoSection from '@/features/profile/components/ProfileBasicInfoSection';
+import ProfileLifestyleSection from '@/features/profile/components/ProfileLifestyleSection';
+import ProfileLinksSection from '@/features/profile/components/ProfileLinksSection';
+import ProfilePreferencesSection from '@/features/profile/components/ProfilePreferencesSection';
 
-const REGION_OPTIONS = ['서울', '경기'];
-const CAREER_OPTIONS = ['신입', '1~3년', '4년 이상'];
-const INTEREST_OPTIONS = ['기획 • PM', '개발', '디자인'];
-const LIFESTYLE_TAGS = ['# 성장 지향', '# 실무형', '# 협업 중시'];
-
-function FieldLabel({
-  children,
-  status,
-}: {
-  children: string;
-  status?: '필수' | '선택' | '읽기 전용';
-}) {
-  return (
-    <div className="flex items-center gap-2">
-      <h2 className="text-label-medium font-medium text-text-primary">{children}</h2>
-      {status && (
-        <Badge color={status === '필수' ? 'primary' : 'disabled'} type="outline">
-          {status}
-        </Badge>
-      )}
-    </div>
-  );
-}
-
-function ProfileLinkRow({
-  title,
-  status,
-  onClick,
-}: {
-  title: string;
-  status: string;
-  onClick?: () => void;
-}) {
-  return (
-    <div>
-      <button
-        type="button"
-        onClick={onClick}
-        className="flex min-h-18 w-full cursor-pointer items-center justify-between rounded-xs border border-gray-400 bg-white px-6 py-4 text-left transition-colors hover:bg-gray-50"
-      >
-        <span className="flex flex-wrap items-center gap-1.5">
-          <strong className="text-body-small text-text-primary">{title}</strong>
-          <span className="text-body-xsmall font-medium text-text-tertiary">{status}</span>
-        </span>
-        <ChevronRightIcon className="size-6 text-gray-800" aria-hidden="true" />
-      </button>
-    </div>
-  );
-}
+const INITIAL_REGIONS = ['서울', '경기'];
+const INITIAL_INTERESTS = ['기획 • PM'];
 
 export default function ProfileSettingsForm({
   onDocumentsClick,
@@ -62,9 +15,9 @@ export default function ProfileSettingsForm({
   onDocumentsClick?: () => void;
   onAptitudeTestClick?: () => void;
 }) {
-  const [regions, setRegions] = useState(REGION_OPTIONS);
+  const [regions, setRegions] = useState(INITIAL_REGIONS);
   const [career, setCareer] = useState('신입');
-  const [interests, setInterests] = useState(['기획 • PM']);
+  const [interests, setInterests] = useState(INITIAL_INTERESTS);
   const [isSaved, setIsSaved] = useState(false);
 
   const toggleRegion = (region: string) => {
@@ -73,6 +26,11 @@ export default function ProfileSettingsForm({
         ? previous.filter((item) => item !== region)
         : [...previous, region],
     );
+    setIsSaved(false);
+  };
+
+  const changeCareer = (nextCareer: string) => {
+    setCareer(nextCareer);
     setIsSaved(false);
   };
 
@@ -100,132 +58,26 @@ export default function ProfileSettingsForm({
         </p>
       </header>
 
-      <section className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <FieldLabel status="필수">관심 직무</FieldLabel>
-          <input
-            type="text"
-            defaultValue="IT 서비스 PM"
-            onChange={() => setIsSaved(false)}
-            className="h-10 w-full rounded-[6px] border border-gray-700 bg-white px-4 text-label-medium font-medium text-text-secondary outline-none transition-colors focus:border-primary-500"
-            aria-label="관심 직무"
-          />
-        </div>
+      <ProfileBasicInfoSection
+        regions={regions}
+        career={career}
+        onToggleRegion={toggleRegion}
+        onCareerChange={changeCareer}
+        onFieldChange={() => setIsSaved(false)}
+      />
 
-        <div className="flex flex-col gap-2">
-          <FieldLabel status="필수">희망 지역</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            {REGION_OPTIONS.map((region) => (
-              <Tag
-                key={region}
-                variant="removable"
-                label={region}
-                className={cn(
-                  'h-10 border-primary-600 bg-primary-600 px-3 text-label-large text-text-primary',
-                  !regions.includes(region) && 'border-gray-300 bg-white text-text-primary',
-                )}
-                onClick={() => toggleRegion(region)}
-                aria-pressed={regions.includes(region)}
-              />
-            ))}
-            <Tag
-              variant="add"
-              label="지역"
-              className="h-10 border-dashed text-label-large text-text-primary"
-            />
-          </div>
-        </div>
+      <ProfilePreferencesSection
+        interests={interests}
+        onToggleInterest={toggleInterest}
+        onFieldChange={() => setIsSaved(false)}
+      />
 
-        <div className="flex flex-col gap-2">
-          <FieldLabel status="필수">경력 단계</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            {CAREER_OPTIONS.map((option) => (
-              <Tag
-                key={option}
-                variant="select"
-                label={option}
-                selected={career === option}
-                className={cn(
-                  'h-10 px-3 text-label-large',
-                  career === option && 'border-primary-600 bg-primary-600 text-text-primary',
-                )}
-                onClick={() => {
-                  setCareer(option);
-                  setIsSaved(false);
-                }}
-              />
-            ))}
-          </div>
-        </div>
-      </section>
+      <ProfileLinksSection
+        onDocumentsClick={onDocumentsClick}
+        onAptitudeTestClick={onAptitudeTestClick}
+      />
 
-      <section className="flex flex-col gap-5">
-        <div className="flex flex-col gap-2">
-          <FieldLabel status="선택">관심 분야 • 직군</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            {INTEREST_OPTIONS.map((option) => (
-              <Tag
-                key={option}
-                variant="removable"
-                label={option}
-                className={cn(
-                  'h-10 px-3 text-label-large',
-                  interests.includes(option) &&
-                    'border-primary-600 bg-primary-600 text-text-primary',
-                )}
-                onClick={() => toggleInterest(option)}
-                aria-pressed={interests.includes(option)}
-              />
-            ))}
-            <Tag
-              variant="add"
-              label="추가"
-              className="h-10 border-dashed text-label-large text-text-primary"
-            />
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <FieldLabel status="선택">선호 조건</FieldLabel>
-          <input
-            type="text"
-            placeholder="정규직 우선 · 재택 가능한 곳이면 좋겠어요…"
-            onChange={() => setIsSaved(false)}
-            className="h-10 w-full rounded-[6px] border border-gray-700 bg-white px-4 text-label-medium font-medium text-text-secondary outline-none placeholder:text-gray-600 focus:border-primary-500"
-          />
-        </div>
-
-        <div className="flex flex-col gap-2">
-          <FieldLabel status="선택">기술 스택</FieldLabel>
-          <div className="flex flex-wrap gap-2">
-            <Tag variant="hash" label="React" className="h-10 px-3 text-label-large" />
-            <Tag variant="hash" label="Figma" className="h-10 px-3 text-label-large" />
-            <Tag
-              variant="plain"
-              label="+ 2"
-              className="h-10 border-dashed px-3 text-label-large text-text-primary"
-            />
-          </div>
-        </div>
-      </section>
-
-      <div className="flex flex-col gap-5">
-        <ProfileLinkRow
-          title="이력서 • 자기소개서 관리"
-          status="미첨부 / 2개"
-          onClick={onDocumentsClick}
-        />
-        <ProfileLinkRow title="직무 성향 테스트" status="미완료" onClick={onAptitudeTestClick} />
-      </div>
-
-      <section className="border-b border-gray-400 pb-5">
-        <FieldLabel status="읽기 전용">성향 결과 태그</FieldLabel>
-        <div className="mt-5 flex flex-wrap gap-2">
-          {LIFESTYLE_TAGS.map((tag) => (
-            <Tag key={tag} variant="plain" label={tag} className="h-10 px-3 text-label-large" />
-          ))}
-        </div>
-      </section>
+      <ProfileLifestyleSection />
 
       <div className="flex flex-col gap-5">
         <div className="flex min-h-18 items-center rounded-xs border border-dashed border-gray-400 bg-gray-200 px-6">
@@ -235,11 +87,9 @@ export default function ProfileSettingsForm({
               : '오늘 레터는 그대로예요. 다음 레터부터 반영돼요(내일 발송 분).'}
           </p>
         </div>
-        <div>
-          <Button type="submit" className="h-14 w-full">
-            저장
-          </Button>
-        </div>
+        <Button type="submit" className="h-14 w-full">
+          저장
+        </Button>
       </div>
     </form>
   );
