@@ -1,4 +1,4 @@
-import { type ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { useSearchParams } from 'react-router';
 import Button from '@/components/common/Button';
 import { ResultIcon } from '@/components/feedback';
@@ -50,7 +50,7 @@ const VARIANT_CONTENT: Record<
     icon: 'warning',
     title: '잠깐 정비하고 있어요',
     description: '더 나은 레터로 곧 찾아뵐게요.',
-    notice: '.오전 9:00쯤 다시 열려요.',
+    notice: '오전 9:00쯤 다시 열려요.',
     actions: (
       <Button className="w-full max-w-104" onClick={handleRetry}>
         다시 시도
@@ -64,7 +64,7 @@ const VARIANT_CONTENT: Record<
       <>
         인터넷 연결을 확인하고 [다시 시도]를 눌러 주세요.
         <br />
-        연결되면 자동으 로 이어서 불러올게요.
+        연결되면 자동으로 이어서 불러올게요.
       </>
     ),
     actions: (
@@ -80,7 +80,15 @@ export default function SystemErrorPage({ variant = 'server-error' }: SystemErro
 
   // NOTE: ?preview= 쿼리스트링, 임시 확인용, 실제 트리거 연결 후 삭제 예정
   const previewVariant = PREVIEW_VARIANTS.find((item) => item === searchParams.get('preview'));
-  const content = VARIANT_CONTENT[previewVariant ?? variant];
+  const resolvedVariant = previewVariant ?? variant;
+  const content = VARIANT_CONTENT[resolvedVariant];
+
+  useEffect(() => {
+    if (resolvedVariant !== 'offline') return;
+
+    window.addEventListener('online', handleRetry);
+    return () => window.removeEventListener('online', handleRetry);
+  }, [resolvedVariant]);
 
   return (
     <div className="flex w-full flex-1 items-center justify-center bg-gray-50 px-3 py-8">
