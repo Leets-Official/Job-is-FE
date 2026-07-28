@@ -27,7 +27,7 @@ export default function UnsubscribePage() {
           회원 자격과 웹 추천은 그대로 유지돼요.
         </p>
 
-        <Button className="w-full max-w-169">다시 받을게요 ( 재구독)</Button>
+        <Button className="w-full max-w-169">다시 받을게요 (재구독)</Button>
 
         <hr className="w-full border-t border-gray-200" />
 
