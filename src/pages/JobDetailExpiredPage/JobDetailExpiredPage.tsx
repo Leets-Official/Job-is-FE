@@ -35,7 +35,7 @@ export default function JobDetailExpiredPage() {
         </div>
         <div className="h-px w-full bg-gray-200" />
         <div className="flex w-full flex-wrap items-center justify-center gap-3">
-          <Button variant="outline" className="w-[250px]">
+          <Button variant="outline" className="w-[250px]" disabled>
             저장 해제
           </Button>
           <Button className="w-[250px] border-none bg-gray-400 text-text-tertiary hover:bg-gray-400 active:bg-gray-400">

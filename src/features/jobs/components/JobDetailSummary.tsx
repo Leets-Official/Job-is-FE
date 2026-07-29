@@ -1,6 +1,5 @@
 import StarIcon from '@/assets/icons/icon-star-solid.svg?react';
-import { Badge } from '@/components/common';
-import Tag from '@/components/common/Tag';
+import { Badge, Tag } from '@/components/common';
 import type { JobDetail } from '@/features/jobs/types/jobDetail';
 
 interface JobDetailSummaryProps {

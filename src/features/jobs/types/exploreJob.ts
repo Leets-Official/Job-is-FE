@@ -7,4 +7,5 @@ export interface ExploreJobSummary {
   title: string;
   companyName: string;
   employmentInfo: string;
+  isRemote: boolean;
 }

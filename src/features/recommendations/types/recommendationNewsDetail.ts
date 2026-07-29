@@ -13,8 +13,6 @@ export interface RecommendationNewsDetail {
   id: string;
   badgeLabel: string;
   title: string;
-  sourceName: string;
-  registeredDate: string;
   applicationPeriod: string;
   summary: string;
   applicationInfoTitle: string;

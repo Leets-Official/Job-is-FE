@@ -1,12 +1,11 @@
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import Button from '@/components/common/Button';
+import { Button, NoticePanel } from '@/components/common';
 import RecommendationCompletion from './RecommendationCompletion';
 import RecommendationGreeting from './RecommendationGreeting';
 import RecommendationLetterCard from './RecommendationLetterCard';
 import RecommendationLetterCarousel from './RecommendationLetterCarousel';
 import RecommendationNews from './RecommendationNews';
-import RecommendationNoticePanel from './RecommendationNoticePanel';
 import RecommendationPendingContent from './RecommendationPendingContent';
 import RecommendationStatusTabs from './RecommendationStatusTabs';
 import { RECOMMENDATION_LETTERS } from '../mocks/recommendationLetters';
@@ -263,7 +262,7 @@ export default function RecommendationFlowContent({
 
   return (
     <ScreenLayout>
-      <RecommendationNoticePanel
+      <NoticePanel
         resultIconVariant={notice.icon}
         title={notice.title}
         description={notice.description}
@@ -275,7 +274,7 @@ export default function RecommendationFlowContent({
         <Button className="w-103.5" variant="outline" onClick={() => navigate('/explore')}>
           탐색 둘러보기
         </Button>
-      </RecommendationNoticePanel>
+      </NoticePanel>
     </ScreenLayout>
   );
 }

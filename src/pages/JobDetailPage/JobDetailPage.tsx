@@ -11,10 +11,17 @@ export default function JobDetailPage() {
   const job = { ...mockJobDetail, id: id ?? mockJobDetail.id };
   const [isSkipModalOpen, setIsSkipModalOpen] = useState(false);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
+  const [intendedToApply, setIntendedToApply] = useState(false);
 
-  function handleConfirmApply() {
+  function handleConfirmApply(intendToApply: boolean) {
+    setIntendedToApply(intendToApply);
     window.open(job.source.originalUrl, '_blank', 'noopener,noreferrer');
     setIsApplyModalOpen(false);
+  }
+
+  // No submission endpoint exists yet to send skip feedback to.
+  function handleSkipSubmit(_reasons: string[], _note: string) {
+    setIsSkipModalOpen(false);
   }
 
   return (
@@ -30,6 +37,7 @@ export default function JobDetailPage() {
                 job={job}
                 onApply={() => setIsApplyModalOpen(true)}
                 onNotInterested={() => setIsSkipModalOpen(true)}
+                isIntendedToApply={intendedToApply}
               />
             </div>
           </div>
@@ -38,7 +46,7 @@ export default function JobDetailPage() {
       {isSkipModalOpen && (
         <JobDetailSkipFeedbackModal
           onClose={() => setIsSkipModalOpen(false)}
-          onSubmit={() => setIsSkipModalOpen(false)}
+          onSubmit={handleSkipSubmit}
         />
       )}
       {isApplyModalOpen && (

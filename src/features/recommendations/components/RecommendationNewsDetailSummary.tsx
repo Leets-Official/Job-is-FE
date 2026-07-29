@@ -4,7 +4,7 @@ import type { RecommendationNewsDetail } from '@/features/recommendations/types/
 interface RecommendationNewsDetailSummaryProps {
   newsDetail: Pick<
     RecommendationNewsDetail,
-    'badgeLabel' | 'title' | 'sourceName' | 'registeredDate' | 'applicationPeriod'
+    'badgeLabel' | 'title' | 'applicationPeriod' | 'source'
   >;
 }
 
@@ -19,8 +19,8 @@ export default function RecommendationNewsDetailSummary({
         </Badge>
         <h1 className="text-heading-medium font-bold text-text-primary">{newsDetail.title}</h1>
         <div className="flex flex-col gap-0.5 text-label-medium font-medium text-text-primary">
-          <p>출처 {newsDetail.sourceName}</p>
-          <p>등록 {newsDetail.registeredDate}</p>
+          <p>출처 {newsDetail.source.siteName}</p>
+          <p>등록 {newsDetail.source.registeredDate}</p>
           <p>신청기간 {newsDetail.applicationPeriod}</p>
         </div>
       </div>

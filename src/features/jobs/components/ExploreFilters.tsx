@@ -1,6 +1,5 @@
-import { MultiSelect, Select } from '@/components/common';
+import { MultiSelect, Select, Tag } from '@/components/common';
 import Search from '@/components/common/Search';
-import Tag from '@/components/common/Tag';
 import { JOB_ROLE_OPTIONS } from '@/features/jobs/constants/exploreFilters';
 
 interface ExploreFiltersProps {

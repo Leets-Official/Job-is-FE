@@ -69,15 +69,19 @@ export default function ExplorePage() {
       : []),
   ];
 
-  const visibleJobs =
-    selectedJobRoles.length === 0
-      ? mockExploreJobs
-      : mockExploreJobs.filter((job) =>
-          selectedJobRoles.some((role) => job.title.includes(JOB_ROLE_KEYWORDS[role])),
-        );
+  const hasActiveFilters = selectedJobRoles.length > 0 || isRemoteSelected || !isAlwaysOpenSelected;
+
+  const visibleJobs = mockExploreJobs.filter((job) => {
+    const matchesRole =
+      selectedJobRoles.length === 0 ||
+      selectedJobRoles.some((role) => job.title.includes(JOB_ROLE_KEYWORDS[role]));
+    const matchesRemote = !isRemoteSelected || job.isRemote;
+    const matchesAlwaysOpen = isAlwaysOpenSelected || job.dDayLabel !== '상시';
+    return matchesRole && matchesRemote && matchesAlwaysOpen;
+  });
 
   const hasResults = visibleJobs.length > 0;
-  const resultCount = selectedJobRoles.length === 0 ? TOTAL_RESULT_COUNT : visibleJobs.length;
+  const resultCount = hasActiveFilters ? visibleJobs.length : TOTAL_RESULT_COUNT;
 
   const resetFilters = () => {
     setSelectedJobRoles([]);

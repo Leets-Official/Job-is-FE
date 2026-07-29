@@ -42,7 +42,7 @@ export default function NoticePanel({
       </div>
       <div className="flex w-full flex-col items-center gap-5">{children}</div>
       {footNote && (
-        <p className="flex w-[415px] flex-col items-center justify-center rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6 text-body-small font-medium text-text-tertiary">
+        <p className="flex w-full max-w-[415px] flex-col items-center justify-center rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6 text-body-small font-medium text-text-tertiary">
           {footNote}
         </p>
       )}

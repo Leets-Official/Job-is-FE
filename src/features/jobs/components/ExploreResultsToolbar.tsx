@@ -1,5 +1,4 @@
-import { Select } from '@/components/common';
-import Tag from '@/components/common/Tag';
+import { Select, Tag } from '@/components/common';
 
 export interface ExploreActiveFilter {
   key: string;

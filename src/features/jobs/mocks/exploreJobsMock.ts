@@ -16,6 +16,7 @@ export const mockExploreJobs: ExploreJobSummary[] = [
     title: '주니어 백엔드 엔지니어',
     companyName: '[Company Name]',
     employmentInfo: '스택플로우 · 서울 강남',
+    isRemote: true,
   },
   {
     id: '2',
@@ -26,6 +27,7 @@ export const mockExploreJobs: ExploreJobSummary[] = [
     title: '프론트엔드 개발자',
     companyName: '[Company Name]',
     employmentInfo: '브라이트모드 · 서울 성수',
+    isRemote: false,
   },
   {
     id: '3',
@@ -36,6 +38,7 @@ export const mockExploreJobs: ExploreJobSummary[] = [
     title: 'iOS 개발자',
     companyName: '[Company Name]',
     employmentInfo: '모바일 팩토리 · 서울 강남',
+    isRemote: false,
   },
   {
     id: '4',
@@ -46,6 +49,7 @@ export const mockExploreJobs: ExploreJobSummary[] = [
     title: 'QA 엔지니어',
     companyName: '[Company Name]',
     employmentInfo: '테스트 웨이브 · 부산',
+    isRemote: false,
   },
   {
     id: '5',
@@ -56,6 +60,7 @@ export const mockExploreJobs: ExploreJobSummary[] = [
     title: '머신러닝 엔지니어',
     companyName: '[Company Name]',
     employmentInfo: '딥사이트 · 서울 역삼',
+    isRemote: true,
   },
   {
     id: '6',
@@ -66,5 +71,6 @@ export const mockExploreJobs: ExploreJobSummary[] = [
     title: '프로덕트 매니저',
     companyName: '[Company Name]',
     employmentInfo: '알파스퀘어 · 서울 성동',
+    isRemote: false,
   },
 ];

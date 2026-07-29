@@ -1,11 +1,13 @@
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import { Button } from '@/components/common';
+import { cn } from '@/utils/cn';
 
 interface JobDetailApplyPanelProps {
   onApply?: () => void;
   onIntendToApply?: () => void;
   onSave?: () => void;
   onNotInterested?: () => void;
+  isIntendedToApply?: boolean;
 }
 
 export default function JobDetailApplyPanel({
@@ -13,6 +15,7 @@ export default function JobDetailApplyPanel({
   onIntendToApply,
   onSave,
   onNotInterested,
+  isIntendedToApply,
 }: JobDetailApplyPanelProps) {
   return (
     <div className="flex w-full flex-col gap-2">
@@ -21,7 +24,14 @@ export default function JobDetailApplyPanel({
         <ArrowRightIcon className="size-5" />
       </Button>
       <div className="flex w-full gap-2">
-        <Button variant="outline" className="w-[110px] shrink-0" onClick={onIntendToApply}>
+        <Button
+          variant="outline"
+          className={cn(
+            'w-[110px] shrink-0',
+            isIntendedToApply && 'border-transparent bg-primary-400 hover:bg-primary-400',
+          )}
+          onClick={onIntendToApply}
+        >
           지원 의향
         </Button>
         <Button variant="outline" className="w-[110px] shrink-0" onClick={onSave}>

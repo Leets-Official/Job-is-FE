@@ -128,7 +128,7 @@ export const router = createBrowserRouter([
       {
         path: '/jobs/:id/expired',
         element: <JobDetailExpiredPage />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       { path: '*', element: <NotFoundPage /> },
     ],

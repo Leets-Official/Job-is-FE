@@ -17,6 +17,7 @@ export default function Search({
   onSearchSubmit,
   placeholder = '선택해주세요.',
   name,
+  disabled,
   ...props
 }: SearchProps) {
   const generatedId = useId();
@@ -43,13 +44,15 @@ export default function Search({
             type="search"
             placeholder={placeholder}
             aria-describedby={helperText ? `${inputId}-helper-text` : undefined}
-            className="h-full w-full flex-1 bg-transparent text-body-large text-gray-900 outline-none placeholder:text-gray-600"
+            disabled={disabled}
+            className="h-full w-full flex-1 bg-transparent text-body-large text-gray-900 outline-none placeholder:text-gray-600 disabled:cursor-not-allowed disabled:text-gray-400"
             {...props}
           />
           <button
             type="submit"
             aria-label="검색"
-            className="flex shrink-0 items-center justify-center text-gray-700"
+            disabled={disabled}
+            className="flex shrink-0 items-center justify-center text-gray-700 disabled:cursor-not-allowed disabled:text-gray-400"
           >
             <SearchIcon className="size-6" />
           </button>

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
+import MoreVerticalIcon from '@/assets/icons/icon-more-vertical.svg?react';
 import JobCard from '@/features/jobs/components/JobCard';
 import type { ExploreJobSummary } from '@/features/jobs/types/exploreJob';
 
@@ -26,7 +27,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
 
   return (
     <div ref={containerRef} className="relative w-full">
-      <Link to={`/jobs/${job.id}`} className="w-full">
+      <Link to={`/jobs/${job.id}`} className="block w-full">
         <JobCard
           className="w-full"
           thumbnailUrl={job.thumbnailUrl}
@@ -36,13 +37,16 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
           title={job.title}
           companyName={job.companyName}
           employmentInfo={job.employmentInfo}
-          onMoreClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setIsMenuOpen((prev) => !prev);
-          }}
         />
       </Link>
+      <button
+        type="button"
+        onClick={() => setIsMenuOpen((prev) => !prev)}
+        aria-label="더보기"
+        className="absolute top-[209px] right-2.5 flex size-6 items-center justify-center"
+      >
+        <MoreVerticalIcon className="size-6" />
+      </button>
       {isMenuOpen && (
         <div className="absolute top-9 right-2.5 z-10 flex w-36 flex-col gap-3 rounded-sm border border-gray-200 bg-white p-4 shadow-md">
           <button
