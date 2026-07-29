@@ -28,7 +28,12 @@ export default function Modal({
   ...props
 }: ModalProps) {
   const dialogRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
   const titleId = useId();
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     const node = dialogRef.current;
@@ -37,7 +42,7 @@ export default function Modal({
 
     function handleKeyDown(event: KeyboardEvent) {
       if (event.key === 'Escape') {
-        onClose?.();
+        onCloseRef.current?.();
         return;
       }
       if (event.key !== 'Tab' || !node) return;
@@ -59,14 +64,16 @@ export default function Modal({
       document.removeEventListener('keydown', handleKeyDown);
       previouslyFocused?.focus();
     };
-  }, [onClose]);
+  }, []);
 
   return (
     <div
       ref={(node) => {
         dialogRef.current = node;
-        if (typeof ref === 'function') ref(node);
-        else if (ref) ref.current = node;
+        if (typeof ref === 'function') {
+          return ref(node) ?? undefined;
+        }
+        if (ref) ref.current = node;
       }}
       role="dialog"
       aria-modal="true"
