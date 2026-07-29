@@ -20,6 +20,8 @@ import ProfilePage from '@/pages/ProfilePage/ProfilePage';
 import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
 import SavedJobsPage from '@/pages/SavedJobsPage/SavedJobsPage';
 import SettingsPage from '@/pages/SettingsPage/SettingsPage';
+import SystemErrorPage from '@/pages/SystemErrorPage/SystemErrorPage';
+import UnsubscribePage from '@/pages/UnsubscribePage/UnsubscribePage';
 
 const MAIN_NAVIGATION_TABS = [
   { label: '오늘의 추천', path: '/recommendations' },
@@ -47,6 +49,9 @@ export const router = createBrowserRouter([
       { path: '/policy', element: <PolicyPage /> },
       { path: '/oauth/callback', element: <CallbackPage /> },
       { path: '/playground', element: <PlaygroundPage /> },
+      // NOTE: 임시 미리보기 라우트, 실제 트리거(에러 바운더리 등) 연결 후 삭제 예정
+      { path: '/system-error', element: <SystemErrorPage /> },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
   {
@@ -168,7 +173,11 @@ export const router = createBrowserRouter([
         element: <JobDetailPage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
-      { path: '*', element: <NotFoundPage /> },
+      {
+        path: '/unsubscribe',
+        element: <UnsubscribePage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
     ],
   },
 ]);
