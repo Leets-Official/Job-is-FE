@@ -21,6 +21,7 @@ export default function Tag({
   label,
   selected = false,
   type = 'button',
+  'aria-pressed': ariaPressed,
   ...props
 }: TagProps) {
   const content = (
@@ -46,7 +47,7 @@ export default function Tag({
         className,
       )}
       {...props}
-      aria-pressed={variant === 'select' ? selected : undefined}
+      aria-pressed={ariaPressed ?? (variant === 'select' ? selected : undefined)}
     >
       {content}
     </button>
