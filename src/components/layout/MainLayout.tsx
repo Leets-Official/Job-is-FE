@@ -61,6 +61,7 @@ export default function MainLayout() {
             if (path) navigate(path);
           }}
           profileImageUrl={headerHandle.profileImageUrl}
+          onProfileClick={() => navigate('/profile')}
           className={isRecommendationIntroPreview ? 'recommendation-intro-header-enter' : undefined}
         />
       ) : (
