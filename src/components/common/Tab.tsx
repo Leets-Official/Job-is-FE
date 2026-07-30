@@ -3,7 +3,7 @@ import { type ComponentPropsWithRef } from 'react';
 import { cn } from '@/utils/cn';
 
 const tabVariants = cva(
-  'flex items-center justify-center text-[18px] leading-normal font-bold text-text-primary',
+  'flex cursor-pointer items-center justify-center text-[18px] leading-normal font-bold text-text-primary transition-[color,border-color] duration-150 motion-reduce:transition-none',
   {
     variants: {
       variant: {
@@ -18,6 +18,7 @@ const tabVariants = cva(
     compoundVariants: [
       { variant: 'filled', active: true, className: 'bg-primary-400 text-white' },
       { variant: 'underline', active: true, className: 'border-primary-400' },
+      { variant: 'underline', active: false, className: 'text-text-tertiary' },
     ],
     defaultVariants: {
       variant: 'filled',

@@ -1,4 +1,6 @@
 import { type ReactNode } from 'react';
+import { Link, useNavigate } from 'react-router';
+import LogoIcon from '@/assets/icons/logo.svg?react';
 import Button from '@/components/common/Button';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
 import Tab from '@/components/common/Tab';
@@ -24,6 +26,7 @@ type HeaderProps =
       activeIndex: number;
       onTabChange?: (index: number) => void;
       profileImageUrl?: string;
+      onProfileClick?: () => void;
     })
   | (HeaderBaseProps & {
       variant: 'adm';
@@ -47,13 +50,29 @@ function HeaderShell({ className, children }: { className?: string; children: Re
   );
 }
 
-function HeaderLogo({ children }: { children: ReactNode }) {
+function HeaderTabShell({ className, children }: { className?: string; children: ReactNode }) {
   return (
-    <div className="flex h-10 shrink-0 items-center">
-      <p className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
-        {children}
-      </p>
-    </div>
+    <header
+      className={cn(
+        'sticky top-0 z-10 flex w-full items-center justify-center bg-white px-3 pt-3 pb-4',
+        className,
+      )}
+    >
+      <div className="flex h-15 w-full items-center justify-center">{children}</div>
+    </header>
+  );
+}
+
+function HeaderLogo({ suffix }: { suffix?: ReactNode }) {
+  return (
+    <Link to="/" className="flex h-15 shrink-0 items-center gap-1">
+      <LogoIcon className="h-15 w-auto" role="img" aria-label="Job.is" />
+      {suffix && (
+        <span className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
+          {suffix}
+        </span>
+      )}
+    </Link>
   );
 }
 
@@ -61,13 +80,15 @@ function HeaderTabNav({
   tabs,
   activeIndex,
   onTabChange,
+  className,
 }: {
   tabs: HeaderTabItem[];
   activeIndex: number;
   onTabChange?: (index: number) => void;
+  className?: string;
 }) {
   return (
-    <nav className="flex items-center gap-10">
+    <nav className={cn('flex items-center gap-10', className)}>
       {tabs.map((tab, index) => (
         <Tab
           key={tab.label}
@@ -83,11 +104,12 @@ function HeaderTabNav({
 
 export default function Header(props: HeaderProps) {
   const { className } = props;
+  const navigate = useNavigate();
 
   if (props.variant === 'carousel') {
     return (
       <HeaderShell className={className}>
-        <HeaderLogo>Job.is</HeaderLogo>
+        <HeaderLogo />
         <CarouselIndicator variant="dot" total={props.totalSteps} activeIndex={props.activeIndex} />
         <Button variant="outline" className="h-12.5 w-24" onClick={props.onExit}>
           나가기
@@ -98,30 +120,38 @@ export default function Header(props: HeaderProps) {
 
   if (props.variant === 'tab') {
     return (
-      <HeaderShell className={className}>
-        <HeaderLogo>Job.is</HeaderLogo>
+      <HeaderTabShell className={className}>
+        <HeaderLogo />
         <HeaderTabNav
           tabs={props.tabs}
           activeIndex={props.activeIndex}
           onTabChange={props.onTabChange}
+          className="h-10 w-251 shrink-0 px-12.5"
         />
-        {props.profileImageUrl ? (
-          <img
-            src={props.profileImageUrl}
-            alt=""
-            className="size-9 shrink-0 rounded-full object-cover"
-          />
-        ) : (
-          <span className="size-9 shrink-0 rounded-full bg-gray-100" />
-        )}
-      </HeaderShell>
+        <button
+          type="button"
+          className="mr-2 size-9 shrink-0 cursor-pointer rounded-full"
+          onClick={props.onProfileClick}
+          aria-label="프로필 설정 열기"
+        >
+          {props.profileImageUrl ? (
+            <img
+              src={props.profileImageUrl}
+              alt=""
+              className="size-full rounded-full object-cover"
+            />
+          ) : (
+            <span className="block size-full rounded-full bg-gray-100" />
+          )}
+        </button>
+      </HeaderTabShell>
     );
   }
 
   if (props.variant === 'adm') {
     return (
       <HeaderShell className={className}>
-        <HeaderLogo>Job.is ADM</HeaderLogo>
+        <HeaderLogo suffix="ADM" />
         <HeaderTabNav
           tabs={props.tabs}
           activeIndex={props.activeIndex}
@@ -134,7 +164,7 @@ export default function Header(props: HeaderProps) {
           <button
             type="button"
             onClick={props.onLogout}
-            className="text-label-medium font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
+            className="cursor-pointer text-label-medium font-medium whitespace-nowrap text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
           >
             로그아웃
           </button>
@@ -145,8 +175,10 @@ export default function Header(props: HeaderProps) {
 
   return (
     <HeaderShell className={className}>
-      <HeaderLogo>Job.is</HeaderLogo>
-      <Button className="h-12.5">시작하기</Button>
+      <HeaderLogo />
+      <Button className="h-12.5" onClick={() => navigate('/login')}>
+        시작하기
+      </Button>
     </HeaderShell>
   );
 }

@@ -1,0 +1,50 @@
+import Button from '@/components/common/Button';
+import Modal from '@/components/common/Modal';
+
+interface DeleteDocumentModalProps {
+  documentLabel: string;
+  onCancel: () => void;
+  onConfirm: () => void;
+}
+
+export default function DeleteDocumentModal({
+  documentLabel,
+  onCancel,
+  onConfirm,
+}: DeleteDocumentModalProps) {
+  return (
+    <div
+      className="fixed inset-0 z-30 flex items-center justify-center bg-black-alpha-40 px-5"
+      role="presentation"
+      onMouseDown={(event) => {
+        if (event.target === event.currentTarget) onCancel();
+      }}
+    >
+      <Modal
+        role="dialog"
+        aria-modal="true"
+        aria-describedby="delete-document-description"
+        title={`${documentLabel}를 삭제할까요?`}
+        onClose={onCancel}
+        className="min-h-0 max-w-120 shadow-xl"
+        footer={
+          <>
+            <Button variant="outline" className="h-12 border-gray-300" onClick={onCancel}>
+              취소
+            </Button>
+            <Button className="h-12 bg-gray-1000 text-white hover:bg-gray-800" onClick={onConfirm}>
+              삭제
+            </Button>
+          </>
+        }
+      >
+        <p
+          id="delete-document-description"
+          className="text-body-medium font-medium text-text-secondary"
+        >
+          삭제하면 즉시 파기되며 복구할 수 없어요.
+        </p>
+      </Modal>
+    </div>
+  );
+}

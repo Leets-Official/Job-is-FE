@@ -63,7 +63,7 @@ export default function LandingHero({
         <button
           type="button"
           onClick={onLogin}
-          className="text-label-large font-medium text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
+          className="cursor-pointer text-label-large font-medium text-text-tertiary underline decoration-solid decoration-from-font transition-colors [text-underline-position:from-font] hover:text-text-secondary"
         >
           이미 계정이 있어요 → 로그인
         </button>
