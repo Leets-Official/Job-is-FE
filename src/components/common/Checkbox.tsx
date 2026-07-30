@@ -29,7 +29,7 @@ export default function Checkbox({ className, id, label, disabled, ...props }: C
         />
         <CheckIcon
           className={cn(
-            'pointer-events-none absolute inset-0 m-auto size-4 scale-75 text-white opacity-0 transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none',
+            'pointer-events-none absolute inset-0 m-auto size-4 scale-75 text-text-primary opacity-0 transition-[opacity,transform] duration-150 ease-out motion-reduce:transition-none',
             'peer-checked:scale-100 peer-checked:opacity-100 peer-disabled:text-gray-400',
           )}
         />

@@ -7,6 +7,7 @@ import AccountRecoveryPage from '@/pages/AccountRecoveryPage/AccountRecoveryPage
 import AccountWithdrawalPage from '@/pages/AccountWithdrawalPage/AccountWithdrawalPage';
 import CallbackPage from '@/pages/CallbackPage/CallbackPage';
 import ExplorePage from '@/pages/ExplorePage/ExplorePage';
+import JobDetailExpiredPage from '@/pages/JobDetailExpiredPage/JobDetailExpiredPage';
 import JobDetailPage from '@/pages/JobDetailPage/JobDetailPage';
 import LandingPage from '@/pages/LandingPage/LandingPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
@@ -17,6 +18,7 @@ import PolicyPage from '@/pages/PolicyPage/PolicyPage';
 import ProfileAptitudeTestPage from '@/pages/ProfileAptitudeTestPage/ProfileAptitudeTestPage';
 import ProfileDocumentsPage from '@/pages/ProfileDocumentsPage/ProfileDocumentsPage';
 import ProfilePage from '@/pages/ProfilePage/ProfilePage';
+import RecommendationNewsDetailPage from '@/pages/RecommendationNewsDetailPage/RecommendationNewsDetailPage';
 import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
 import SavedJobsPage from '@/pages/SavedJobsPage/SavedJobsPage';
 import SettingsPage from '@/pages/SettingsPage/SettingsPage';
@@ -82,6 +84,11 @@ export const router = createBrowserRouter([
       {
         path: '/recommendations/news',
         element: <RecommendationsPage screen="news" />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
+      },
+      {
+        path: '/recommendations/news/:id',
+        element: <RecommendationNewsDetailPage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
@@ -174,10 +181,16 @@ export const router = createBrowserRouter([
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
+        path: '/jobs/:id/expired',
+        element: <JobDetailExpiredPage />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
+      },
+      {
         path: '/unsubscribe',
         element: <UnsubscribePage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
       },
+      { path: '*', element: <NotFoundPage /> },
     ],
   },
 ]);

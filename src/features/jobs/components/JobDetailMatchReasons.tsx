@@ -11,8 +11,8 @@ export default function JobDetailMatchReasons({ matchScore, reasons }: JobDetail
   return (
     <div className="flex w-full flex-col gap-3">
       <div className="flex items-center gap-2">
-        <p className="text-heading-xxsmall font-bold text-text-primary">왜 추천했나요</p>
-        <Badge type="solid" color="primary">
+        <p className="text-label-small font-medium text-text-tertiary">왜 추천했나요</p>
+        <Badge type="outline" color="primary">
           적합도 {matchScore}%
         </Badge>
       </div>

@@ -1,3 +1,4 @@
+import { ListCard } from '@/components/common';
 import type { JobDetailGlanceItem } from '@/features/jobs/types/jobDetail';
 
 interface JobDetailAtAGlanceProps {
@@ -12,13 +13,12 @@ export default function JobDetailAtAGlance({ items }: JobDetailAtAGlanceProps) {
       </p>
       <div className="grid grid-cols-3 gap-2">
         {items.map((item) => (
-          <div
+          <ListCard
             key={item.label}
-            className="flex flex-col gap-1 rounded-sm border border-gray-200 bg-gray-50 p-4"
-          >
-            <span className="text-body-small font-medium text-text-tertiary">{item.label}</span>
-            <span className="text-body-large font-bold text-text-primary">{item.value}</span>
-          </div>
+            heading={item.value}
+            caption={item.label}
+            captionPosition="top"
+          />
         ))}
       </div>
     </div>

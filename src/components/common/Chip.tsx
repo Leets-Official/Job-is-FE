@@ -24,7 +24,7 @@ export default function Chip({
         disabled
           ? 'cursor-not-allowed border-gray-200 bg-gray-100 text-gray-400'
           : selected
-            ? 'border-transparent bg-primary-500 text-white shadow-sm'
+            ? 'border-transparent bg-primary-600 text-text-primary shadow-sm'
             : 'border-gray-200 bg-white text-gray-900 hover:border-gray-300 hover:bg-gray-50',
         className,
       )}

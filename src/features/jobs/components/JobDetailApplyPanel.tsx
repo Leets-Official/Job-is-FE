@@ -1,23 +1,22 @@
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import { Button } from '@/components/common';
+import { cn } from '@/utils/cn';
 
 interface JobDetailApplyPanelProps {
   onApply?: () => void;
   onIntendToApply?: () => void;
   onSave?: () => void;
+  onNotInterested?: () => void;
+  isIntendedToApply?: boolean;
 }
 
 export default function JobDetailApplyPanel({
   onApply,
   onIntendToApply,
   onSave,
+  onNotInterested,
+  isIntendedToApply,
 }: JobDetailApplyPanelProps) {
-  const secondaryActions = [
-    { label: '지원 의향', onClick: onIntendToApply },
-    { label: '저장', onClick: onSave },
-    { label: '관심없음', onClick: undefined },
-  ];
-
   return (
     <div className="flex w-full flex-col gap-2">
       <Button className="w-full" onClick={onApply} disabled={!onApply}>
@@ -25,17 +24,26 @@ export default function JobDetailApplyPanel({
         <ArrowRightIcon className="size-5" />
       </Button>
       <div className="flex w-full gap-2">
-        {secondaryActions.map(({ label, onClick }) => (
-          <Button
-            key={label}
-            variant="outline"
-            className="flex-1 px-2"
-            onClick={onClick}
-            disabled={!onClick}
-          >
-            {label}
-          </Button>
-        ))}
+        <Button
+          variant="outline"
+          className={cn(
+            'w-[110px] shrink-0',
+            isIntendedToApply && 'border-transparent bg-primary-400 hover:bg-primary-400',
+          )}
+          onClick={onIntendToApply}
+        >
+          지원 의향
+        </Button>
+        <Button variant="outline" className="w-[110px] shrink-0" onClick={onSave}>
+          저장
+        </Button>
+        <Button
+          className="w-[110px] shrink-0 bg-gray-400 hover:bg-gray-400 active:bg-gray-400"
+          onClick={onNotInterested}
+          disabled={!onNotInterested}
+        >
+          관심없음
+        </Button>
       </div>
     </div>
   );

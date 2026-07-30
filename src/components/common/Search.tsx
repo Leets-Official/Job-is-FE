@@ -1,6 +1,6 @@
 import { useId, type ComponentPropsWithRef, type FormEvent } from 'react';
 import SearchIcon from '@/assets/icons/icon-search.svg?react';
-import TextInput from '@/components/common/TextInput';
+import FormField from '@/components/common/FormField';
 import { cn } from '@/utils/cn';
 
 type SearchProps = Omit<ComponentPropsWithRef<'input'>, 'onSubmit'> & {
@@ -17,6 +17,7 @@ export default function Search({
   onSearchSubmit,
   placeholder = '선택해주세요.',
   name,
+  disabled,
   ...props
 }: SearchProps) {
   const generatedId = useId();
@@ -31,24 +32,32 @@ export default function Search({
   };
 
   return (
-    <form onSubmit={handleSubmit} className={cn('relative', className)}>
-      <TextInput
-        id={inputId}
-        name={inputName}
-        type="search"
-        label={label}
-        helperText={helperText}
-        placeholder={placeholder}
-        className="rounded-xl border border-gray-200 bg-white px-4 pr-12 text-body-large text-gray-900 outline-none transition focus:border-primary-500"
-        {...props}
-      />
-      <button
-        type="submit"
-        aria-label="검색"
-        className="absolute right-2 top-[calc(50%+1rem)] inline-flex h-10 w-10 items-center justify-center rounded-full bg-primary-500 text-white transition hover:bg-primary-600"
-      >
-        <SearchIcon className="size-4" />
-      </button>
+    <form
+      onSubmit={handleSubmit}
+      className={cn('flex shrink-0 flex-col items-start gap-2', className)}
+    >
+      <FormField id={inputId} label={label} helperText={helperText} className="w-full">
+        <div className="flex h-14 w-full items-center gap-2 rounded-sm border border-gray-700 bg-white px-4">
+          <input
+            id={inputId}
+            name={inputName}
+            type="search"
+            placeholder={placeholder}
+            aria-describedby={helperText ? `${inputId}-helper-text` : undefined}
+            disabled={disabled}
+            className="h-full w-full flex-1 bg-transparent text-body-large text-gray-900 outline-none placeholder:text-gray-600 disabled:cursor-not-allowed disabled:text-gray-400"
+            {...props}
+          />
+          <button
+            type="submit"
+            aria-label="검색"
+            disabled={disabled}
+            className="flex shrink-0 items-center justify-center text-gray-700 disabled:cursor-not-allowed disabled:text-gray-400"
+          >
+            <SearchIcon className="size-6" />
+          </button>
+        </div>
+      </FormField>
     </form>
   );
 }
