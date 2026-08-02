@@ -1,38 +1,57 @@
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router';
+import { Navigate, useNavigate, useOutletContext } from 'react-router';
+import { getJobCategories, getRegions } from '@/api/jobs';
+import {
+  completeOnboarding,
+  getProfileDraft,
+  getProfileFiles,
+  saveProfileDraft,
+  type ProfileDraftResponse,
+} from '@/api/profile';
 import type { MainLayoutOutletContext } from '@/components/layout/MainLayout';
+import { setOnboardingCompleted, useAuthStore } from '@/features/login/store/useAuthStore';
 import OnboardingConfirmStep from '@/features/onboarding/components/OnboardingConfirmStep';
 import OnboardingProfileStep from '@/features/onboarding/components/OnboardingProfileStep';
-import OnboardingQuizStep from '@/features/onboarding/components/OnboardingQuizStep';
 import { cn } from '@/utils/cn';
 
-type OnboardingStep = 'profile' | 'quiz' | 'confirm';
+type OnboardingStep = 'profile' | 'confirm';
 type StepTransitionDirection = 'forward' | 'backward';
 
-interface OnboardingDraft {
-  region: string;
-  careerLevel: string;
-  quizAnswers: string[];
-}
+function findMetadataByName<T extends { name: string }>(items: T[], value: string) {
+  const normalizedValue = value.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase();
 
-const initialDraft: OnboardingDraft = {
-  region: '서울 강남',
-  careerLevel: '신입',
-  quizAnswers: [],
-};
+  return items.find((item) => {
+    const normalizedName = item.name.replace(/[^\p{L}\p{N}]/gu, '').toLowerCase();
+    return normalizedName === normalizedValue || normalizedName.includes(normalizedValue);
+  });
+}
 
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<OnboardingStep>('profile');
-  const [draft, setDraft] = useState<OnboardingDraft>(initialDraft);
-  const [quizIndex, setQuizIndex] = useState(0);
+  const [draft, setDraft] = useState<ProfileDraftResponse | null>(null);
+  const [resumeName, setResumeName] = useState<string>();
+  const [saveError, setSaveError] = useState<string>();
+  const [isSaving, setIsSaving] = useState(false);
+  const [completeError, setCompleteError] = useState<string>();
+  const [isCompleting, setIsCompleting] = useState(false);
   const [transitionDirection, setTransitionDirection] =
     useState<StepTransitionDirection>('forward');
   const [shouldAnimateStep, setShouldAnimateStep] = useState(false);
   const { setCarouselActiveIndex } = useOutletContext<MainLayoutOutletContext>();
+  const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
+  const { data: jobCategories = [] } = useQuery({
+    queryKey: ['jobCategories'],
+    queryFn: getJobCategories,
+  });
+  const { data: regions = [] } = useQuery({
+    queryKey: ['regions'],
+    queryFn: getRegions,
+  });
 
   useEffect(() => {
-    const carouselActiveIndex = { profile: 0, quiz: 1, confirm: 2 }[step];
+    const carouselActiveIndex = { profile: 0, confirm: 1 }[step];
     setCarouselActiveIndex(carouselActiveIndex);
   }, [setCarouselActiveIndex, step]);
 
@@ -42,60 +61,91 @@ export default function OnboardingPage() {
     setStep(nextStep);
   };
 
+  const handleOnboardingComplete = async () => {
+    setCompleteError(undefined);
+    setIsCompleting(true);
+
+    try {
+      await saveProfileDraft({ onboardingStep: 'REVIEW' });
+      await completeOnboarding();
+      setOnboardingCompleted(true);
+      navigate('/recommendations', { replace: true });
+    } catch {
+      setCompleteError('온보딩 완료 처리에 실패했어요. 잠시 후 다시 시도해주세요.');
+      setIsCompleting(false);
+    }
+  };
+
+  if (onboardingCompleted) {
+    return <Navigate to="/recommendations" replace />;
+  }
+
   let stepContent;
 
   if (step === 'profile') {
     stepContent = (
       <OnboardingProfileStep
-        region={draft.region}
-        careerLevel={draft.careerLevel}
-        onRegionChange={(region) => setDraft((previous) => ({ ...previous, region }))}
-        onCareerLevelChange={(careerLevel) =>
-          setDraft((previous) => ({ ...previous, careerLevel }))
-        }
-        onNext={() => changeStep('quiz', 'forward')}
+        onDocumentsClick={() => navigate('/profile/documents?from=onboarding')}
+        onAptitudeTestClick={() => navigate('/profile/aptitude-test?source=ONBOARDING')}
+        submitError={saveError}
+        isSubmitting={isSaving}
+        onNext={async ({
+          interests,
+          regions: selectedRegions,
+          career,
+          preferenceNotes,
+          techStacks,
+        }) => {
+          setSaveError(undefined);
+          const selectedCategories = interests
+            .map((interest) => findMetadataByName(jobCategories, interest))
+            .filter((category) => category !== undefined);
+          const selectedRegion = findMetadataByName(regions, selectedRegions[0] ?? '');
+          const careerLevel = career as ProfileDraftResponse['careerLevel'];
+
+          // TODO: 직무·지역·경력 메타데이터 선택 상태를 ID로 보관한 뒤, 임시저장 전 필수값 검증을 복구한다.
+          setIsSaving(true);
+
+          try {
+            await saveProfileDraft({
+              onboardingStep: 'PROFILE',
+              jobCategoryIds: selectedCategories.map((category) => category.id),
+              primaryJobCategoryId: selectedCategories[0]?.id,
+              regionId: selectedRegion?.id,
+              careerLevel: careerLevel || undefined,
+              preferenceNotes,
+              excludeKeywords: [],
+              techStacks,
+            });
+
+            const [savedDraft, profileFiles] = await Promise.all([
+              getProfileDraft(),
+              getProfileFiles().catch(() => []),
+            ]);
+            setDraft(savedDraft);
+            setResumeName(profileFiles.find((file) => file.category === 'RESUME')?.fileName);
+            changeStep('confirm', 'forward');
+          } catch {
+            setSaveError('임시저장에 실패했어요. 잠시 후 다시 시도해주세요.');
+          } finally {
+            setIsSaving(false);
+          }
+        }}
       />
     );
-  } else if (step === 'quiz') {
+  } else if (draft) {
     stepContent = (
-      <OnboardingQuizStep
-        currentIndex={quizIndex}
-        selectedOption={draft.quizAnswers[quizIndex]}
-        onBack={() => {
-          if (quizIndex === 0) {
-            changeStep('profile', 'backward');
-            return;
-          }
-
-          setQuizIndex((previous) => previous - 1);
-        }}
-        onSelect={(answer, isLastQuestion) => {
-          setDraft((previous) => {
-            const quizAnswers = [...previous.quizAnswers];
-            quizAnswers[quizIndex] = answer;
-            return { ...previous, quizAnswers };
-          });
-
-          if (isLastQuestion) {
-            changeStep('confirm', 'forward');
-            return;
-          }
-
-          setQuizIndex((previous) => previous + 1);
-        }}
-        onSkip={() => changeStep('confirm', 'forward')}
+      <OnboardingConfirmStep
+        draft={draft}
+        resumeName={resumeName}
+        onBack={() => changeStep('profile', 'backward')}
+        onStart={handleOnboardingComplete}
+        isStarting={isCompleting}
+        startError={completeError}
       />
     );
   } else {
-    stepContent = (
-      <OnboardingConfirmStep
-        region={draft.region}
-        careerLevel={draft.careerLevel}
-        onBack={() => changeStep('quiz', 'backward')}
-        onEdit={() => changeStep('profile', 'backward')}
-        onStart={() => navigate('/recommendations')}
-      />
-    );
+    stepContent = null;
   }
 
   return (
