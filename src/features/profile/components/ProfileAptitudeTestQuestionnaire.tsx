@@ -1,22 +1,21 @@
+import type { QuizQuestion } from '@/api/quiz';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
-import type {
-  AptitudeChoiceValue,
-  AptitudeQuestion,
-} from '@/features/profile/profileAptitudeQuestions';
 import { cn } from '@/utils/cn';
 
 export default function ProfileAptitudeTestQuestionnaire({
   questions,
   currentIndex,
   selectedAnswer,
+  isSavingAnswer = false,
   onSelect,
   onPrevious,
   onSkip,
 }: {
-  questions: AptitudeQuestion[];
+  questions: QuizQuestion[];
   currentIndex: number;
-  selectedAnswer?: AptitudeChoiceValue;
-  onSelect: (answer: AptitudeChoiceValue) => void;
+  selectedAnswer?: number | null;
+  isSavingAnswer?: boolean;
+  onSelect: (answer: number) => void;
   onPrevious: () => void;
   onSkip: () => void;
 }) {
@@ -39,23 +38,24 @@ export default function ProfileAptitudeTestQuestionnaire({
         </p>
       </div>
 
-      <h1 className="max-w-157 text-center text-heading-xlarge leading-[1.2] whitespace-pre-line text-text-primary">
-        {question.prompt}
+      <h1 className="max-w-157 break-keep text-center text-heading-xlarge leading-[1.2] whitespace-pre-line text-text-primary">
+        {question.question}
       </h1>
 
       <div className="flex w-full flex-col items-center gap-5">
-        {question.options.map((option) => (
+        {question.choices.map((choice) => (
           <button
-            key={option.value}
+            key={choice.choiceValue}
             type="button"
-            onClick={() => onSelect(option.value)}
+            onClick={() => onSelect(choice.choiceValue)}
+            disabled={isSavingAnswer}
             className={cn(
-              'min-h-17.5 w-full max-w-144 cursor-pointer rounded-xs border border-gray-400 bg-white px-6 text-label-medium font-medium text-text-secondary transition-colors hover:border-primary-400 hover:bg-primary-50',
-              selectedAnswer === option.value && 'border-primary-400 bg-primary-50',
+              'min-h-17.5 w-full max-w-144 cursor-pointer rounded-xs border border-gray-400 bg-white px-6 text-label-medium font-medium text-text-secondary transition-colors hover:border-primary-400 hover:bg-primary-50 disabled:cursor-wait',
+              selectedAnswer === choice.choiceValue && 'border-primary-400 bg-primary-50',
             )}
-            aria-pressed={selectedAnswer === option.value}
+            aria-pressed={selectedAnswer === choice.choiceValue}
           >
-            {option.label}
+            {choice.content}
           </button>
         ))}
       </div>
@@ -80,11 +80,11 @@ export default function ProfileAptitudeTestQuestionnaire({
             />
           ))}
         </div>
-
         <button
           type="button"
           onClick={onSkip}
-          className="cursor-pointer text-label-large font-medium text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font] hover:text-text-secondary"
+          disabled={isSavingAnswer}
+          className="cursor-pointer text-label-large font-medium text-text-tertiary underline decoration-solid decoration-from-font [text-underline-position:from-font] hover:text-text-secondary disabled:cursor-wait"
         >
           건너뛰기
         </button>

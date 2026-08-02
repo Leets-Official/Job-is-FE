@@ -7,9 +7,13 @@ import Modal from '@/components/common/Modal';
 export default function WithdrawalConfirmModal({
   onClose,
   onConfirm,
+  isSubmitting,
+  errorMessage,
 }: {
   onClose: () => void;
-  onConfirm: () => void;
+  onConfirm: () => void | Promise<void>;
+  isSubmitting: boolean;
+  errorMessage?: string;
 }) {
   const agreementId = useId();
   const modalRef = useRef<HTMLDivElement>(null);
@@ -34,7 +38,7 @@ export default function WithdrawalConfirmModal({
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        onClose();
+        if (!isSubmitting) onClose();
         return;
       }
 
@@ -75,13 +79,13 @@ export default function WithdrawalConfirmModal({
       document.removeEventListener('keydown', handleKeyDown);
       previouslyFocusedElement?.focus();
     };
-  }, [onClose]);
+  }, [isSubmitting, onClose]);
 
   return createPortal(
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center bg-black/60 px-5 py-12"
       onMouseDown={(event) => {
-        if (event.target === event.currentTarget) onClose();
+        if (!isSubmitting && event.target === event.currentTarget) onClose();
       }}
     >
       <Modal
@@ -90,15 +94,15 @@ export default function WithdrawalConfirmModal({
         aria-modal="true"
         aria-label="회원 탈퇴 확인"
         title="정말 탈퇴할까요?"
-        onClose={onClose}
+        onClose={isSubmitting ? undefined : onClose}
         className="max-w-190"
         footer={
           <>
-            <Button variant="outline" onClick={onClose}>
+            <Button variant="outline" onClick={onClose} disabled={isSubmitting}>
               취소
             </Button>
-            <Button disabled={!isAgreed} onClick={onConfirm}>
-              탈퇴하기
+            <Button disabled={!isAgreed || isSubmitting} onClick={() => void onConfirm()}>
+              {isSubmitting ? '탈퇴 중…' : '탈퇴하기'}
             </Button>
           </>
         }
@@ -114,6 +118,11 @@ export default function WithdrawalConfirmModal({
           onChange={(event) => setIsAgreed(event.target.checked)}
           label="위 내용을 확인했고, 탈퇴에 동의해요."
         />
+        {errorMessage && (
+          <p className="text-label-small font-medium text-danger-500" role="alert">
+            {errorMessage}
+          </p>
+        )}
       </Modal>
     </div>,
     document.body,

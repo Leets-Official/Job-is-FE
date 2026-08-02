@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import Tab from '@/components/common/Tab';
-import SavedJobsHistoryContent from '@/features/savedJobs/SavedJobsHistoryContent';
+import SavedJobsHistoryContent from '@/features/savedJobs/components/SavedJobsHistoryContent';
+import SavedJobsSavedContent from '@/features/savedJobs/components/SavedJobsSavedContent';
 import {
   SAVED_JOB_HISTORY,
   SAVED_JOBS,
   type SavedJobHistoryStatus,
-} from '@/features/savedJobs/savedJobsMock';
-import SavedJobsSavedContent from '@/features/savedJobs/SavedJobsSavedContent';
+} from '@/features/savedJobs/mocks/savedJobsMock';
 
 const LIST_TABS = [
   { label: '저장', value: 'saved' },

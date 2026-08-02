@@ -1,12 +1,19 @@
-import { useNavigate } from 'react-router';
+import { useMutation } from '@tanstack/react-query';
+import { useLocation, useNavigate } from 'react-router';
+import { restoreAccount } from '@/api/auth';
 import Button from '@/components/common/Button';
 import ResultIcon from '@/components/feedback/ResultIcon';
+import {
+  setAccessToken,
+  setOnboardingCompleted,
+  setUserId,
+} from '@/features/login/store/useAuthStore';
 
-const MOCK_REMAINING_DAYS = 12;
+function formatRecoveryDeadline(value: string | null) {
+  if (!value) return '확인 필요';
 
-function getMockRecoveryDeadline() {
-  const recoveryDeadline = new Date();
-  recoveryDeadline.setDate(recoveryDeadline.getDate() + MOCK_REMAINING_DAYS);
+  const recoveryDeadline = new Date(value);
+  if (Number.isNaN(recoveryDeadline.getTime())) return '확인 필요';
 
   return new Intl.DateTimeFormat('ko-KR', {
     month: 'long',
@@ -14,9 +21,43 @@ function getMockRecoveryDeadline() {
   }).format(recoveryDeadline);
 }
 
+function getRemainingDays(value: string | null) {
+  if (!value) return null;
+
+  const recoveryDeadline = new Date(value);
+  if (Number.isNaN(recoveryDeadline.getTime())) return null;
+
+  return Math.max(0, Math.ceil((recoveryDeadline.getTime() - Date.now()) / 86_400_000));
+}
+
+interface AccountRecoveryLocationState {
+  restoreCode?: string;
+  restorableUntil?: string | null;
+}
+
 export default function AccountRecoveryPage() {
   const navigate = useNavigate();
-  const recoveryDeadline = getMockRecoveryDeadline();
+  const location = useLocation();
+  const recoveryState = location.state as AccountRecoveryLocationState | null;
+  const restoreCode = recoveryState?.restoreCode ?? null;
+  const restorableUntil = recoveryState?.restorableUntil ?? null;
+  const recoveryDeadline = formatRecoveryDeadline(restorableUntil);
+  const remainingDays = getRemainingDays(restorableUntil);
+  const restoreMutation = useMutation({
+    mutationFn: restoreAccount,
+    onSuccess: (result) => {
+      setAccessToken(result.accessToken);
+      setUserId(result.userId);
+      setOnboardingCompleted(result.onboardingCompleted);
+      navigate(result.onboardingCompleted ? '/recommendations' : '/onboarding', { replace: true });
+    },
+  });
+
+  const handleRestore = () => {
+    if (!restoreCode) return;
+
+    restoreMutation.mutate({ restoreCode });
+  };
 
   return (
     <div className="flex flex-1 items-center justify-center bg-gray-50 px-5 py-12">
@@ -32,11 +73,23 @@ export default function AccountRecoveryPage() {
         </p>
 
         <div className="flex min-h-17.5 w-full max-w-103.75 items-center justify-center rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6 text-label-medium font-medium text-text-tertiary">
-          남은 복구 기간 · {MOCK_REMAINING_DAYS}일({recoveryDeadline}까지)
+          {remainingDays === null
+            ? '복구 가능 기간을 확인해 주세요.'
+            : `남은 복구 기간 · ${remainingDays}일(${recoveryDeadline}까지)`}
         </div>
 
-        <Button className="w-full max-w-103.75" onClick={() => navigate('/profile')}>
-          계정 복구하기
+        {restoreMutation.isError ? (
+          <p className="text-label-small font-medium text-danger-500" role="alert">
+            계정을 복구하지 못했어요. 다시 시도해주세요.
+          </p>
+        ) : null}
+
+        <Button
+          className="w-full max-w-103.75"
+          onClick={handleRestore}
+          disabled={!restoreCode || restoreMutation.isPending}
+        >
+          {restoreMutation.isPending ? '복구 중…' : '계정 복구하기'}
         </Button>
         <Button variant="outline" className="w-full max-w-103.75" onClick={() => navigate('/')}>
           복구하지 않고 나가기
