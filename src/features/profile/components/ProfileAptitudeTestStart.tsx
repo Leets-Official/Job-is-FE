@@ -1,8 +1,12 @@
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import QuizIcon from '@/assets/icons/icon-quiz.svg?react';
-import Button from '@/components/common/Button';
+import { Button } from '@/components/common';
 
-export default function ProfileAptitudeTestStart({ onStart }: { onStart: () => void }) {
+interface ProfileAptitudeTestStartProps {
+  onStart: () => void;
+}
+
+export default function ProfileAptitudeTestStart({ onStart }: ProfileAptitudeTestStartProps) {
   return (
     <section className="flex min-h-74 w-full max-w-190 flex-col items-center gap-5 overflow-hidden rounded-md border border-gray-200 bg-white p-6">
       <div
@@ -16,11 +20,11 @@ export default function ProfileAptitudeTestStart({ onStart }: { onStart: () => v
 
       <p className="text-label-medium font-medium text-text-secondary">양자 택일 10문항 · 약 3분</p>
 
-      <p className="flex min-h-12.5 w-full max-w-103.75 items-center justify-center rounded-xs border border-dashed border-gray-400 bg-gray-200 px-6 text-label-medium font-medium text-text-tertiary">
+      <p className="flex w-103.75 items-center justify-center rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6 text-label-medium font-medium text-text-tertiary">
         결과는 추천 선호 시드로 프로필에 반영돼요.
       </p>
 
-      <Button className="w-full max-w-103.5" onClick={onStart}>
+      <Button className="w-103.5" onClick={onStart}>
         시작하기
         <ArrowRightIcon className="size-6" aria-hidden="true" />
       </Button>
