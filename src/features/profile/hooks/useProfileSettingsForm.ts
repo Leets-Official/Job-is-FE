@@ -28,6 +28,7 @@ export default function useProfileSettingsForm({
   const [regions, setRegions] = useState<string[]>([]);
   const [career, setCareer] = useState('');
   const [interests, setInterests] = useState<string[]>([]);
+  const [primaryInterest, setPrimaryInterest] = useState<string>();
   const [techStacks, setTechStacks] = useState<string[]>([]);
   const [preferenceNote, setPreferenceNote] = useState('');
   const [isSaved, setIsSaved] = useState(false);
@@ -48,7 +49,13 @@ export default function useProfileSettingsForm({
 
     setRegions(profile.region ? [profile.region.name] : []);
     setCareer(profile.careerLevel ?? '');
-    setInterests(profile.jobCategories?.map((category) => category.name) ?? []);
+    const jobCategories = profile.jobCategories ?? [];
+    const primaryCategory = jobCategories.find((category) => category.primary);
+    setInterests([
+      ...(primaryCategory ? [primaryCategory.name] : []),
+      ...jobCategories.filter((category) => !category.primary).map((category) => category.name),
+    ]);
+    setPrimaryInterest(primaryCategory?.name);
     setTechStacks(profile.techStacks ?? []);
     setPreferenceNote(profile.preferenceNotes?.[0] ?? '');
     hasHydratedProfile.current = true;
@@ -59,6 +66,7 @@ export default function useProfileSettingsForm({
       regions,
       career,
       interests,
+      primaryInterest,
       techStacks,
       preferenceNotes: preferenceNote.trim() ? [preferenceNote.trim()] : [],
     } satisfies ProfileSettingsFormValues;
@@ -110,11 +118,19 @@ export default function useProfileSettingsForm({
       markUnsaved();
     },
     toggleInterest: (interest: string) => {
-      setInterests((previous) => toggleMultipleValue(previous, interest));
+      const nextInterests = toggleMultipleValue(interests, interest);
+      setInterests(nextInterests);
+      if (!nextInterests.includes(primaryInterest ?? '')) {
+        setPrimaryInterest(nextInterests[0]);
+      } else if (!primaryInterest) {
+        setPrimaryInterest(nextInterests[0]);
+      }
       markUnsaved();
     },
     addInterest: (interest: string) => {
-      setInterests((previous) => addUniqueValue(previous, interest));
+      const nextInterests = addUniqueValue(interests, interest);
+      setInterests(nextInterests);
+      setPrimaryInterest(primaryInterest ?? nextInterests[0]);
       markUnsaved();
     },
     toggleTechStack: (techStack: string) => {

@@ -50,8 +50,14 @@ export interface ProfileResponse {
   jobTestCompleted: boolean;
 }
 
-export type CareerLevel = 'ENTRY' | 'JUNIOR' | 'EXPERIENCED';
+export const CAREER_LEVELS = ['ENTRY', 'JUNIOR', 'EXPERIENCED'] as const;
+
+export type CareerLevel = (typeof CAREER_LEVELS)[number];
 export type OnboardingStep = 'PROFILE' | 'QUIZ' | 'REVIEW';
+
+export function isCareerLevel(value: string): value is CareerLevel {
+  return CAREER_LEVELS.includes(value as CareerLevel);
+}
 
 export interface ProfileDraftResponse {
   onboardingStep: OnboardingStep;

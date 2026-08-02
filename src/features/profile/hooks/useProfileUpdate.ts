@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type { JobCategory, Region } from '@/api/jobs';
-import { updateProfile, type CareerLevel } from '@/api/profile';
+import { isCareerLevel, updateProfile } from '@/api/profile';
 
 interface ProfileSettingsValues {
   regions: string[];
   career: string;
   interests: string[];
+  primaryInterest?: string;
   techStacks: string[];
   preferenceNotes: string[];
 }
@@ -36,21 +37,26 @@ export default function useProfileUpdate({ jobCategories, regions }: UseProfileU
       .map((interest) => findByName(jobCategories, interest))
       .filter((category): category is JobCategory => category !== undefined);
     const selectedRegion = findByName(regions, values.regions[0] ?? '');
+    const primaryCategory = findByName(
+      jobCategories,
+      values.primaryInterest ?? values.interests[0] ?? '',
+    );
 
     if (
       values.interests.length === 0 ||
       !selectedRegion ||
-      !values.career ||
-      selectedCategories.length !== values.interests.length
+      selectedCategories.length !== values.interests.length ||
+      !primaryCategory ||
+      !isCareerLevel(values.career)
     ) {
       throw new Error(PROFILE_UPDATE_VALIDATION_ERROR_MESSAGE);
     }
 
     await updateMutation.mutateAsync({
       jobCategoryIds: selectedCategories.map((category) => category.id),
-      primaryJobCategoryId: selectedCategories[0]?.id,
+      primaryJobCategoryId: primaryCategory.id,
       regionId: selectedRegion.id,
-      careerLevel: values.career as CareerLevel,
+      careerLevel: values.career,
       preferenceNotes: values.preferenceNotes,
       techStacks: values.techStacks,
     });

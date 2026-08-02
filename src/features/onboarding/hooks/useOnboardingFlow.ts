@@ -5,8 +5,8 @@ import {
   completeOnboarding,
   getProfileDraft,
   getProfileFiles,
+  isCareerLevel,
   saveProfileDraft,
-  type CareerLevel,
   type ProfileDraftResponse,
 } from '@/api/profile';
 import { setOnboardingCompleted } from '@/features/login/store/useAuthStore';
@@ -30,6 +30,7 @@ const VALIDATION_MESSAGES = {
   metadataPending: '선택 목록을 불러오는 중이에요. 잠시 후 다시 시도해주세요.',
   required: '관심 직무, 희망 지역, 경력 단계를 모두 선택해주세요.',
   invalidMetadata: '등록된 목록에서 관심 직무와 희망 지역을 선택해주세요.',
+  invalidCareer: '등록된 경력 단계를 선택해주세요.',
 } as const;
 
 function normalizeMetadataName(value: string) {
@@ -78,6 +79,11 @@ export default function useOnboardingFlow({
       return;
     }
 
+    if (!isCareerLevel(values.career)) {
+      setSaveError(VALIDATION_MESSAGES.invalidCareer);
+      return;
+    }
+
     setIsSaving(true);
 
     try {
@@ -86,7 +92,7 @@ export default function useOnboardingFlow({
         jobCategoryIds: selectedCategories.map((category) => category.id),
         primaryJobCategoryId: selectedCategories[0]?.id,
         regionId: selectedRegion.id,
-        careerLevel: values.career as CareerLevel,
+        careerLevel: values.career,
         preferenceNotes: values.preferenceNotes,
         excludeKeywords: [],
         techStacks: values.techStacks,
