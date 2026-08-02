@@ -1,4 +1,9 @@
+import { getOAuthAuthorizeUrl, type OAuthProvider } from '@/api/auth';
 import SocialLoginButton from './SocialLoginButton';
+
+function handleSocialLogin(provider: OAuthProvider) {
+  window.location.href = getOAuthAuthorizeUrl(provider);
+}
 
 export default function LoginDefaultContent() {
   return (
@@ -10,8 +15,8 @@ export default function LoginDefaultContent() {
       </p>
 
       <div className="flex w-full max-w-104 flex-col gap-3">
-        <SocialLoginButton provider="google" />
-        <SocialLoginButton provider="kakao" />
+        <SocialLoginButton provider="google" onClick={() => handleSocialLogin('google')} />
+        <SocialLoginButton provider="kakao" onClick={() => handleSocialLogin('kakao')} />
       </div>
 
       <div className="w-full max-w-104 rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6">
