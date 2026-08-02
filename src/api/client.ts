@@ -1,4 +1,4 @@
-import axios, { type AxiosError, type AxiosInstance } from 'axios';
+import axios, { type AxiosError, type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 import { ENV } from '@/api/env';
 import type { ApiEnvelope } from '@/api/types';
 import { clearAuth, getAccessToken, setAccessToken } from '@/features/login/store/useAuthStore';
@@ -62,7 +62,10 @@ client.interceptors.request.use((config) => {
   return config;
 });
 
-const retriedRequests = new WeakSet<object>();
+interface RetriableRequestConfig extends InternalAxiosRequestConfig {
+  hasRetriedAfterReissue?: boolean;
+}
+
 let isRefreshing = false;
 let pendingRequests: Array<(accessToken: string | null) => void> = [];
 
@@ -74,19 +77,19 @@ function resolvePendingRequests(accessToken: string | null) {
 client.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const config = error.config;
+    const config = error.config as RetriableRequestConfig | undefined;
     const isReissueRequest = config?.url?.includes('/api/auth/token/reissue');
 
     if (
       error.response?.status !== 401 ||
       !config ||
-      retriedRequests.has(config) ||
+      config.hasRetriedAfterReissue ||
       isReissueRequest
     ) {
       return Promise.reject(error);
     }
 
-    retriedRequests.add(config);
+    config.hasRetriedAfterReissue = true;
 
     if (isRefreshing) {
       return new Promise((resolve, reject) => {
