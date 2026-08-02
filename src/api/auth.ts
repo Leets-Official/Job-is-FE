@@ -43,6 +43,10 @@ export interface WithdrawalResponse {
   restorableUntil: string;
 }
 
+interface RestoreRequest {
+  restoreCode: string;
+}
+
 export function getOAuthAuthorizeUrl(provider: OAuthProvider) {
   return `${ENV.API_BASE_URL}/api/auth/oauth/${provider}`;
 }
@@ -64,6 +68,14 @@ export async function getCurrentSession() {
 
 export async function logout() {
   return postWithCsrf<string>('/api/auth/logout', true);
+}
+
+export async function restoreAccount(request: RestoreRequest) {
+  const { data } = await client.post<ApiEnvelope<OAuthExchangeResponse>>(
+    '/api/auth/restore',
+    request,
+  );
+  return data.data;
 }
 
 export async function withdrawAccount(request: WithdrawalRequest) {

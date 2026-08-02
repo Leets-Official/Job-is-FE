@@ -16,6 +16,8 @@ function readCallbackParams() {
   return {
     code: query.get('code') ?? hash.get('code'),
     error: query.get('error') ?? hash.get('error'),
+    restoreCode: query.get('restoreCode') ?? hash.get('restoreCode'),
+    restorableUntil: query.get('restorableUntil') ?? hash.get('restorableUntil'),
   };
 }
 
@@ -27,7 +29,13 @@ export default function CallbackPage() {
     if (hasRequested.current) return;
     hasRequested.current = true;
 
-    const { code, error: errorParam } = readCallbackParams();
+    const { code, error: errorParam, restoreCode, restorableUntil } = readCallbackParams();
+
+    if (restoreCode && restorableUntil) {
+      const searchParams = new URLSearchParams({ restoreCode, restorableUntil });
+      navigate(`/account/recovery?${searchParams}`, { replace: true });
+      return;
+    }
 
     if (errorParam || !code) {
       navigate(`/login/fail?message=${encodeURIComponent(DEFAULT_FAILURE_MESSAGE)}`, {
