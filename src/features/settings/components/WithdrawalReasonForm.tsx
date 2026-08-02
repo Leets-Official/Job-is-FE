@@ -1,46 +1,51 @@
 import { useState } from 'react';
+import type { WithdrawalRequest } from '@/api/auth';
 import Button from '@/components/common/Button';
 import RadioButton from '@/components/common/RadioButton';
 import WithdrawalConfirmModal from '@/features/settings/components/WithdrawalConfirmModal';
 
 const WITHDRAWAL_REASONS = [
-  '추천이 잘 안맞아요',
-  '메일이 너무 자주 와요',
-  '지금은 구직 중이 아니에요',
-  '서비스를 잘 안 쓰게 돼요',
-  '기타',
-];
+  { label: '추천이 잘 안맞아요', code: 'RECOMMENDATION_MISMATCH' },
+  { label: '메일이 너무 자주 와요', code: 'EMAIL_TOO_FREQUENT' },
+  { label: '지금은 구직 중이 아니에요', code: 'NOT_JOB_SEEKING' },
+  { label: '서비스를 잘 안 쓰게 돼요', code: 'SERVICE_NOT_USED' },
+  { label: '기타', code: 'OTHER' },
+] satisfies Array<{ label: string; code: NonNullable<WithdrawalRequest['reasonCode']> }>;
 
 export default function WithdrawalReasonForm({
   onCancel,
   onComplete,
+  isSubmitting,
+  errorMessage,
 }: {
   onCancel: () => void;
-  onComplete: () => void;
+  onComplete: (request: WithdrawalRequest) => Promise<void>;
+  isSubmitting: boolean;
+  errorMessage?: string;
 }) {
   const [selectedReason, setSelectedReason] = useState(WITHDRAWAL_REASONS[1]);
   const [customReason, setCustomReason] = useState('');
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
   return (
-    <section className="flex min-h-74 w-full max-w-190 flex-col gap-5 overflow-hidden rounded-md border border-gray-200 bg-white p-6">
+    <section className="flex min-h-74 w-full max-w-186 flex-col gap-5 overflow-hidden rounded-md border border-gray-200 bg-white p-6">
       <h1 className="text-heading-medium text-text-primary">정말 떠나시나요?</h1>
 
       <fieldset className="flex flex-col gap-5">
         <legend className="sr-only">회원 탈퇴 사유</legend>
-        {WITHDRAWAL_REASONS.map((reason) => {
-          const reasonId = `withdrawal-reason-${WITHDRAWAL_REASONS.indexOf(reason)}`;
+        {WITHDRAWAL_REASONS.map((reason, index) => {
+          const reasonId = `withdrawal-reason-${index}`;
 
           return (
             <RadioButton
-              key={reason}
+              key={reason.code}
               id={reasonId}
               name="withdrawal-reason"
-              value={reason}
-              checked={selectedReason === reason}
+              value={reason.code}
+              checked={selectedReason.code === reason.code}
               onChange={() => setSelectedReason(reason)}
-              label={reason}
-              className="min-h-17.5 w-full cursor-pointer rounded-xs border border-gray-400 bg-white p-6 text-label-medium font-medium text-text-primary hover:bg-gray-50"
+              label={reason.label}
+              className="min-h-17.5 w-full cursor-pointer gap-[13px] rounded-xs border border-gray-400 bg-white p-6 text-label-medium font-medium text-text-primary hover:bg-gray-50"
             />
           );
         })}
@@ -71,10 +76,19 @@ export default function WithdrawalReasonForm({
       </div>
 
       <div className="flex gap-7.5">
-        <Button variant="outline" className="w-25 shrink-0" onClick={onCancel}>
+        <Button
+          variant="outline"
+          className="w-25 shrink-0"
+          onClick={onCancel}
+          disabled={isSubmitting}
+        >
           취소
         </Button>
-        <Button className="min-w-0 flex-1" onClick={() => setIsConfirmModalOpen(true)}>
+        <Button
+          className="min-w-0 flex-1"
+          onClick={() => setIsConfirmModalOpen(true)}
+          disabled={isSubmitting}
+        >
           계속
         </Button>
       </div>
@@ -82,7 +96,18 @@ export default function WithdrawalReasonForm({
       {isConfirmModalOpen && (
         <WithdrawalConfirmModal
           onClose={() => setIsConfirmModalOpen(false)}
-          onConfirm={onComplete}
+          onConfirm={async () => {
+            try {
+              await onComplete({
+                reasonCode: selectedReason.code,
+                reasonDetail: customReason.trim() || undefined,
+              });
+            } catch {
+              // 오류 메시지는 mutation 상태를 통해 모달에 표시합니다.
+            }
+          }}
+          isSubmitting={isSubmitting}
+          errorMessage={errorMessage}
         />
       )}
     </section>
