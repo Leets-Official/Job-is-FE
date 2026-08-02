@@ -20,6 +20,13 @@ export interface CurrentSessionResponse {
   restorableUntil: string | null;
 }
 
+export interface AccountResponse {
+  socialType: 'GOOGLE' | 'KAKAO';
+  joinedAt: string;
+  receivingEmail: string;
+  emailVerified: boolean;
+}
+
 export interface ConsentRequest {
   termsAgreed: boolean;
   privacyAgreed: boolean;
@@ -63,6 +70,11 @@ export async function exchangeOAuthCode(loginCode: string) {
 
 export async function getCurrentSession() {
   const { data } = await client.get<ApiEnvelope<CurrentSessionResponse>>('/api/auth/me');
+  return data.data;
+}
+
+export async function getAccount() {
+  const { data } = await client.get<ApiEnvelope<AccountResponse>>('/api/auth/account');
   return data.data;
 }
 
