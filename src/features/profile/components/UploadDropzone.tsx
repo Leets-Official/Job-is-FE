@@ -167,7 +167,7 @@ export default function UploadDropzone({
             </p>
           </div>
           <Button
-            className="h-12 min-w-20 text-white"
+            className="h-12 min-w-20 text-white font-normal"
             onClick={() => fileInputRef.current?.click()}
           >
             파일선택
