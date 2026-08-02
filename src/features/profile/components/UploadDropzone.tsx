@@ -1,7 +1,6 @@
 import { useId, useRef, useState, type ChangeEvent, type DragEvent } from 'react';
 import CloseCircleIcon from '@/assets/icons/icon-close-circle.svg?react';
 import CloseIcon from '@/assets/icons/icon-close.svg?react';
-import DownloadIcon from '@/assets/icons/icon-download.svg?react';
 import Button from '@/components/common/Button';
 import {
   type DocumentUpload,
@@ -127,13 +126,6 @@ export default function UploadDropzone({
             </p>
           </div>
           <div className="flex shrink-0 gap-4">
-            <Button
-              variant="outline"
-              className="h-[30px] rounded-sm px-3 text-label-small font-normal"
-            >
-              다운로드
-              <DownloadIcon className="size-4" aria-hidden="true" />
-            </Button>
             <Button
               variant="outline"
               className="h-[30px] rounded-sm px-3 text-label-small font-normal"
