@@ -1,11 +1,11 @@
 import { useMemo } from 'react';
 import Button from '@/components/common/Button';
 import Tag from '@/components/common/Tag';
-import SavedJobsEmptyState from '@/features/savedJobs/SavedJobsEmptyState';
+import SavedJobsEmptyState from '@/features/savedJobs/components/SavedJobsEmptyState';
 import {
   type SavedJobHistoryItem,
   type SavedJobHistoryStatus,
-} from '@/features/savedJobs/savedJobsMock';
+} from '@/features/savedJobs/mocks/savedJobsMock';
 import { cn } from '@/utils/cn';
 
 const HISTORY_FILTERS: { label: string; value: SavedJobHistoryStatus | 'all' }[] = [

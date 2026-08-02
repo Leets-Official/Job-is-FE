@@ -1,8 +1,8 @@
 import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg?react';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
-import SavedJobsEmptyState from '@/features/savedJobs/SavedJobsEmptyState';
-import { type SavedJob } from '@/features/savedJobs/savedJobsMock';
+import SavedJobsEmptyState from '@/features/savedJobs/components/SavedJobsEmptyState';
+import { type SavedJob } from '@/features/savedJobs/mocks/savedJobsMock';
 import { cn } from '@/utils/cn';
 
 interface SavedJobsSavedContentProps {
