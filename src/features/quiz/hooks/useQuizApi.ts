@@ -63,7 +63,7 @@ export default function useQuizApi(source: QuizSource, screen: QuizScreen) {
   };
 
   const retryQuiz = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['quizQuestions', source] });
+    await quizQuestionsQuery.refetch();
   };
 
   return {
