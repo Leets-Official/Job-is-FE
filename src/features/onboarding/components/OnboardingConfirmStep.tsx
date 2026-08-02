@@ -18,11 +18,13 @@ export default function OnboardingConfirmStep({
   isStarting = false,
   startError,
 }: OnboardingConfirmStepProps) {
-  const careerLevelLabel = {
-    ENTRY: '신입',
-    JUNIOR: '1~3년',
-    EXPERIENCED: '4년 이상',
-  }[draft.careerLevel];
+  const careerLevelLabel = draft.careerLevel
+    ? {
+        ENTRY: '신입',
+        JUNIOR: '1~3년',
+        EXPERIENCED: '4년 이상',
+      }[draft.careerLevel]
+    : undefined;
   const preferenceSummary = [
     ...(draft.preferenceNotes ?? []),
     ...(draft.excludeKeywords ?? []),

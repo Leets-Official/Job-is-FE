@@ -6,6 +6,7 @@ import {
   getProfileDraft,
   getProfileFiles,
   saveProfileDraft,
+  type CareerLevel,
   type ProfileDraftResponse,
 } from '@/api/profile';
 import type { MainLayoutOutletContext } from '@/components/layout/MainLayout';
@@ -23,7 +24,7 @@ type ProfileValidationResult =
       isValid: true;
       selectedCategories: JobCategory[];
       selectedRegion: Region;
-      careerLevel: ProfileDraftResponse['careerLevel'];
+      careerLevel: CareerLevel;
     }
   | { isValid: false; message: string };
 
@@ -71,7 +72,7 @@ function validateProfileValues(
     isValid: true,
     selectedCategories,
     selectedRegion,
-    careerLevel: career as ProfileDraftResponse['careerLevel'],
+    careerLevel: career as CareerLevel,
   };
 }
 

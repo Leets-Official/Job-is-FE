@@ -39,21 +39,22 @@ export interface ProfileResponse {
 }
 
 export type CareerLevel = 'ENTRY' | 'JUNIOR' | 'EXPERIENCED';
+export type OnboardingStep = 'PROFILE' | 'QUIZ' | 'REVIEW';
 
 export interface ProfileDraftResponse {
-  onboardingStep: 'PROFILE' | 'QUIZ' | 'REVIEW';
-  jobCategories: Array<{ id: number; name: string; primary: boolean }>;
-  region: { id: number; name: string };
-  careerLevel: CareerLevel;
-  preferenceNotes: string[];
-  excludeKeywords: string[];
-  techStacks: string[];
-  personalityTags: string[];
+  onboardingStep: OnboardingStep;
+  jobCategories: Array<{ id: number; name: string; primary: boolean }> | null;
+  region: { id: number; name: string } | null;
+  careerLevel: CareerLevel | null;
+  preferenceNotes: string[] | null;
+  excludeKeywords: string[] | null;
+  techStacks: string[] | null;
+  personalityTags: string[] | null;
   jobTestCompleted: boolean;
 }
 
 export interface ProfileDraftRequest {
-  onboardingStep?: ProfileDraftResponse['onboardingStep'];
+  onboardingStep?: OnboardingStep;
   jobCategoryIds?: number[];
   primaryJobCategoryId?: number;
   regionId?: number;
