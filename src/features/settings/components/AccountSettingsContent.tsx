@@ -1,6 +1,9 @@
+import { useMutation } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { logout } from '@/api/auth';
 import Badge from '@/components/common/Badge';
+import { clearAuth } from '@/features/login/store/useAuthStore';
 
 const SMALL_OUTLINE_BUTTON_CLASS_NAME =
   'inline-flex h-7.5 cursor-pointer items-center justify-center rounded-sm border border-primary-400 bg-white px-3 text-label-small font-normal text-text-primary transition-colors hover:bg-primary-50 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-600 disabled:hover:bg-gray-100';
@@ -15,6 +18,19 @@ function AccountSettingsCard({ title, children }: { title: string; children: Rea
 }
 
 export default function AccountSettingsContent() {
+  const navigate = useNavigate();
+  const {
+    mutate: requestLogout,
+    isPending: isLoggingOut,
+    isError: isLogoutError,
+  } = useMutation({
+    mutationFn: logout,
+    onSuccess: () => {
+      clearAuth();
+      navigate('/login', { replace: true });
+    },
+  });
+
   return (
     <div className="flex min-w-0 max-w-179 flex-1 flex-col gap-5">
       <AccountSettingsCard title="연결된 계정">
@@ -50,12 +66,16 @@ export default function AccountSettingsContent() {
           <button
             type="button"
             className={SMALL_OUTLINE_BUTTON_CLASS_NAME}
-            disabled
-            title="로그아웃 기능 준비 중"
-            aria-label="로그아웃 기능 준비 중"
+            disabled={isLoggingOut}
+            onClick={() => requestLogout()}
           >
-            로그아웃
+            {isLoggingOut ? '로그아웃 중…' : '로그아웃'}
           </button>
+          {isLogoutError && (
+            <p className="mt-2 text-label-small font-medium text-danger-500" role="alert">
+              로그아웃에 실패했어요. 다시 시도해주세요.
+            </p>
+          )}
         </div>
       </AccountSettingsCard>
 
