@@ -70,6 +70,11 @@ export default function ProfileSettingsForm({
     markUnsaved();
   };
 
+  const addRegion = (region: string) => {
+    setRegions([region]);
+    markUnsaved();
+  };
+
   const changeCareer = (nextCareer: string) => {
     setCareer(nextCareer);
     markUnsaved();
@@ -156,7 +161,7 @@ export default function ProfileSettingsForm({
         onToggleInterest={toggleInterest}
         onAddInterest={addInterest}
         onToggleRegion={toggleRegion}
-        onAddRegion={toggleRegion}
+        onAddRegion={addRegion}
         onCareerChange={changeCareer}
       />
 
