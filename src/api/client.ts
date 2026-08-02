@@ -36,9 +36,13 @@ async function getCsrfHeaders() {
   return { [headerName]: token };
 }
 
-export async function postWithCsrf<T>(url: string) {
+export async function postWithCsrf<T>(url: string, withAuthorization = false) {
+  const accessToken = withAuthorization ? getAccessToken() : null;
   const { data } = await tokenClient.post<ApiEnvelope<T>>(url, undefined, {
-    headers: await getCsrfHeaders(),
+    headers: {
+      ...(await getCsrfHeaders()),
+      ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
+    },
   });
 
   return data.data;

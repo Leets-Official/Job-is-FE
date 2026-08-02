@@ -63,7 +63,7 @@ export async function getCurrentSession() {
 }
 
 export async function logout() {
-  return postWithCsrf<string>('/api/auth/logout');
+  return postWithCsrf<string>('/api/auth/logout', true);
 }
 
 export async function withdrawAccount(request: WithdrawalRequest) {
