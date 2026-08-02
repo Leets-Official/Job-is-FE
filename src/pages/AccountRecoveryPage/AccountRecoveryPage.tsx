@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
 import { restoreAccount } from '@/api/auth';
 import Button from '@/components/common/Button';
 import ResultIcon from '@/components/feedback/ResultIcon';
@@ -30,11 +30,17 @@ function getRemainingDays(value: string | null) {
   return Math.max(0, Math.ceil((recoveryDeadline.getTime() - Date.now()) / 86_400_000));
 }
 
+interface AccountRecoveryLocationState {
+  restoreCode?: string;
+  restorableUntil?: string | null;
+}
+
 export default function AccountRecoveryPage() {
   const navigate = useNavigate();
-  const searchParams = new URLSearchParams(window.location.search);
-  const restoreCode = searchParams.get('restoreCode');
-  const restorableUntil = searchParams.get('restorableUntil');
+  const location = useLocation();
+  const recoveryState = location.state as AccountRecoveryLocationState | null;
+  const restoreCode = recoveryState?.restoreCode ?? null;
+  const restorableUntil = recoveryState?.restorableUntil ?? null;
   const recoveryDeadline = formatRecoveryDeadline(restorableUntil);
   const remainingDays = getRemainingDays(restorableUntil);
   const restoreMutation = useMutation({

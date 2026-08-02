@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { logout } from '@/api/auth';
@@ -31,6 +31,7 @@ function formatJoinedAt(value: string) {
 
 export default function AccountSettingsContent() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { data: account, isPending: isAccountPending, isError: isAccountError } = useAccount();
   const {
     mutate: requestLogout,
@@ -39,6 +40,7 @@ export default function AccountSettingsContent() {
   } = useMutation({
     mutationFn: logout,
     onSuccess: () => {
+      queryClient.clear();
       clearAuth();
       navigate('/login', { replace: true });
     },

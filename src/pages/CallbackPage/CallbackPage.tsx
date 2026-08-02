@@ -31,9 +31,11 @@ export default function CallbackPage() {
 
     const { code, error: errorParam, restoreCode, restorableUntil } = readCallbackParams();
 
-    if (restoreCode && restorableUntil) {
-      const searchParams = new URLSearchParams({ restoreCode, restorableUntil });
-      navigate(`/account/recovery?${searchParams}`, { replace: true });
+    if (restoreCode) {
+      navigate('/account/recovery', {
+        replace: true,
+        state: { restoreCode, restorableUntil },
+      });
       return;
     }
 

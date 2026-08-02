@@ -1,4 +1,4 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import { withdrawAccount, type WithdrawalRequest } from '@/api/auth';
@@ -10,10 +10,12 @@ type WithdrawalStep = 'reason' | 'complete';
 
 export default function AccountWithdrawalPage() {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const [withdrawalStep, setWithdrawalStep] = useState<WithdrawalStep>('reason');
   const withdrawalMutation = useMutation({
     mutationFn: withdrawAccount,
     onSuccess: () => {
+      queryClient.clear();
       clearAuth();
       setWithdrawalStep('complete');
     },
