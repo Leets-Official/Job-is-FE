@@ -27,11 +27,13 @@ export default function PolicyPage() {
     marketing: false,
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string>();
   const hasRequiredAgreements = AGREEMENT_ITEMS.filter((item) => item.required).every(
     (item) => checked[item.id],
   );
 
   async function handleNext() {
+    setSubmitError(undefined);
     setIsSubmitting(true);
     try {
       await postConsent({
@@ -42,6 +44,7 @@ export default function PolicyPage() {
       });
       navigate('/onboarding');
     } catch {
+      setSubmitError('약관 동의를 저장하지 못했어요. 다시 시도해주세요.');
       setIsSubmitting(false);
     }
   }
@@ -79,6 +82,11 @@ export default function PolicyPage() {
         >
           다음
         </Button>
+        {submitError && (
+          <p className="text-label-small font-medium text-danger-500" role="alert">
+            {submitError}
+          </p>
+        )}
       </div>
     </div>
   );
