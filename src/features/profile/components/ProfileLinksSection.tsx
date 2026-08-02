@@ -27,9 +27,11 @@ function ProfileLinkRow({
 export default function ProfileLinksSection({
   onDocumentsClick,
   onAptitudeTestClick,
+  aptitudeTestCompleted = false,
 }: {
   onDocumentsClick?: () => void;
   onAptitudeTestClick?: () => void;
+  aptitudeTestCompleted?: boolean;
 }) {
   return (
     <section className="flex flex-col gap-5">
@@ -38,7 +40,11 @@ export default function ProfileLinksSection({
         status="1개 첨부 / 2개"
         onClick={onDocumentsClick}
       />
-      <ProfileLinkRow title="직무 성향 테스트" status="미완료" onClick={onAptitudeTestClick} />
+      <ProfileLinkRow
+        title="직무 성향 테스트"
+        status={aptitudeTestCompleted ? '완료' : '미완료'}
+        onClick={onAptitudeTestClick}
+      />
     </section>
   );
 }
