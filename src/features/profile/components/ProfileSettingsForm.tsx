@@ -7,6 +7,7 @@ import ProfileBasicInfoSection from '@/features/profile/components/ProfileBasicI
 import ProfileLifestyleSection from '@/features/profile/components/ProfileLifestyleSection';
 import ProfileLinksSection from '@/features/profile/components/ProfileLinksSection';
 import ProfilePreferencesSection from '@/features/profile/components/ProfilePreferencesSection';
+import useProfileFiles from '@/features/profile/hooks/useProfileFiles';
 
 const INITIAL_REGIONS: string[] = [];
 const INITIAL_INTERESTS: string[] = [];
@@ -62,24 +63,26 @@ export default function ProfileSettingsForm({
   const [preferenceNote, setPreferenceNote] = useState('');
   const [isSaved, setIsSaved] = useState(false);
 
+  const markUnsaved = () => setIsSaved(false);
+
   const toggleRegion = (region: string) => {
     setRegions((previous) => toggleSingleValue(previous, region));
-    setIsSaved(false);
+    markUnsaved();
   };
 
   const changeCareer = (nextCareer: string) => {
     setCareer(nextCareer);
-    setIsSaved(false);
+    markUnsaved();
   };
 
   const toggleInterest = (interest: string) => {
     setInterests((previous) => toggleMultipleValue(previous, interest));
-    setIsSaved(false);
+    markUnsaved();
   };
 
   const addInterest = (interest: string) => {
     setInterests((previous) => addUniqueValue(previous, interest));
-    setIsSaved(false);
+    markUnsaved();
   };
 
   const { data: techStackMetadata = [] } = useQuery({
@@ -103,16 +106,19 @@ export default function ProfileSettingsForm({
     queryFn: getProfile,
     enabled: loadProfile,
   });
+  const { profileFiles } = useProfileFiles();
   const techStackOptions = techStackMetadata.map((techStack) => techStack.name);
+  const documentsStatus =
+    profileFiles.length === 0 ? '미등록' : `${profileFiles.length}개 첨부 / 2개`;
 
   const toggleTechStack = (techStack: string) => {
     setTechStacks((previous) => toggleMultipleValue(previous, techStack));
-    setIsSaved(false);
+    markUnsaved();
   };
 
   const addTechStack = (techStack: string) => {
     setTechStacks((previous) => addUniqueValue(previous, techStack));
-    setIsSaved(false);
+    markUnsaved();
   };
 
   return (
@@ -161,7 +167,7 @@ export default function ProfileSettingsForm({
         onToggleTechStack={toggleTechStack}
         onPreferenceNoteChange={(value) => {
           setPreferenceNote(value);
-          setIsSaved(false);
+          markUnsaved();
         }}
       />
 
@@ -169,6 +175,7 @@ export default function ProfileSettingsForm({
         onDocumentsClick={onDocumentsClick}
         onAptitudeTestClick={onAptitudeTestClick}
         aptitudeTestCompleted={profile?.jobTestCompleted}
+        documentsStatus={documentsStatus}
       />
 
       {profile?.jobTestCompleted && profile.personalityTags.length > 0 && (

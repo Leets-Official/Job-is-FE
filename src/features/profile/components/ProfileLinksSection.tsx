@@ -28,16 +28,18 @@ export default function ProfileLinksSection({
   onDocumentsClick,
   onAptitudeTestClick,
   aptitudeTestCompleted = false,
+  documentsStatus = '미등록',
 }: {
   onDocumentsClick?: () => void;
   onAptitudeTestClick?: () => void;
   aptitudeTestCompleted?: boolean;
+  documentsStatus?: string;
 }) {
   return (
     <section className="flex flex-col gap-5">
       <ProfileLinkRow
         title="이력서 • 자기소개서 관리"
-        status="1개 첨부 / 2개"
+        status={documentsStatus}
         onClick={onDocumentsClick}
       />
       <ProfileLinkRow

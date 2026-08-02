@@ -1,10 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useMemo, useRef, useState } from 'react';
-import { deleteProfileFile, getProfileFiles } from '@/api/profile';
+import { deleteProfileFile } from '@/api/profile';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import DeleteDocumentModal from '@/features/profile/components/DeleteDocumentModal';
 import UploadDropzone from '@/features/profile/components/UploadDropzone';
 import useProfileDocumentUpload from '@/features/profile/hooks/useProfileDocumentUpload';
+import useProfileFiles from '@/features/profile/hooks/useProfileFiles';
 import {
   type DocumentType,
   type DocumentUpload,
@@ -33,11 +34,7 @@ export default function ProfileDocumentsManager({
   const [deleteTarget, setDeleteTarget] = useState<DocumentType | null>(null);
   const uploadControllersRef = useRef<Partial<Record<DocumentType, AbortController>>>({});
   const { uploadProfileDocument } = useProfileDocumentUpload();
-  const queryClient = useQueryClient();
-  const { data: profileFiles = [] } = useQuery({
-    queryKey: ['profileFiles'],
-    queryFn: getProfileFiles,
-  });
+  const { profileFiles, invalidateProfileFiles } = useProfileFiles();
   const { mutate: removeProfileFile } = useMutation({
     mutationFn: deleteProfileFile,
   });
@@ -94,7 +91,7 @@ export default function ProfileDocumentsManager({
     })
       .then((document) => {
         setDocuments((previous) => ({ ...previous, [type]: document }));
-        void queryClient.invalidateQueries({ queryKey: ['profileFiles'] });
+        void invalidateProfileFiles();
       })
       .catch(() => {
         if (controller.signal.aborted) return;
@@ -133,7 +130,7 @@ export default function ProfileDocumentsManager({
         setDocuments((previous) => ({ ...previous, [deleteTarget]: null }));
         setErrors((previous) => ({ ...previous, [deleteTarget]: undefined }));
         setDeleteTarget(null);
-        void queryClient.invalidateQueries({ queryKey: ['profileFiles'] });
+        void invalidateProfileFiles();
       },
     });
   };
