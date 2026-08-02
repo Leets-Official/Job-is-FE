@@ -32,10 +32,11 @@ export default function ProfileDocumentsManager({
   const [uploads, setUploads] = useState<Partial<Record<DocumentType, DocumentUpload>>>({});
   const [errors, setErrors] = useState<Partial<Record<DocumentType, DocumentUploadError>>>({});
   const [deleteTarget, setDeleteTarget] = useState<DocumentType | null>(null);
+  const [deleteError, setDeleteError] = useState<string>();
   const uploadControllersRef = useRef<Partial<Record<DocumentType, AbortController>>>({});
   const { uploadProfileDocument } = useProfileDocumentUpload();
   const { profileFiles, invalidateProfileFiles } = useProfileFiles();
-  const { mutate: removeProfileFile } = useMutation({
+  const { mutate: removeProfileFile, isPending: isDeletingProfileFile } = useMutation({
     mutationFn: deleteProfileFile,
   });
 
@@ -120,7 +121,7 @@ export default function ProfileDocumentsManager({
   };
 
   const confirmDelete = () => {
-    if (!deleteTarget) return;
+    if (!deleteTarget || isDeletingProfileFile) return;
 
     const document = displayedDocuments[deleteTarget];
     if (!document) return;
@@ -131,6 +132,9 @@ export default function ProfileDocumentsManager({
         setErrors((previous) => ({ ...previous, [deleteTarget]: undefined }));
         setDeleteTarget(null);
         void invalidateProfileFiles();
+      },
+      onError: () => {
+        setDeleteError('파일을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.');
       },
     });
   };
@@ -164,7 +168,10 @@ export default function ProfileDocumentsManager({
             upload={uploads.resume}
             uploadError={errors.resume}
             onSelect={(file) => selectDocument('resume', file)}
-            onDelete={() => setDeleteTarget('resume')}
+            onDelete={() => {
+              setDeleteError(undefined);
+              setDeleteTarget('resume');
+            }}
             onCancelUpload={() => cancelUpload('resume')}
             onClearError={() => clearError('resume')}
           />
@@ -174,7 +181,10 @@ export default function ProfileDocumentsManager({
             upload={uploads.coverLetter}
             uploadError={errors.coverLetter}
             onSelect={(file) => selectDocument('coverLetter', file)}
-            onDelete={() => setDeleteTarget('coverLetter')}
+            onDelete={() => {
+              setDeleteError(undefined);
+              setDeleteTarget('coverLetter');
+            }}
             onCancelUpload={() => cancelUpload('coverLetter')}
             onClearError={() => clearError('coverLetter')}
           />
@@ -184,8 +194,15 @@ export default function ProfileDocumentsManager({
       {deleteTarget && (
         <DeleteDocumentModal
           documentLabel={deleteTarget === 'resume' ? '이력서' : '자소서'}
-          onCancel={() => setDeleteTarget(null)}
+          onCancel={() => {
+            if (isDeletingProfileFile) return;
+
+            setDeleteError(undefined);
+            setDeleteTarget(null);
+          }}
           onConfirm={confirmDelete}
+          isSubmitting={isDeletingProfileFile}
+          errorMessage={deleteError}
         />
       )}
     </>
