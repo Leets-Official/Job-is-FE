@@ -58,10 +58,6 @@ export default function ExploreFilters({
             </option>
           ))}
         </Select>
-        <Select placeholder="경력" className="w-[200px] shrink-0">
-          <option value="junior">신입~1년</option>
-          <option value="mid">3~5년</option>
-        </Select>
         <Select
           placeholder="고용 형태"
           className="w-[200px] shrink-0"

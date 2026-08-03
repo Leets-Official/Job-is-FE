@@ -10,6 +10,7 @@ export function formatDDayLabel(dueDateIso: string | null): string {
 
   const diffDays = Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
 
+  if (Number.isNaN(diffDays)) return '상시';
   if (diffDays < 0) return '마감';
   if (diffDays === 0) return 'D-day';
   return `D-${diffDays}`;

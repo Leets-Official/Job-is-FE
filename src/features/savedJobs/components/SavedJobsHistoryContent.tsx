@@ -96,23 +96,15 @@ export default function SavedJobsHistoryContent({
       </div>
 
       {historyByDate.length > 0 ? (
-        <>
-          {historyByDate.map((group) => (
-            <section key={group.dateLabel} className="flex w-full flex-col gap-5">
-              <p className="text-label-medium font-medium text-text-primary">{group.dateLabel}</p>
-              <div className="h-0 w-full border-t border-gray-400" />
-              {group.items.map((item) => (
-                <SavedJobHistoryRow key={item.id} item={item} />
-              ))}
-            </section>
-          ))}
-
-          {onLoadMore && (
-            <Button className="h-10 w-93.75 self-center" onClick={onLoadMore}>
-              더보기
-            </Button>
-          )}
-        </>
+        historyByDate.map((group) => (
+          <section key={group.dateLabel} className="flex w-full flex-col gap-5">
+            <p className="text-label-medium font-medium text-text-primary">{group.dateLabel}</p>
+            <div className="h-0 w-full border-t border-gray-400" />
+            {group.items.map((item) => (
+              <SavedJobHistoryRow key={item.id} item={item} />
+            ))}
+          </section>
+        ))
       ) : (
         <SavedJobsEmptyState
           title="아직 열람·피드백 내역이 없어요"
@@ -120,6 +112,12 @@ export default function SavedJobsHistoryContent({
           onBrowseRecommendations={onBrowseRecommendations}
           onExplore={onExplore}
         />
+      )}
+
+      {onLoadMore && (
+        <Button className="h-10 w-93.75 self-center" onClick={onLoadMore}>
+          더보기
+        </Button>
       )}
     </>
   );

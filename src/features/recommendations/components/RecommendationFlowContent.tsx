@@ -74,7 +74,10 @@ export default function RecommendationFlowContent({
     () => (contentsQuery.data ?? []).map(mapContentSummary),
     [contentsQuery.data],
   );
-  const cards = useMemo(() => cardsQuery.data ?? [], [cardsQuery.data]);
+  const cards = useMemo(
+    () => [...(cardsQuery.data ?? [])].sort((a, b) => a.position - b.position),
+    [cardsQuery.data],
+  );
   const letters = useMemo(() => cards.map(mapBriefingCard), [cards]);
   const initialStatusByLetterId = useMemo(
     () =>
@@ -94,9 +97,15 @@ export default function RecommendationFlowContent({
   const resolveStatus = (letterId: string) =>
     getRecommendationLetterStatus(statusByLetterId, letterId, initialStatusByLetterId[letterId]);
   const handleSaveLetter = (letterId: string) => {
+    const previousStatus = resolveStatus(letterId);
     setStatus(letterId, 'saved');
     const jobId = jobIdByLetterId[letterId];
-    if (jobId) saveRecommendedJob(jobId).catch(console.error);
+    if (jobId !== undefined) {
+      saveRecommendedJob(jobId).catch((error) => {
+        setStatus(letterId, previousStatus);
+        console.error(error);
+      });
+    }
   };
   const handleExpandLetter = (letterId: string) => {
     const jobId = jobIdByLetterId[letterId];
@@ -106,9 +115,15 @@ export default function RecommendationFlowContent({
     });
   };
   const handleDismissLetter = (letterId: string) => {
+    const previousStatus = resolveStatus(letterId);
     setStatus(letterId, 'dismissed');
     const deckId = deckIdByLetterId[letterId];
-    if (deckId) dismissCard(deckId, Number(letterId)).catch(console.error);
+    if (deckId !== undefined) {
+      dismissCard(deckId, Number(letterId)).catch((error) => {
+        setStatus(letterId, previousStatus);
+        console.error(error);
+      });
+    }
   };
 
   const DECK = useMemo(
@@ -145,6 +160,16 @@ export default function RecommendationFlowContent({
       );
     }
 
+    if (briefingQuery.isError) {
+      return (
+        <ScreenLayout>
+          <NoticePanel resultIconVariant="danger" title="브리핑을 불러오지 못했어요">
+            <Button onClick={() => briefingQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
+        </ScreenLayout>
+      );
+    }
+
     return (
       <ScreenLayout>
         <RecommendationGreeting
@@ -169,6 +194,16 @@ export default function RecommendationFlowContent({
       );
     }
 
+    if (cardsQuery.isError) {
+      return (
+        <ScreenLayout>
+          <NoticePanel resultIconVariant="danger" title="오늘의 추천을 불러오지 못했어요">
+            <Button onClick={() => cardsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
+        </ScreenLayout>
+      );
+    }
+
     const isLastStep = deckIndex === DECK.length - 1;
     const goNext = () => {
       if (isLastStep) {
@@ -189,7 +224,11 @@ export default function RecommendationFlowContent({
           footNote={deckStep.type === 'news' ? '' : undefined}
         >
           {deckStep.type === 'news' ? (
-            <RecommendationNews items={newsItems} />
+            contentsQuery.isLoading ? (
+              <Spinner />
+            ) : (
+              <RecommendationNews items={newsItems} />
+            )
           ) : (
             <RecommendationLetterCard
               {...deckStep.letter}
@@ -212,7 +251,7 @@ export default function RecommendationFlowContent({
   if (screen === 'news') {
     return (
       <ScreenLayout>
-        <RecommendationNews items={newsItems} />
+        {contentsQuery.isLoading ? <Spinner /> : <RecommendationNews items={newsItems} />}
       </ScreenLayout>
     );
   }
@@ -243,6 +282,16 @@ export default function RecommendationFlowContent({
       return (
         <ScreenLayout>
           <Spinner />
+        </ScreenLayout>
+      );
+    }
+
+    if (cardsQuery.isError) {
+      return (
+        <ScreenLayout>
+          <NoticePanel resultIconVariant="danger" title="목록을 불러오지 못했어요">
+            <Button onClick={() => cardsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
         </ScreenLayout>
       );
     }

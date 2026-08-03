@@ -1,6 +1,11 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { saveJob } from '@/api/jobs';
 
 export function useSaveRecommendedJob() {
-  return useMutation({ mutationFn: saveJob });
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: saveJob,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['saves'] }),
+  });
 }

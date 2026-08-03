@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { JobRegionName } from '@/api/jobs';
+import { isJobRegionName } from '@/api/jobs';
 import Pagination from '@/components/common/Pagination';
 import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults';
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
@@ -43,16 +43,15 @@ export default function ExplorePage() {
   const jobsQuery = useExploreJobs({
     keyword: keyword || undefined,
     categoryChild: selectedJobRoles[0],
-    regions: selectedRegion ? [selectedRegion as JobRegionName] : undefined,
+    regions: isJobRegionName(selectedRegion) ? [selectedRegion] : undefined,
     page,
     size: PAGE_SIZE,
   });
 
+  // categoryChild는 서버가 값 하나만 받아서, UI도 한 번에 하나만 선택되게 제한한다
   const toggleJobRole = (value: string) => {
     setPage(0);
-    setSelectedJobRoles((prev) =>
-      prev.includes(value) ? prev.filter((role) => role !== value) : [...prev, value],
-    );
+    setSelectedJobRoles((prev) => (prev.includes(value) ? [] : [value]));
   };
 
   const handleSearchSubmit = (value: string) => {
@@ -115,9 +114,12 @@ export default function ExplorePage() {
     .map(mapJobSummary);
 
   const isSearching = jobsQuery.isLoading;
-  const hasResults = visibleJobs.length > 0;
   const totalPages = jobsQuery.data?.totalPages ?? 1;
   const resultCount = jobsQuery.data?.totalElements ?? 0;
+  // 원격/고용형태는 서버 검색 파라미터로 못 보내서 현재 페이지 안에서만 걸러진다.
+  // 그래서 서버 결과 자체는 있는데 이 페이지엔 조건에 맞는 게 없을 수 있어, 페이지네이션은 유지한다.
+  const hasServerResults = resultCount > 0;
+  const hasVisibleResults = visibleJobs.length > 0;
 
   const resetFilters = () => {
     setPage(0);
@@ -161,9 +163,15 @@ export default function ExplorePage() {
             <ExploreJobGridSkeleton />
             <ExploreLoadingIndicator />
           </>
-        ) : hasResults ? (
+        ) : hasServerResults ? (
           <>
-            <ExploreJobGrid jobs={visibleJobs} />
+            {hasVisibleResults ? (
+              <ExploreJobGrid jobs={visibleJobs} />
+            ) : (
+              <p className="w-full py-16 text-center text-body-medium font-medium text-text-secondary">
+                이 페이지엔 조건에 맞는 공고가 없어요. 다음 페이지를 확인해보세요.
+              </p>
+            )}
             <Pagination
               currentPage={page + 1}
               totalPages={totalPages}

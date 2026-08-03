@@ -6,6 +6,7 @@ interface JobDetailApplyPanelProps {
   onApply?: () => void;
   onIntendToApply?: () => void;
   onSave?: () => void;
+  isSaved?: boolean;
   onNotInterested?: () => void;
   isIntendedToApply?: boolean;
 }
@@ -14,6 +15,7 @@ export default function JobDetailApplyPanel({
   onApply,
   onIntendToApply,
   onSave,
+  isSaved,
   onNotInterested,
   isIntendedToApply,
 }: JobDetailApplyPanelProps) {
@@ -34,7 +36,14 @@ export default function JobDetailApplyPanel({
         >
           지원 의향
         </Button>
-        <Button variant="outline" className="w-[110px] shrink-0" onClick={onSave}>
+        <Button
+          variant="outline"
+          className={cn(
+            'w-[110px] shrink-0',
+            isSaved && 'border-transparent bg-primary-400 hover:bg-primary-400',
+          )}
+          onClick={onSave}
+        >
           저장
         </Button>
         <Button

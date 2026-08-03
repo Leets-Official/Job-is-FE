@@ -8,9 +8,21 @@ import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
 import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkipFeedbackModal';
 import { mockJobDetail } from '@/features/jobs/mocks/jobDetailMock';
 
+const DISMISS_REASON_MAX_LENGTH = 30;
+
 interface JobDetailLocationState {
   deckId?: number;
   cardId?: number;
+}
+
+function buildDismissReason(reasons: string[]): string | undefined {
+  let combined = '';
+  for (const reason of reasons) {
+    const next = combined ? `${combined},${reason}` : reason;
+    if (next.length > DISMISS_REASON_MAX_LENGTH) break;
+    combined = next;
+  }
+  return combined || undefined;
 }
 
 export default function JobDetailPage() {
@@ -18,16 +30,21 @@ export default function JobDetailPage() {
   const location = useLocation();
   const { deckId, cardId } = (location.state as JobDetailLocationState | null) ?? {};
   const job = { ...mockJobDetail, id: id ?? mockJobDetail.id };
-  const jobId = Number(job.id);
+  const parsedJobId = Number(job.id);
+  const jobId = Number.isFinite(parsedJobId) ? parsedJobId : null;
+  const canSubmitDismissReason = deckId !== undefined && cardId !== undefined;
   const [isSkipModalOpen, setIsSkipModalOpen] = useState(false);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [intendedToApply, setIntendedToApply] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
+    if (jobId === null) return;
     recordJobView(jobId).catch(console.error);
   }, [jobId]);
 
   function handleConfirmApply(intendToApply: boolean) {
+    if (jobId === null) return;
     setIntendedToApply(intendToApply);
     window.open(job.source.originalUrl, '_blank', 'noopener,noreferrer');
     setIsApplyModalOpen(false);
@@ -35,24 +52,34 @@ export default function JobDetailPage() {
   }
 
   function handleIntendToApply() {
+    if (jobId === null) return;
+    const previous = intendedToApply;
     setIntendedToApply((prev) => !prev);
-    toggleApplyIntent(jobId).catch(console.error);
+    toggleApplyIntent(jobId)
+      .then((result) => setIntendedToApply(result.applyIntent))
+      .catch((error) => {
+        setIntendedToApply(previous);
+        console.error(error);
+      });
   }
 
   function handleSave() {
-    saveJob(jobId).catch(console.error);
+    if (jobId === null) return;
+    saveJob(jobId)
+      .then(() => setIsSaved(true))
+      .catch(console.error);
   }
 
   // 오늘의 브리핑 카드에서 들어온 경우에만 deckId/cardId가 있음(navigate state로 전달됨).
-  // 탐색 등 다른 경로로 들어온 경우엔 소속된 덱이 없어 서버에 반영할 수 없음
+  // 탐색 등 다른 경로로 들어온 경우엔 소속된 덱이 없어 서버에 반영할 수 없어 버튼 자체를 비활성화한다
   function handleSkipSubmit(reasons: string[], note: string) {
     setIsSkipModalOpen(false);
-    if (!deckId || !cardId) return;
+    if (!canSubmitDismissReason) return;
 
     dismissCard(deckId, cardId)
       .then(() =>
         submitDismissReason(deckId, cardId, {
-          reason: reasons.join(',').slice(0, 30) || undefined,
+          reason: buildDismissReason(reasons),
           comment: note || undefined,
         }),
       )
@@ -73,7 +100,10 @@ export default function JobDetailPage() {
                 onApply={() => setIsApplyModalOpen(true)}
                 onIntendToApply={handleIntendToApply}
                 onSave={handleSave}
-                onNotInterested={() => setIsSkipModalOpen(true)}
+                isSaved={isSaved}
+                onNotInterested={
+                  canSubmitDismissReason ? () => setIsSkipModalOpen(true) : undefined
+                }
                 isIntendedToApply={intendedToApply}
               />
             </div>

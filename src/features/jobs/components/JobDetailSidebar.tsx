@@ -8,6 +8,7 @@ interface JobDetailSidebarProps {
   onApply?: () => void;
   onIntendToApply?: () => void;
   onSave?: () => void;
+  isSaved?: boolean;
   onNotInterested?: () => void;
   isIntendedToApply?: boolean;
 }
@@ -17,6 +18,7 @@ export default function JobDetailSidebar({
   onApply,
   onIntendToApply,
   onSave,
+  isSaved,
   onNotInterested,
   isIntendedToApply,
 }: JobDetailSidebarProps) {
@@ -26,6 +28,7 @@ export default function JobDetailSidebar({
         onApply={onApply}
         onIntendToApply={onIntendToApply}
         onSave={onSave}
+        isSaved={isSaved}
         onNotInterested={onNotInterested}
         isIntendedToApply={isIntendedToApply}
       />

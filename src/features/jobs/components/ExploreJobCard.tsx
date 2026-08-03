@@ -54,7 +54,10 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             onClick={() => {
               setIsSaved(true);
               setIsMenuOpen(false);
-              save(job.id).catch(console.error);
+              save(job.id).catch((error) => {
+                setIsSaved(false);
+                console.error(error);
+              });
             }}
             className="text-left text-body-medium font-medium text-text-primary"
           >
@@ -67,7 +70,10 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             onClick={() => {
               setIsSaved(false);
               setIsMenuOpen(false);
-              unsave(job.id).catch(console.error);
+              unsave(job.id).catch((error) => {
+                setIsSaved(true);
+                console.error(error);
+              });
             }}
             className="text-left text-body-medium font-medium text-text-primary disabled:text-gray-400"
           >

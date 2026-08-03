@@ -22,6 +22,12 @@ export type JobSkillTag =
 
 export type JobRegionName = '서울' | '경기' | '인천' | '부산';
 
+const JOB_REGION_NAMES: readonly string[] = ['서울', '경기', '인천', '부산'];
+
+export function isJobRegionName(value: string): value is JobRegionName {
+  return JOB_REGION_NAMES.includes(value);
+}
+
 export interface JobCategory {
   id: number;
   name: string;
@@ -69,6 +75,8 @@ export interface SearchJobsParams {
 export async function searchJobs(params: SearchJobsParams = {}) {
   const { data } = await client.get<ApiEnvelope<PageResponse<JobSummary>>>('/api/jobs', {
     params,
+    // 기본 직렬화는 배열을 regions[]=... 형태로 보내는데, 백엔드는 regions=...&regions=... 형태를 기대함
+    paramsSerializer: { indexes: null },
   });
   return data.data;
 }
