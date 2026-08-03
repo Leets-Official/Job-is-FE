@@ -44,7 +44,7 @@ export default function JobDetailApplyPanel({
           )}
           onClick={onSave}
         >
-          저장
+          {isSaved ? '저장됨' : '저장'}
         </Button>
         <Button
           className="w-[110px] shrink-0 bg-gray-400 hover:bg-gray-400 active:bg-gray-400"
