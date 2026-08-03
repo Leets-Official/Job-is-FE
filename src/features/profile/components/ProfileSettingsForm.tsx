@@ -1,37 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { getCareerLevels, getJobCategories, getRegions, getTechStacks } from '@/api/jobs';
-import { getProfile } from '@/api/profile';
 import Button from '@/components/common/Button';
 import ProfileBasicInfoSection from '@/features/profile/components/ProfileBasicInfoSection';
 import ProfileLifestyleSection from '@/features/profile/components/ProfileLifestyleSection';
 import ProfileLinksSection from '@/features/profile/components/ProfileLinksSection';
 import ProfilePreferencesSection from '@/features/profile/components/ProfilePreferencesSection';
-import useProfileFiles from '@/features/profile/hooks/useProfileFiles';
+import useProfileSettingsForm from '@/features/profile/hooks/useProfileSettingsForm';
+import type { ProfileSettingsFormValues } from '@/features/profile/types/profileSettings';
 
-const INITIAL_REGIONS: string[] = [];
-const INITIAL_INTERESTS: string[] = [];
-const INITIAL_TECH_STACKS: string[] = [];
-
-function toggleSingleValue(values: string[], value: string) {
-  return values.includes(value) ? [] : [value];
-}
-
-function toggleMultipleValue(values: string[], value: string) {
-  return values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
-}
-
-function addUniqueValue(values: string[], value: string) {
-  return values.includes(value) ? values : [...values, value];
-}
-
-export interface ProfileSettingsFormValues {
-  regions: string[];
-  career: string;
-  interests: string[];
-  techStacks: string[];
-  preferenceNotes: string[];
-}
+export type { ProfileSettingsFormValues } from '@/features/profile/types/profileSettings';
 
 interface ProfileSettingsFormProps {
   onDocumentsClick?: () => void;
@@ -56,92 +31,38 @@ export default function ProfileSettingsForm({
   submitError,
   isSubmitting = false,
 }: ProfileSettingsFormProps) {
-  const [regions, setRegions] = useState(INITIAL_REGIONS);
-  const [career, setCareer] = useState('');
-  const [interests, setInterests] = useState(INITIAL_INTERESTS);
-  const [techStacks, setTechStacks] = useState(INITIAL_TECH_STACKS);
-  const [preferenceNote, setPreferenceNote] = useState('');
-  const [isSaved, setIsSaved] = useState(false);
-
-  const markUnsaved = () => setIsSaved(false);
-
-  const toggleRegion = (region: string) => {
-    setRegions((previous) => toggleSingleValue(previous, region));
-    markUnsaved();
-  };
-
-  const addRegion = (region: string) => {
-    setRegions([region]);
-    markUnsaved();
-  };
-
-  const changeCareer = (nextCareer: string) => {
-    setCareer(nextCareer);
-    markUnsaved();
-  };
-
-  const toggleInterest = (interest: string) => {
-    setInterests((previous) => toggleMultipleValue(previous, interest));
-    markUnsaved();
-  };
-
-  const addInterest = (interest: string) => {
-    setInterests((previous) => addUniqueValue(previous, interest));
-    markUnsaved();
-  };
-
-  const { data: techStackMetadata = [] } = useQuery({
-    queryKey: ['techStacks'],
-    queryFn: getTechStacks,
-  });
-  const { data: jobCategoryMetadata = [] } = useQuery({
-    queryKey: ['jobCategories'],
-    queryFn: getJobCategories,
-  });
-  const { data: regionMetadata = [] } = useQuery({
-    queryKey: ['regions'],
-    queryFn: getRegions,
-  });
-  const { data: careerLevelMetadata = [] } = useQuery({
-    queryKey: ['careerLevels'],
-    queryFn: getCareerLevels,
-  });
-  const { data: profile } = useQuery({
-    queryKey: ['profile'],
-    queryFn: getProfile,
-    enabled: loadProfile,
-  });
-  const { profileFiles } = useProfileFiles();
-  const techStackOptions = techStackMetadata.map((techStack) => techStack.name);
-  const documentsStatus =
-    profileFiles.length === 0 ? '미등록' : `${profileFiles.length}개 첨부 / 2개`;
-
-  const toggleTechStack = (techStack: string) => {
-    setTechStacks((previous) => toggleMultipleValue(previous, techStack));
-    markUnsaved();
-  };
-
-  const addTechStack = (techStack: string) => {
-    setTechStacks((previous) => addUniqueValue(previous, techStack));
-    markUnsaved();
-  };
+  const {
+    regions,
+    career,
+    interests,
+    techStacks,
+    preferenceNote,
+    isSaved,
+    defaultSubmitError,
+    isSavingProfile,
+    profile,
+    documentsStatus,
+    techStackOptions,
+    jobCategoryOptions,
+    regionOptions,
+    careerOptions,
+    toggleRegion,
+    addRegion,
+    changeCareer,
+    toggleInterest,
+    addInterest,
+    toggleTechStack,
+    addTechStack,
+    changePreferenceNote,
+    submit,
+  } = useProfileSettingsForm({ loadProfile, onSubmit });
 
   return (
     <form
       className="flex w-full max-w-190 flex-col gap-5 rounded-md border border-gray-200 bg-white p-6"
       onSubmit={(event) => {
         event.preventDefault();
-        if (onSubmit) {
-          void onSubmit({
-            regions,
-            career,
-            interests,
-            techStacks,
-            preferenceNotes: preferenceNote.trim() ? [preferenceNote.trim()] : [],
-          });
-          return;
-        }
-        setIsSaved(true);
+        void submit();
       }}
     >
       <header className="flex flex-col gap-5 border-b border-gray-400 pb-5">
@@ -153,10 +74,10 @@ export default function ProfileSettingsForm({
 
       <ProfileBasicInfoSection
         interests={interests}
-        interestOptions={jobCategoryMetadata.map((category) => category.name)}
+        interestOptions={jobCategoryOptions}
         regions={regions}
-        regionOptions={regionMetadata.map((region) => region.name)}
-        careerOptions={careerLevelMetadata}
+        regionOptions={regionOptions}
+        careerOptions={careerOptions}
         career={career}
         onToggleInterest={toggleInterest}
         onAddInterest={addInterest}
@@ -166,14 +87,12 @@ export default function ProfileSettingsForm({
       />
 
       <ProfilePreferencesSection
+        preferenceNote={preferenceNote}
         techStacks={techStacks}
         techStackOptions={techStackOptions}
         onAddTechStack={addTechStack}
         onToggleTechStack={toggleTechStack}
-        onPreferenceNoteChange={(value) => {
-          setPreferenceNote(value);
-          markUnsaved();
-        }}
+        onPreferenceNoteChange={changePreferenceNote}
       />
 
       <ProfileLinksSection
@@ -197,12 +116,16 @@ export default function ProfileSettingsForm({
             </p>
           </div>
         )}
-        {submitError && (
+        {(submitError ?? defaultSubmitError) && (
           <p className="text-label-medium font-medium text-danger-500" role="alert">
-            {submitError}
+            {submitError ?? defaultSubmitError}
           </p>
         )}
-        <Button type="submit" className="h-14 w-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="h-14 w-full"
+          disabled={isSubmitting || (!onSubmit && isSavingProfile)}
+        >
           {submitLabel}
         </Button>
       </div>

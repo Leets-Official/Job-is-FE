@@ -1,15 +1,7 @@
 import Button from '@/components/common/Button';
 import Tag from '@/components/common/Tag';
 
-export default function ProfileAptitudeTestResult({
-  resultName,
-  resultSummary,
-  resultTags,
-  onApply,
-  onRetry,
-  isApplying = false,
-  errorMessage,
-}: {
+interface QuizResultProps {
   resultName: string;
   resultSummary: string;
   resultTags: string[];
@@ -17,7 +9,17 @@ export default function ProfileAptitudeTestResult({
   onRetry: () => void;
   isApplying?: boolean;
   errorMessage?: string;
-}) {
+}
+
+export default function QuizResult({
+  resultName,
+  resultSummary,
+  resultTags,
+  onApply,
+  onRetry,
+  isApplying = false,
+  errorMessage,
+}: QuizResultProps) {
   return (
     <section className="flex w-full max-w-190 flex-col items-center gap-5 overflow-hidden rounded-md border border-gray-200 bg-white px-8 py-6">
       <h1 className="w-full text-center text-label-medium font-medium text-text-primary">

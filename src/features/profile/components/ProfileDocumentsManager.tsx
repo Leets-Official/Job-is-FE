@@ -1,9 +1,8 @@
-import { useMutation } from '@tanstack/react-query';
 import { useMemo, useRef, useState } from 'react';
-import { deleteProfileFile } from '@/api/profile';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import DeleteDocumentModal from '@/features/profile/components/DeleteDocumentModal';
 import UploadDropzone from '@/features/profile/components/UploadDropzone';
+import useProfileDocumentActions from '@/features/profile/hooks/useProfileDocumentActions';
 import useProfileDocumentUpload from '@/features/profile/hooks/useProfileDocumentUpload';
 import useProfileFiles from '@/features/profile/hooks/useProfileFiles';
 import {
@@ -33,12 +32,16 @@ export default function ProfileDocumentsManager({
   const [errors, setErrors] = useState<Partial<Record<DocumentType, DocumentUploadError>>>({});
   const [deleteTarget, setDeleteTarget] = useState<DocumentType | null>(null);
   const [deleteError, setDeleteError] = useState<string>();
+  const [downloadError, setDownloadError] = useState<string>();
   const uploadControllersRef = useRef<Partial<Record<DocumentType, AbortController>>>({});
   const { uploadProfileDocument } = useProfileDocumentUpload();
   const { profileFiles, invalidateProfileFiles } = useProfileFiles();
-  const { mutate: removeProfileFile, isPending: isDeletingProfileFile } = useMutation({
-    mutationFn: deleteProfileFile,
-  });
+  const {
+    deleteProfileFile,
+    isDeletingProfileFile,
+    downloadProfileFile,
+    isDownloadingProfileFile,
+  } = useProfileDocumentActions();
 
   const loadedDocuments = useMemo<Record<DocumentType, ProfileDocument | null>>(() => {
     const nextDocuments: Record<DocumentType, ProfileDocument | null> = {
@@ -126,21 +129,27 @@ export default function ProfileDocumentsManager({
     const document = displayedDocuments[deleteTarget];
     if (!document) return;
 
-    removeProfileFile(Number(document.id), {
-      onSuccess: () => {
+    void deleteProfileFile(Number(document.id))
+      .then(() => {
         setDocuments((previous) => ({ ...previous, [deleteTarget]: null }));
         setErrors((previous) => ({ ...previous, [deleteTarget]: undefined }));
         setDeleteTarget(null);
         void invalidateProfileFiles();
-      },
-      onError: () => {
+      })
+      .catch(() => {
         setDeleteError('파일을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.');
-      },
-    });
+      });
   };
 
   const clearError = (type: DocumentType) => {
     setErrors((previous) => ({ ...previous, [type]: undefined }));
+  };
+
+  const downloadDocument = (document: ProfileDocument) => {
+    setDownloadError(undefined);
+    void downloadProfileFile(Number(document.id)).catch(() => {
+      setDownloadError('파일을 다운로드하지 못했어요. 잠시 후 다시 시도해주세요.');
+    });
   };
 
   return (
@@ -149,7 +158,7 @@ export default function ProfileDocumentsManager({
         <button
           type="button"
           onClick={onBack}
-          className="inline-flex h-[35px] w-fit cursor-pointer items-center gap-1 rounded-sm border border-primary-400 px-5 text-label-large font-medium text-text-primary transition-colors hover:bg-primary-50"
+          className="inline-flex h-8.75 w-fit cursor-pointer items-center gap-1 rounded-sm border border-primary-400 px-5 text-label-large font-medium text-text-primary transition-colors hover:bg-primary-50"
         >
           <ChevronLeftIcon className="size-6" aria-hidden="true" />
           {backLabel}
@@ -160,6 +169,11 @@ export default function ProfileDocumentsManager({
         <p className="flex min-h-18 items-center rounded-xs border border-dashed border-gray-400 bg-gray-200 px-6 text-label-medium font-medium text-text-tertiary">
           추천 고도화에 활용할 예정이에요 · 지금은 본인 보관용
         </p>
+        {downloadError && (
+          <p className="text-label-small font-medium text-danger-500" role="alert">
+            {downloadError}
+          </p>
+        )}
 
         <div className="flex flex-col gap-5 border-t border-gray-400 pt-5">
           <UploadDropzone
@@ -168,6 +182,10 @@ export default function ProfileDocumentsManager({
             upload={uploads.resume}
             uploadError={errors.resume}
             onSelect={(file) => selectDocument('resume', file)}
+            onDownload={() => {
+              if (displayedDocuments.resume) downloadDocument(displayedDocuments.resume);
+            }}
+            isDownloading={isDownloadingProfileFile}
             onDelete={() => {
               setDeleteError(undefined);
               setDeleteTarget('resume');
@@ -181,6 +199,10 @@ export default function ProfileDocumentsManager({
             upload={uploads.coverLetter}
             uploadError={errors.coverLetter}
             onSelect={(file) => selectDocument('coverLetter', file)}
+            onDownload={() => {
+              if (displayedDocuments.coverLetter) downloadDocument(displayedDocuments.coverLetter);
+            }}
+            isDownloading={isDownloadingProfileFile}
             onDelete={() => {
               setDeleteError(undefined);
               setDeleteTarget('coverLetter');

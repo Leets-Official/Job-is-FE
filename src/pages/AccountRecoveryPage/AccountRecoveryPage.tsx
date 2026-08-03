@@ -1,13 +1,7 @@
-import { useMutation } from '@tanstack/react-query';
 import { useLocation, useNavigate } from 'react-router';
-import { restoreAccount } from '@/api/auth';
 import Button from '@/components/common/Button';
 import ResultIcon from '@/components/feedback/ResultIcon';
-import {
-  setAccessToken,
-  setOnboardingCompleted,
-  setUserId,
-} from '@/features/login/store/useAuthStore';
+import useAccountRecovery from '@/features/login/hooks/useAccountRecovery';
 
 function formatRecoveryDeadline(value: string | null) {
   if (!value) return '확인 필요';
@@ -43,20 +37,12 @@ export default function AccountRecoveryPage() {
   const restorableUntil = recoveryState?.restorableUntil ?? null;
   const recoveryDeadline = formatRecoveryDeadline(restorableUntil);
   const remainingDays = getRemainingDays(restorableUntil);
-  const restoreMutation = useMutation({
-    mutationFn: restoreAccount,
-    onSuccess: (result) => {
-      setAccessToken(result.accessToken);
-      setUserId(result.userId);
-      setOnboardingCompleted(result.onboardingCompleted);
-      navigate(result.onboardingCompleted ? '/recommendations' : '/onboarding', { replace: true });
-    },
-  });
+  const { restoreAccount, isRestoring, isRestoreError } = useAccountRecovery();
 
   const handleRestore = () => {
     if (!restoreCode) return;
 
-    restoreMutation.mutate({ restoreCode });
+    restoreAccount({ restoreCode });
   };
 
   return (
@@ -78,7 +64,7 @@ export default function AccountRecoveryPage() {
             : `남은 복구 기간 · ${remainingDays}일(${recoveryDeadline}까지)`}
         </div>
 
-        {restoreMutation.isError ? (
+        {isRestoreError ? (
           <p className="text-label-small font-medium text-danger-500" role="alert">
             계정을 복구하지 못했어요. 다시 시도해주세요.
           </p>
@@ -87,9 +73,9 @@ export default function AccountRecoveryPage() {
         <Button
           className="w-full max-w-103.75"
           onClick={handleRestore}
-          disabled={!restoreCode || restoreMutation.isPending}
+          disabled={!restoreCode || isRestoring}
         >
-          {restoreMutation.isPending ? '복구 중…' : '계정 복구하기'}
+          {isRestoring ? '복구 중…' : '계정 복구하기'}
         </Button>
         <Button variant="outline" className="w-full max-w-103.75" onClick={() => navigate('/')}>
           복구하지 않고 나가기

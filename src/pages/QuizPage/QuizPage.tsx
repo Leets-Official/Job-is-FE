@@ -1,18 +1,11 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import {
-  applyQuizResult,
-  getQuizQuestions,
-  getQuizResult,
-  saveQuizAnswer,
-  type QuizQuestionsResponse,
-  type QuizSource,
-} from '@/api/quiz';
+import type { QuizSource } from '@/api/quiz';
 import { Alert, Spinner } from '@/components/feedback';
-import ProfileAptitudeTestQuestionnaire from '@/features/profile/components/ProfileAptitudeTestQuestionnaire';
-import ProfileAptitudeTestResult from '@/features/profile/components/ProfileAptitudeTestResult';
-import ProfileAptitudeTestStart from '@/features/profile/components/ProfileAptitudeTestStart';
+import QuizQuestionnaire from '@/features/quiz/components/QuizQuestionnaire';
+import QuizResult from '@/features/quiz/components/QuizResult';
+import QuizStart from '@/features/quiz/components/QuizStart';
+import useQuizApi from '@/features/quiz/hooks/useQuizApi';
 
 type QuizScreen = 'start' | 'questions' | 'result';
 
@@ -22,7 +15,6 @@ function getQuizSource(value: string | null): QuizSource {
 
 export default function QuizPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [searchParams] = useSearchParams();
   const source = getQuizSource(searchParams.get('source'));
   const [screen, setScreen] = useState<QuizScreen>('start');
@@ -30,21 +22,15 @@ export default function QuizPage() {
   const [answerError, setAnswerError] = useState<string>();
   const [applyError, setApplyError] = useState<string>();
 
-  const quizQuestionsQuery = useQuery({
-    queryKey: ['quizQuestions', source],
-    queryFn: () => getQuizQuestions(source),
-    enabled: screen === 'questions',
-  });
-  const quizResultQuery = useQuery({
-    queryKey: ['quizResult', quizQuestionsQuery.data?.testId],
-    queryFn: () => getQuizResult(quizQuestionsQuery.data?.testId as number),
-    enabled:
-      (screen === 'result' ||
-        (screen === 'questions' && quizQuestionsQuery.data?.completed === true)) &&
-      quizQuestionsQuery.data?.testId !== undefined,
-  });
-  const saveAnswerMutation = useMutation({ mutationFn: saveQuizAnswer });
-  const applyResultMutation = useMutation({ mutationFn: applyQuizResult });
+  const {
+    quizQuestionsQuery,
+    quizResultQuery,
+    saveAnswer,
+    applyResult: submitQuizResult,
+    retryQuiz: refetchQuiz,
+    isSavingAnswer,
+    isApplyingResult,
+  } = useQuizApi(source, screen);
 
   const exitQuestionnaire = () => {
     setCurrentIndex(null);
@@ -88,27 +74,7 @@ export default function QuizPage() {
     setAnswerError(undefined);
 
     try {
-      const savedAnswer = await saveAnswerMutation.mutateAsync({
-        testId: quiz.testId,
-        questionNo: currentQuestion.questionNo,
-        choiceValue,
-      });
-
-      queryClient.setQueryData<QuizQuestionsResponse>(['quizQuestions', source], (previous) => {
-        if (!previous) return previous;
-
-        return {
-          ...previous,
-          answeredCount: savedAnswer.answeredCount,
-          totalCount: savedAnswer.totalCount,
-          completed: savedAnswer.completed,
-          questions: previous.questions.map((question) =>
-            question.questionNo === currentQuestion.questionNo
-              ? { ...question, selectedChoiceValue: choiceValue }
-              : question,
-          ),
-        };
-      });
+      const savedAnswer = await saveAnswer(quiz.testId, currentQuestion.questionNo, choiceValue);
 
       if (savedAnswer.completed) {
         setScreen('result');
@@ -130,11 +96,7 @@ export default function QuizPage() {
     setApplyError(undefined);
 
     try {
-      await applyResultMutation.mutateAsync(quiz.testId);
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ['profile'] }),
-        queryClient.invalidateQueries({ queryKey: ['profileDraft'] }),
-      ]);
+      await submitQuizResult(quiz.testId);
       navigate(source === 'ONBOARDING' ? '/onboarding' : '/profile');
     } catch {
       setApplyError('결과를 프로필에 반영하지 못했어요. 잠시 후 다시 시도해주세요.');
@@ -143,7 +105,7 @@ export default function QuizPage() {
 
   const retryQuiz = async () => {
     setApplyError(undefined);
-    await queryClient.invalidateQueries({ queryKey: ['quizQuestions', source] });
+    await refetchQuiz();
     setCurrentIndex(null);
     setScreen('questions');
   };
@@ -173,13 +135,13 @@ export default function QuizPage() {
             </Alert>
           </section>
         ) : (
-          <ProfileAptitudeTestResult
+          <QuizResult
             resultName={quizResultQuery.data.resultType.name}
             resultSummary={quizResultQuery.data.resultType.summary}
             resultTags={quizResultQuery.data.resultTags}
             onApply={() => void applyResult()}
             onRetry={() => void retryQuiz()}
-            isApplying={applyResultMutation.isPending}
+            isApplying={isApplyingResult}
             errorMessage={applyError}
           />
         )
@@ -196,11 +158,11 @@ export default function QuizPage() {
           </section>
         ) : (
           <div className="flex w-full max-w-190 flex-col gap-3">
-            <ProfileAptitudeTestQuestionnaire
+            <QuizQuestionnaire
               questions={quiz.questions}
               currentIndex={activeQuestionIndex}
               selectedAnswer={quiz.questions[activeQuestionIndex]?.selectedChoiceValue}
-              isSavingAnswer={saveAnswerMutation.isPending}
+              isSavingAnswer={isSavingAnswer}
               onSelect={(choiceValue) => void selectAnswer(choiceValue)}
               onPrevious={moveToPrevious}
               onSkip={skipQuestion}
@@ -213,7 +175,7 @@ export default function QuizPage() {
           </div>
         )
       ) : (
-        <ProfileAptitudeTestStart onStart={startQuestionnaire} />
+        <QuizStart onStart={startQuestionnaire} />
       )}
     </div>
   );

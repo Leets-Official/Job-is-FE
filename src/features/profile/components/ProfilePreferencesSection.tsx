@@ -3,6 +3,7 @@ import ProfileAutocompleteTagInput from '@/features/profile/components/ProfileAu
 import ProfileFieldLabel from '@/features/profile/components/ProfileFieldLabel';
 
 interface ProfilePreferencesSectionProps {
+  preferenceNote: string;
   techStacks: string[];
   techStackOptions: string[];
   onAddTechStack: (techStack: string) => void;
@@ -11,6 +12,7 @@ interface ProfilePreferencesSectionProps {
 }
 
 export default function ProfilePreferencesSection({
+  preferenceNote,
   techStacks,
   techStackOptions,
   onAddTechStack,
@@ -25,6 +27,7 @@ export default function ProfilePreferencesSection({
         <ProfileFieldLabel status="선택">선호 조건</ProfileFieldLabel>
         <input
           type="text"
+          value={preferenceNote}
           placeholder="정규직 우선 · 재택 가능한 곳이면 좋겠어요…"
           onChange={(event) => onPreferenceNoteChange(event.target.value)}
           className="h-10 w-full rounded-[6px] border border-gray-700 bg-white px-4 text-label-medium font-medium text-text-secondary outline-none placeholder:text-gray-600 focus:border-primary-500"

@@ -1,29 +1,17 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { withdrawAccount, type WithdrawalRequest } from '@/api/auth';
-import { clearAuth } from '@/features/login/store/useAuthStore';
 import WithdrawalCompleteContent from '@/features/settings/components/WithdrawalCompleteContent';
 import WithdrawalReasonForm from '@/features/settings/components/WithdrawalReasonForm';
+import useAccountWithdrawal from '@/features/settings/hooks/useAccountWithdrawal';
 
 type WithdrawalStep = 'reason' | 'complete';
 
 export default function AccountWithdrawalPage() {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const [withdrawalStep, setWithdrawalStep] = useState<WithdrawalStep>('reason');
-  const withdrawalMutation = useMutation({
-    mutationFn: withdrawAccount,
-    onSuccess: () => {
-      queryClient.clear();
-      clearAuth();
-      setWithdrawalStep('complete');
-    },
+  const { withdrawAccount, isWithdrawing, isWithdrawalError } = useAccountWithdrawal(() => {
+    setWithdrawalStep('complete');
   });
-
-  async function handleWithdrawal(request: WithdrawalRequest) {
-    await withdrawalMutation.mutateAsync(request);
-  }
 
   return (
     <div
@@ -36,10 +24,10 @@ export default function AccountWithdrawalPage() {
       {withdrawalStep === 'reason' ? (
         <WithdrawalReasonForm
           onCancel={() => navigate('/settings/account')}
-          onComplete={handleWithdrawal}
-          isSubmitting={withdrawalMutation.isPending}
+          onComplete={withdrawAccount}
+          isSubmitting={isWithdrawing}
           errorMessage={
-            withdrawalMutation.isError ? '회원 탈퇴에 실패했어요. 다시 시도해주세요.' : undefined
+            isWithdrawalError ? '회원 탈퇴에 실패했어요. 다시 시도해주세요.' : undefined
           }
         />
       ) : (

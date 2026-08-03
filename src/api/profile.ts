@@ -25,6 +25,12 @@ interface ConfirmProfileFileResponse {
   created: boolean;
 }
 
+interface ProfileFileDownloadUrlResponse {
+  downloadUrl: string;
+  fileName: string;
+  expiresIn: number;
+}
+
 export interface ProfileFile {
   fileId: number;
   category: ProfileFileCategory;
@@ -34,12 +40,24 @@ export interface ProfileFile {
 }
 
 export interface ProfileResponse {
+  jobCategories: Array<{ id: number; name: string; primary: boolean }> | null;
+  region: { id: number; name: string } | null;
+  careerLevel: CareerLevel | null;
+  preferenceNotes: string[] | null;
+  excludeKeywords: string[] | null;
+  techStacks: string[] | null;
   personalityTags: string[];
   jobTestCompleted: boolean;
 }
 
-export type CareerLevel = 'ENTRY' | 'JUNIOR' | 'EXPERIENCED';
+export const CAREER_LEVELS = ['ENTRY', 'JUNIOR', 'EXPERIENCED'] as const;
+
+export type CareerLevel = (typeof CAREER_LEVELS)[number];
 export type OnboardingStep = 'PROFILE' | 'QUIZ' | 'REVIEW';
+
+export function isCareerLevel(value: string): value is CareerLevel {
+  return CAREER_LEVELS.includes(value as CareerLevel);
+}
 
 export interface ProfileDraftResponse {
   onboardingStep: OnboardingStep;
@@ -64,8 +82,24 @@ export interface ProfileDraftRequest {
   techStacks?: string[];
 }
 
+export interface ProfileUpdateRequest {
+  jobCategoryIds?: number[];
+  primaryJobCategoryId?: number;
+  regionId?: number;
+  careerLevel?: CareerLevel;
+  preferenceNotes?: string[];
+  excludeKeywords?: string[];
+  techStacks?: string[];
+}
+
 export async function getProfile() {
   const { data } = await client.get<ApiEnvelope<ProfileResponse>>('/api/profile');
+
+  return data.data;
+}
+
+export async function updateProfile(request: ProfileUpdateRequest) {
+  const { data } = await client.patch<ApiEnvelope<ProfileResponse>>('/api/profile', request);
 
   return data.data;
 }
@@ -117,6 +151,14 @@ export async function confirmProfileFile(request: ConfirmProfileFileRequest) {
 
 export async function deleteProfileFile(fileId: number) {
   const { data } = await client.delete<ApiEnvelope<string>>(`/api/profile/files/${fileId}`);
+
+  return data.data;
+}
+
+export async function getProfileFileDownloadUrl(fileId: number) {
+  const { data } = await client.get<ApiEnvelope<ProfileFileDownloadUrlResponse>>(
+    `/api/profile/files/${fileId}/download-url`,
+  );
 
   return data.data;
 }
