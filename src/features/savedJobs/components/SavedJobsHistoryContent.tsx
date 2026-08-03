@@ -5,7 +5,7 @@ import SavedJobsEmptyState from '@/features/savedJobs/components/SavedJobsEmptyS
 import {
   type SavedJobHistoryItem,
   type SavedJobHistoryStatus,
-} from '@/features/savedJobs/mocks/savedJobsMock';
+} from '@/features/savedJobs/types/savedJob';
 import { cn } from '@/utils/cn';
 
 const HISTORY_FILTERS: { label: string; value: SavedJobHistoryStatus | 'all' }[] = [
@@ -32,6 +32,7 @@ interface SavedJobsHistoryContentProps {
   onFilterChange: (filter: SavedJobHistoryStatus | 'all') => void;
   onBrowseRecommendations: () => void;
   onExplore: () => void;
+  onLoadMore?: () => void;
 }
 
 function SavedJobHistoryRow({ item }: { item: SavedJobHistoryItem }) {
@@ -62,6 +63,7 @@ export default function SavedJobsHistoryContent({
   onFilterChange,
   onBrowseRecommendations,
   onExplore,
+  onLoadMore,
 }: SavedJobsHistoryContentProps) {
   const historyByDate = useMemo(() => {
     const filteredHistory = history.filter(
@@ -105,7 +107,11 @@ export default function SavedJobsHistoryContent({
             </section>
           ))}
 
-          <Button className="h-10 w-93.75 self-center">더보기</Button>
+          {onLoadMore && (
+            <Button className="h-10 w-93.75 self-center" onClick={onLoadMore}>
+              더보기
+            </Button>
+          )}
         </>
       ) : (
         <SavedJobsEmptyState

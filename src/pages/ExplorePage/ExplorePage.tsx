@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import type { JobRegionName } from '@/api/jobs';
 import Pagination from '@/components/common/Pagination';
 import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults';
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
@@ -8,47 +9,93 @@ import ExploreLoadingIndicator from '@/features/jobs/components/ExploreLoadingIn
 import ExploreResultsToolbar, {
   type ExploreActiveFilter,
 } from '@/features/jobs/components/ExploreResultsToolbar';
-import { JOB_ROLE_KEYWORDS, JOB_ROLE_OPTIONS } from '@/features/jobs/constants/exploreFilters';
-import { mockExploreJobs } from '@/features/jobs/mocks/exploreJobsMock';
+import { useExploreJobs } from '@/features/jobs/hooks/useExploreJobs';
+import {
+  useEmploymentTypes,
+  useJobCategories,
+  useRegions,
+} from '@/features/jobs/hooks/useJobFilterOptions';
+import { mapJobSummary } from '@/features/jobs/utils/mapJobSummary';
 
-const TOTAL_RESULT_COUNT = 128;
-const TOTAL_PAGES = 3;
-const SEARCH_LOADING_DELAY_MS = 700;
+const PAGE_SIZE = 24;
 
 export default function ExplorePage() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(0);
+  const [keyword, setKeyword] = useState('');
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedEmploymentType, setSelectedEmploymentType] = useState('');
   const [isRemoteSelected, setIsRemoteSelected] = useState(false);
-  const [isAlwaysOpenSelected, setIsAlwaysOpenSelected] = useState(true);
-  const filterKey = JSON.stringify([selectedJobRoles, isRemoteSelected, isAlwaysOpenSelected]);
-  const [previousFilterKey, setPreviousFilterKey] = useState(filterKey);
-  const [isSearching, setIsSearching] = useState(true);
 
-  if (filterKey !== previousFilterKey) {
-    setPreviousFilterKey(filterKey);
-    setIsSearching(true);
-  }
+  const categoriesQuery = useJobCategories();
+  const regionsQuery = useRegions();
+  const employmentTypesQuery = useEmploymentTypes();
+  const categoryOptions = (categoriesQuery.data ?? []).map((category) => ({
+    label: category.name,
+    value: category.name,
+  }));
+  const regionOptions = (regionsQuery.data ?? []).map((region) => ({
+    label: region.name,
+    value: region.name,
+  }));
+  const employmentTypeOptions = employmentTypesQuery.data ?? [];
 
-  useEffect(() => {
-    if (!isSearching) return;
-    const timer = setTimeout(() => setIsSearching(false), SEARCH_LOADING_DELAY_MS);
-    return () => clearTimeout(timer);
-  }, [isSearching]);
+  const jobsQuery = useExploreJobs({
+    keyword: keyword || undefined,
+    categoryChild: selectedJobRoles[0],
+    regions: selectedRegion ? [selectedRegion as JobRegionName] : undefined,
+    page,
+    size: PAGE_SIZE,
+  });
 
   const toggleJobRole = (value: string) => {
+    setPage(0);
     setSelectedJobRoles((prev) =>
       prev.includes(value) ? prev.filter((role) => role !== value) : [...prev, value],
     );
   };
 
+  const handleSearchSubmit = (value: string) => {
+    setPage(0);
+    setKeyword(value);
+  };
+
+  const handleRegionChange = (value: string) => {
+    setPage(0);
+    setSelectedRegion(value);
+  };
+
+  const handleEmploymentTypeChange = (value: string) => {
+    setPage(0);
+    setSelectedEmploymentType(value);
+  };
+
+  const toggleRemote = () => setIsRemoteSelected((prev) => !prev);
+
   const activeFilters: ExploreActiveFilter[] = [
-    ...JOB_ROLE_OPTIONS.filter((option) => selectedJobRoles.includes(option.value)).map(
-      (option) => ({
-        key: option.value,
-        label: option.label,
-        onRemove: () => toggleJobRole(option.value),
-      }),
-    ),
+    ...selectedJobRoles.map((role) => ({
+      key: role,
+      label: role,
+      onRemove: () => toggleJobRole(role),
+    })),
+    ...(selectedRegion
+      ? [
+          {
+            key: selectedRegion,
+            label: selectedRegion,
+            onRemove: () => handleRegionChange(''),
+          },
+        ]
+      : []),
+    ...(selectedEmploymentType
+      ? [
+          {
+            key: selectedEmploymentType,
+            label: selectedEmploymentType,
+            onRemove: () => handleEmploymentTypeChange(''),
+          },
+        ]
+      : []),
     ...(isRemoteSelected
       ? [
           {
@@ -58,35 +105,26 @@ export default function ExplorePage() {
           },
         ]
       : []),
-    ...(isAlwaysOpenSelected
-      ? [
-          {
-            key: 'always-open',
-            label: '상시포함',
-            onRemove: () => setIsAlwaysOpenSelected(false),
-          },
-        ]
-      : []),
   ];
 
-  const hasActiveFilters = selectedJobRoles.length > 0 || isRemoteSelected || !isAlwaysOpenSelected;
+  const hasActiveFilters = activeFilters.length > 0;
 
-  const visibleJobs = mockExploreJobs.filter((job) => {
-    const matchesRole =
-      selectedJobRoles.length === 0 ||
-      selectedJobRoles.some((role) => job.title.includes(JOB_ROLE_KEYWORDS[role]));
-    const matchesRemote = !isRemoteSelected || job.isRemote;
-    const matchesAlwaysOpen = isAlwaysOpenSelected || job.dDayLabel !== '상시';
-    return matchesRole && matchesRemote && matchesAlwaysOpen;
-  });
+  const visibleJobs = (jobsQuery.data?.content ?? [])
+    .filter((job) => !isRemoteSelected || job.remoteAvailable)
+    .filter((job) => !selectedEmploymentType || job.employmentType === selectedEmploymentType)
+    .map(mapJobSummary);
 
+  const isSearching = jobsQuery.isLoading;
   const hasResults = visibleJobs.length > 0;
-  const resultCount = hasActiveFilters ? visibleJobs.length : TOTAL_RESULT_COUNT;
+  const totalPages = jobsQuery.data?.totalPages ?? 1;
+  const resultCount = jobsQuery.data?.totalElements ?? 0;
 
   const resetFilters = () => {
+    setPage(0);
     setSelectedJobRoles([]);
+    setSelectedRegion('');
+    setSelectedEmploymentType('');
     setIsRemoteSelected(false);
-    setIsAlwaysOpenSelected(false);
   };
 
   return (
@@ -99,12 +137,18 @@ export default function ExplorePage() {
           </p>
         </div>
         <ExploreFilters
+          onSearchSubmit={handleSearchSubmit}
+          categoryOptions={categoryOptions}
           selectedJobRoles={selectedJobRoles}
           onToggleJobRole={toggleJobRole}
+          regionOptions={regionOptions}
+          selectedRegion={selectedRegion}
+          onRegionChange={handleRegionChange}
+          employmentTypeOptions={employmentTypeOptions}
+          selectedEmploymentType={selectedEmploymentType}
+          onEmploymentTypeChange={handleEmploymentTypeChange}
           isRemoteSelected={isRemoteSelected}
-          onToggleRemote={() => setIsRemoteSelected((prev) => !prev)}
-          isAlwaysOpenSelected={isAlwaysOpenSelected}
-          onToggleAlwaysOpen={() => setIsAlwaysOpenSelected((prev) => !prev)}
+          onToggleRemote={toggleRemote}
         />
         <ExploreResultsToolbar
           resultCount={resultCount}
@@ -121,15 +165,18 @@ export default function ExplorePage() {
           <>
             <ExploreJobGrid jobs={visibleJobs} />
             <Pagination
-              currentPage={currentPage}
-              totalPages={TOTAL_PAGES}
-              label={`${currentPage}/${TOTAL_PAGES}`}
-              onPrevious={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              onNext={() => setCurrentPage((page) => Math.min(TOTAL_PAGES, page + 1))}
+              currentPage={page + 1}
+              totalPages={totalPages}
+              label={`${page + 1}/${totalPages}`}
+              onPrevious={() => setPage((prev) => Math.max(0, prev - 1))}
+              onNext={() => setPage((prev) => Math.min(totalPages - 1, prev + 1))}
             />
           </>
         ) : (
-          <ExploreEmptyResults activeFilters={activeFilters} onResetFilters={resetFilters} />
+          <ExploreEmptyResults
+            activeFilters={hasActiveFilters ? activeFilters : []}
+            onResetFilters={resetFilters}
+          />
         )}
       </div>
     </div>

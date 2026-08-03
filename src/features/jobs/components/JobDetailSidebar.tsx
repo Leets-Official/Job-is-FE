@@ -6,6 +6,8 @@ import type { JobDetail } from '@/features/jobs/types/jobDetail';
 interface JobDetailSidebarProps {
   job: JobDetail;
   onApply?: () => void;
+  onIntendToApply?: () => void;
+  onSave?: () => void;
   onNotInterested?: () => void;
   isIntendedToApply?: boolean;
 }
@@ -13,6 +15,8 @@ interface JobDetailSidebarProps {
 export default function JobDetailSidebar({
   job,
   onApply,
+  onIntendToApply,
+  onSave,
   onNotInterested,
   isIntendedToApply,
 }: JobDetailSidebarProps) {
@@ -20,6 +24,8 @@ export default function JobDetailSidebar({
     <div className="flex w-full flex-col gap-4">
       <JobDetailApplyPanel
         onApply={onApply}
+        onIntendToApply={onIntendToApply}
+        onSave={onSave}
         onNotInterested={onNotInterested}
         isIntendedToApply={isIntendedToApply}
       />

@@ -1,6 +1,6 @@
 import Badge from '@/components/common/Badge';
 import ListCard from '@/components/common/ListCard';
-import type { RecommendationNewsItem } from '@/features/recommendations/mocks/recommendationNews';
+import type { RecommendationNewsItem } from '@/features/recommendations/types/recommendationNewsItem';
 import { cn } from '@/utils/cn';
 
 interface RecommendationNewsProps {
@@ -20,7 +20,7 @@ export default function RecommendationNews({ items, className }: RecommendationN
       <div className="grid grid-cols-2 gap-4">
         {items.map((item) => (
           <ListCard
-            key={item.title}
+            key={item.href ?? item.title}
             badge={<Badge color="disabled">{item.badgeLabel}</Badge>}
             heading={item.title}
             caption={item.description}

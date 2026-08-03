@@ -1,9 +1,7 @@
 export interface ExploreJobSummary {
-  id: string;
+  id: number;
   thumbnailUrl: string;
   dDayLabel: string;
-  matchScoreLabel: string;
-  avatarUrl: string;
   title: string;
   companyName: string;
   employmentInfo: string;
