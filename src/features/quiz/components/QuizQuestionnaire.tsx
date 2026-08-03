@@ -2,15 +2,7 @@ import type { QuizQuestion } from '@/api/quiz';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import { cn } from '@/utils/cn';
 
-export default function ProfileAptitudeTestQuestionnaire({
-  questions,
-  currentIndex,
-  selectedAnswer,
-  isSavingAnswer = false,
-  onSelect,
-  onPrevious,
-  onSkip,
-}: {
+interface QuizQuestionnaireProps {
   questions: QuizQuestion[];
   currentIndex: number;
   selectedAnswer?: number | null;
@@ -18,7 +10,17 @@ export default function ProfileAptitudeTestQuestionnaire({
   onSelect: (answer: number) => void;
   onPrevious: () => void;
   onSkip: () => void;
-}) {
+}
+
+export default function QuizQuestionnaire({
+  questions,
+  currentIndex,
+  selectedAnswer,
+  isSavingAnswer = false,
+  onSelect,
+  onPrevious,
+  onSkip,
+}: QuizQuestionnaireProps) {
   const question = questions[currentIndex];
   const questionNumber = currentIndex + 1;
 

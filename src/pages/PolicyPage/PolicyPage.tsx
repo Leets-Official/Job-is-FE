@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import { postConsent } from '@/api/auth';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
+import useConsentSubmission from '@/features/login/hooks/useConsentSubmission';
 
 interface AgreementItem {
   id: string;
@@ -26,17 +26,16 @@ export default function PolicyPage() {
     age: false,
     marketing: false,
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string>();
+  const { submitConsent, isSubmitting } = useConsentSubmission();
   const hasRequiredAgreements = AGREEMENT_ITEMS.filter((item) => item.required).every(
     (item) => checked[item.id],
   );
 
   async function handleNext() {
     setSubmitError(undefined);
-    setIsSubmitting(true);
     try {
-      await postConsent({
+      await submitConsent({
         termsAgreed: checked.terms,
         privacyAgreed: checked.privacy,
         ageOver14Agreed: checked.age,
@@ -45,7 +44,6 @@ export default function PolicyPage() {
       navigate('/onboarding');
     } catch {
       setSubmitError('약관 동의를 저장하지 못했어요. 다시 시도해주세요.');
-      setIsSubmitting(false);
     }
   }
 

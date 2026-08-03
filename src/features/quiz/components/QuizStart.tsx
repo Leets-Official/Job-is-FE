@@ -2,11 +2,11 @@ import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import QuizIcon from '@/assets/icons/icon-quiz.svg?react';
 import { Button } from '@/components/common';
 
-interface ProfileAptitudeTestStartProps {
+interface QuizStartProps {
   onStart: () => void;
 }
 
-export default function ProfileAptitudeTestStart({ onStart }: ProfileAptitudeTestStartProps) {
+export default function QuizStart({ onStart }: QuizStartProps) {
   return (
     <section className="flex min-h-74 w-full max-w-190 flex-col items-center gap-5 overflow-hidden rounded-md border border-gray-200 bg-white p-6">
       <div

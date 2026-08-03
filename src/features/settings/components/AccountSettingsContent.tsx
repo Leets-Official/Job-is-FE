@@ -1,10 +1,8 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { type ReactNode } from 'react';
-import { Link, useNavigate } from 'react-router';
-import { logout } from '@/api/auth';
+import { Link } from 'react-router';
 import Badge from '@/components/common/Badge';
-import { clearAuth } from '@/features/login/store/useAuthStore';
 import useAccount from '@/features/settings/hooks/useAccount';
+import useAccountLogout from '@/features/settings/hooks/useAccountLogout';
 
 const SMALL_OUTLINE_BUTTON_CLASS_NAME =
   'inline-flex h-7.5 cursor-pointer items-center justify-center rounded-sm border border-primary-400 bg-white px-3 text-label-small font-normal text-text-primary transition-colors hover:bg-primary-50 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 disabled:text-gray-600 disabled:hover:bg-gray-100';
@@ -30,21 +28,8 @@ function formatJoinedAt(value: string) {
 }
 
 export default function AccountSettingsContent() {
-  const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const { data: account, isPending: isAccountPending, isError: isAccountError } = useAccount();
-  const {
-    mutate: requestLogout,
-    isPending: isLoggingOut,
-    isError: isLogoutError,
-  } = useMutation({
-    mutationFn: logout,
-    onSuccess: () => {
-      queryClient.clear();
-      clearAuth();
-      navigate('/login', { replace: true });
-    },
-  });
+  const { logout, isLoggingOut, isLogoutError } = useAccountLogout();
 
   return (
     <div className="flex min-w-0 max-w-179 flex-1 flex-col gap-5">
@@ -107,7 +92,7 @@ export default function AccountSettingsContent() {
             type="button"
             className={SMALL_OUTLINE_BUTTON_CLASS_NAME}
             disabled={isLoggingOut}
-            onClick={() => requestLogout()}
+            onClick={() => logout()}
           >
             {isLoggingOut ? '로그아웃 중…' : '로그아웃'}
           </button>
