@@ -1,28 +1,138 @@
-import { useState } from 'react';
-import { useParams } from 'react-router';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router';
+import { dismissCard, submitDismissReason } from '@/api/decks';
+import { recordJobApply, recordJobView, saveJob, toggleApplyIntent } from '@/api/jobs';
+import { Button, NoticePanel } from '@/components/common';
+import { Spinner } from '@/components/feedback';
 import JobDetailApplyInterstitialModal from '@/features/jobs/components/JobDetailApplyInterstitialModal';
 import JobDetailMain from '@/features/jobs/components/JobDetailMain';
 import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
 import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkipFeedbackModal';
-import { mockJobDetail } from '@/features/jobs/mocks/jobDetailMock';
+import { useJobDetail } from '@/features/jobs/hooks/useJobDetail';
+import { mapJobDetail } from '@/features/jobs/utils/mapJobDetail';
+
+const DISMISS_REASON_MAX_LENGTH = 30;
+
+interface JobDetailLocationState {
+  deckId?: number;
+  cardId?: number;
+}
+
+function buildDismissReason(reasons: string[]): string | undefined {
+  let combined = '';
+  for (const reason of reasons) {
+    const next = combined ? `${combined},${reason}` : reason;
+    if (next.length > DISMISS_REASON_MAX_LENGTH) break;
+    combined = next;
+  }
+  return combined || undefined;
+}
 
 export default function JobDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const job = { ...mockJobDetail, id: id ?? mockJobDetail.id };
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { deckId, cardId } = (location.state as JobDetailLocationState | null) ?? {};
+  const parsedJobId = Number(id);
+  const jobId = Number.isInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : null;
+  const canSubmitDismissReason = deckId !== undefined && cardId !== undefined;
   const [isSkipModalOpen, setIsSkipModalOpen] = useState(false);
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [intendedToApply, setIntendedToApply] = useState(false);
+  const [isSaved, setIsSaved] = useState(false);
 
-  function handleConfirmApply(intendToApply: boolean) {
-    setIntendedToApply(intendToApply);
-    window.open(job.source.originalUrl, '_blank', 'noopener,noreferrer');
+  const jobDetailQuery = useJobDetail(jobId);
+
+  useEffect(() => {
+    if (jobId === null || !jobDetailQuery.isSuccess) return;
+    recordJobView(jobId).catch(console.error);
+  }, [jobId, jobDetailQuery.isSuccess]);
+
+  function handleConfirmApply(intendToApply: boolean, sourceUrl: string) {
+    if (jobId === null) return;
     setIsApplyModalOpen(false);
+
+    let isValidSourceUrl = false;
+    try {
+      isValidSourceUrl = new URL(sourceUrl).protocol === 'https:';
+    } catch {
+      isValidSourceUrl = false;
+    }
+
+    if (!isValidSourceUrl) {
+      console.error(`유효하지 않은 원문 링크입니다: ${sourceUrl}`);
+      return;
+    }
+
+    setIntendedToApply(intendToApply);
+    window.open(sourceUrl, '_blank', 'noopener,noreferrer');
+    recordJobApply(jobId, intendToApply).catch(console.error);
   }
 
-  // No submission endpoint exists yet to send skip feedback to.
-  function handleSkipSubmit(_reasons: string[], _note: string) {
-    setIsSkipModalOpen(false);
+  function handleIntendToApply() {
+    if (jobId === null) return;
+    const previous = intendedToApply;
+    setIntendedToApply((prev) => !prev);
+    toggleApplyIntent(jobId)
+      .then((result) => setIntendedToApply(result.applyIntent))
+      .catch((error) => {
+        setIntendedToApply(previous);
+        console.error(error);
+      });
   }
+
+  function handleSave() {
+    if (jobId === null) return;
+    saveJob(jobId)
+      .then(() => setIsSaved(true))
+      .catch(console.error);
+  }
+
+  // 오늘의 브리핑 카드에서 들어온 경우에만 deckId/cardId가 있음(navigate state로 전달됨).
+  // 탐색 등 다른 경로로 들어온 경우엔 소속된 덱이 없어 서버에 반영할 수 없음
+  function handleSkipSubmit(reasons: string[], note: string) {
+    setIsSkipModalOpen(false);
+    if (!canSubmitDismissReason) return;
+
+    dismissCard(deckId, cardId)
+      .then(() =>
+        submitDismissReason(deckId, cardId, {
+          reason: buildDismissReason(reasons),
+          comment: note || undefined,
+        }),
+      )
+      .catch(console.error);
+  }
+
+  if (jobId === null) {
+    return (
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center bg-gray-50 px-3 py-8">
+        <NoticePanel resultIconVariant="warning" title="존재하지 않는 공고예요">
+          <Button onClick={() => navigate('/explore')}>탐색으로</Button>
+        </NoticePanel>
+      </div>
+    );
+  }
+
+  if (jobDetailQuery.isLoading) {
+    return (
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center bg-gray-50 px-3 py-8">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (jobDetailQuery.isError || !jobDetailQuery.data) {
+    return (
+      <div className="flex min-h-0 w-full flex-1 items-center justify-center bg-gray-50 px-3 py-8">
+        <NoticePanel resultIconVariant="danger" title="공고 정보를 불러오지 못했어요">
+          <Button onClick={() => jobDetailQuery.refetch()}>다시 시도</Button>
+        </NoticePanel>
+      </div>
+    );
+  }
+
+  const job = mapJobDetail(jobDetailQuery.data);
 
   return (
     <div className="flex min-h-0 w-full flex-1 justify-center bg-gray-50 px-3 py-8">
@@ -36,6 +146,9 @@ export default function JobDetailPage() {
               <JobDetailSidebar
                 job={job}
                 onApply={() => setIsApplyModalOpen(true)}
+                onIntendToApply={handleIntendToApply}
+                onSave={handleSave}
+                isSaved={isSaved}
                 onNotInterested={() => setIsSkipModalOpen(true)}
                 isIntendedToApply={intendedToApply}
               />
@@ -53,7 +166,7 @@ export default function JobDetailPage() {
         <JobDetailApplyInterstitialModal
           sourceName={job.source.siteName}
           onClose={() => setIsApplyModalOpen(false)}
-          onConfirm={handleConfirmApply}
+          onConfirm={(intendToApply) => handleConfirmApply(intendToApply, job.source.originalUrl)}
         />
       )}
     </div>

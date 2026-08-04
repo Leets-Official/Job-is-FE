@@ -1,4 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { isJobCareerRange, type JobSortOption } from '@/api/jobs';
+import { Button, NoticePanel } from '@/components/common';
 import Pagination from '@/components/common/Pagination';
 import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults';
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
@@ -8,47 +10,136 @@ import ExploreLoadingIndicator from '@/features/jobs/components/ExploreLoadingIn
 import ExploreResultsToolbar, {
   type ExploreActiveFilter,
 } from '@/features/jobs/components/ExploreResultsToolbar';
-import { JOB_ROLE_KEYWORDS, JOB_ROLE_OPTIONS } from '@/features/jobs/constants/exploreFilters';
-import { mockExploreJobs } from '@/features/jobs/mocks/exploreJobsMock';
+import { useExploreJobs } from '@/features/jobs/hooks/useExploreJobs';
+import {
+  useCareerLevels,
+  useEmploymentTypes,
+  useJobCategories,
+  useRegions,
+} from '@/features/jobs/hooks/useJobFilterOptions';
+import { mapJobSummary } from '@/features/jobs/utils/mapJobSummary';
 
-const TOTAL_RESULT_COUNT = 128;
-const TOTAL_PAGES = 3;
-const SEARCH_LOADING_DELAY_MS = 700;
+const PAGE_SIZE = 24;
 
 export default function ExplorePage() {
-  const [currentPage, setCurrentPage] = useState(1);
+  const [page, setPage] = useState(0);
+  const [keyword, setKeyword] = useState('');
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
+  const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedCareerLevel, setSelectedCareerLevel] = useState('');
+  const [selectedEmploymentType, setSelectedEmploymentType] = useState('');
   const [isRemoteSelected, setIsRemoteSelected] = useState(false);
-  const [isAlwaysOpenSelected, setIsAlwaysOpenSelected] = useState(true);
-  const filterKey = JSON.stringify([selectedJobRoles, isRemoteSelected, isAlwaysOpenSelected]);
-  const [previousFilterKey, setPreviousFilterKey] = useState(filterKey);
-  const [isSearching, setIsSearching] = useState(true);
+  const [isAlwaysOpenIncluded, setIsAlwaysOpenIncluded] = useState(true);
+  const [sort, setSort] = useState<JobSortOption>('FIT');
 
-  if (filterKey !== previousFilterKey) {
-    setPreviousFilterKey(filterKey);
-    setIsSearching(true);
-  }
+  const categoriesQuery = useJobCategories();
+  const regionsQuery = useRegions();
+  const careerLevelsQuery = useCareerLevels();
+  const employmentTypesQuery = useEmploymentTypes();
+  const categoryOptions = (categoriesQuery.data ?? []).map((category) => ({
+    label: category.name,
+    value: category.name,
+  }));
+  const regionOptions = (regionsQuery.data ?? []).map((region) => ({
+    label: region.name,
+    value: region.name,
+  }));
+  const careerLevelOptions = (careerLevelsQuery.data ?? []).map((level) => ({
+    label: level.description,
+    value: level.key,
+  }));
+  const employmentTypeOptions = employmentTypesQuery.data ?? [];
 
-  useEffect(() => {
-    if (!isSearching) return;
-    const timer = setTimeout(() => setIsSearching(false), SEARCH_LOADING_DELAY_MS);
-    return () => clearTimeout(timer);
-  }, [isSearching]);
+  const jobsQuery = useExploreJobs({
+    keyword: keyword || undefined,
+    categoryChildren: selectedJobRoles.length > 0 ? selectedJobRoles : undefined,
+    cities: selectedRegion ? [selectedRegion] : undefined,
+    careerRanges: isJobCareerRange(selectedCareerLevel) ? [selectedCareerLevel] : undefined,
+    employmentTypes: selectedEmploymentType ? [selectedEmploymentType] : undefined,
+    remoteOnly: isRemoteSelected,
+    includeAlwaysOpen: isAlwaysOpenIncluded,
+    sort,
+    page,
+    size: PAGE_SIZE,
+  });
 
   const toggleJobRole = (value: string) => {
+    setPage(0);
     setSelectedJobRoles((prev) =>
       prev.includes(value) ? prev.filter((role) => role !== value) : [...prev, value],
     );
   };
 
+  const handleSearchSubmit = (value: string) => {
+    setPage(0);
+    setKeyword(value);
+  };
+
+  const handleRegionChange = (value: string) => {
+    setPage(0);
+    setSelectedRegion(value);
+  };
+
+  const handleCareerLevelChange = (value: string) => {
+    setPage(0);
+    setSelectedCareerLevel(value);
+  };
+
+  const handleEmploymentTypeChange = (value: string) => {
+    setPage(0);
+    setSelectedEmploymentType(value);
+  };
+
+  const toggleRemote = () => {
+    setPage(0);
+    setIsRemoteSelected((prev) => !prev);
+  };
+
+  const toggleAlwaysOpen = () => {
+    setPage(0);
+    setIsAlwaysOpenIncluded((prev) => !prev);
+  };
+
+  const handleSortChange = (value: JobSortOption) => {
+    setPage(0);
+    setSort(value);
+  };
+
   const activeFilters: ExploreActiveFilter[] = [
-    ...JOB_ROLE_OPTIONS.filter((option) => selectedJobRoles.includes(option.value)).map(
-      (option) => ({
-        key: option.value,
-        label: option.label,
-        onRemove: () => toggleJobRole(option.value),
-      }),
-    ),
+    ...selectedJobRoles.map((role) => ({
+      key: role,
+      label: role,
+      onRemove: () => toggleJobRole(role),
+    })),
+    ...(selectedRegion
+      ? [
+          {
+            key: selectedRegion,
+            label: selectedRegion,
+            onRemove: () => handleRegionChange(''),
+          },
+        ]
+      : []),
+    ...(selectedCareerLevel
+      ? [
+          {
+            key: selectedCareerLevel,
+            label:
+              careerLevelOptions.find((option) => option.value === selectedCareerLevel)?.label ??
+              selectedCareerLevel,
+            onRemove: () => handleCareerLevelChange(''),
+          },
+        ]
+      : []),
+    ...(selectedEmploymentType
+      ? [
+          {
+            key: selectedEmploymentType,
+            label: selectedEmploymentType,
+            onRemove: () => handleEmploymentTypeChange(''),
+          },
+        ]
+      : []),
     ...(isRemoteSelected
       ? [
           {
@@ -58,35 +149,26 @@ export default function ExplorePage() {
           },
         ]
       : []),
-    ...(isAlwaysOpenSelected
-      ? [
-          {
-            key: 'always-open',
-            label: '상시포함',
-            onRemove: () => setIsAlwaysOpenSelected(false),
-          },
-        ]
-      : []),
   ];
 
-  const hasActiveFilters = selectedJobRoles.length > 0 || isRemoteSelected || !isAlwaysOpenSelected;
+  const hasActiveFilters = activeFilters.length > 0;
 
-  const visibleJobs = mockExploreJobs.filter((job) => {
-    const matchesRole =
-      selectedJobRoles.length === 0 ||
-      selectedJobRoles.some((role) => job.title.includes(JOB_ROLE_KEYWORDS[role]));
-    const matchesRemote = !isRemoteSelected || job.isRemote;
-    const matchesAlwaysOpen = isAlwaysOpenSelected || job.dDayLabel !== '상시';
-    return matchesRole && matchesRemote && matchesAlwaysOpen;
-  });
+  const visibleJobs = (jobsQuery.data?.content ?? []).map(mapJobSummary);
 
+  const isSearching = jobsQuery.isLoading;
+  const isRefetchingInBackground = jobsQuery.isPlaceholderData && jobsQuery.isFetching;
   const hasResults = visibleJobs.length > 0;
-  const resultCount = hasActiveFilters ? visibleJobs.length : TOTAL_RESULT_COUNT;
+  const totalPages = jobsQuery.data?.totalPages ?? 1;
+  const resultCount = jobsQuery.data?.totalElements ?? 0;
 
   const resetFilters = () => {
+    setPage(0);
     setSelectedJobRoles([]);
+    setSelectedRegion('');
+    setSelectedCareerLevel('');
+    setSelectedEmploymentType('');
     setIsRemoteSelected(false);
-    setIsAlwaysOpenSelected(false);
+    setIsAlwaysOpenIncluded(true);
   };
 
   return (
@@ -99,37 +181,58 @@ export default function ExplorePage() {
           </p>
         </div>
         <ExploreFilters
+          onSearchSubmit={handleSearchSubmit}
+          categoryOptions={categoryOptions}
           selectedJobRoles={selectedJobRoles}
           onToggleJobRole={toggleJobRole}
+          regionOptions={regionOptions}
+          selectedRegion={selectedRegion}
+          onRegionChange={handleRegionChange}
+          careerLevelOptions={careerLevelOptions}
+          selectedCareerLevel={selectedCareerLevel}
+          onCareerLevelChange={handleCareerLevelChange}
+          employmentTypeOptions={employmentTypeOptions}
+          selectedEmploymentType={selectedEmploymentType}
+          onEmploymentTypeChange={handleEmploymentTypeChange}
           isRemoteSelected={isRemoteSelected}
-          onToggleRemote={() => setIsRemoteSelected((prev) => !prev)}
-          isAlwaysOpenSelected={isAlwaysOpenSelected}
-          onToggleAlwaysOpen={() => setIsAlwaysOpenSelected((prev) => !prev)}
+          onToggleRemote={toggleRemote}
+          isAlwaysOpenIncluded={isAlwaysOpenIncluded}
+          onToggleAlwaysOpen={toggleAlwaysOpen}
         />
         <ExploreResultsToolbar
           resultCount={resultCount}
           activeFilters={activeFilters}
           onReset={resetFilters}
           isLoading={isSearching}
+          sort={sort}
+          onSortChange={handleSortChange}
         />
         {isSearching ? (
           <>
             <ExploreJobGridSkeleton />
             <ExploreLoadingIndicator />
           </>
+        ) : jobsQuery.isError ? (
+          <NoticePanel resultIconVariant="danger" title="공고를 불러오지 못했어요">
+            <Button onClick={() => jobsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
         ) : hasResults ? (
           <>
             <ExploreJobGrid jobs={visibleJobs} />
+            {isRefetchingInBackground && <ExploreLoadingIndicator />}
             <Pagination
-              currentPage={currentPage}
-              totalPages={TOTAL_PAGES}
-              label={`${currentPage}/${TOTAL_PAGES}`}
-              onPrevious={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              onNext={() => setCurrentPage((page) => Math.min(TOTAL_PAGES, page + 1))}
+              currentPage={page + 1}
+              totalPages={totalPages}
+              label={`${page + 1}/${totalPages}`}
+              onPrevious={() => setPage((prev) => Math.max(0, prev - 1))}
+              onNext={() => setPage((prev) => Math.min(totalPages - 1, prev + 1))}
             />
           </>
         ) : (
-          <ExploreEmptyResults activeFilters={activeFilters} onResetFilters={resetFilters} />
+          <ExploreEmptyResults
+            activeFilters={hasActiveFilters ? activeFilters : []}
+            onResetFilters={resetFilters}
+          />
         )}
       </div>
     </div>

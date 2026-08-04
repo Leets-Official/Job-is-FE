@@ -2,16 +2,16 @@ import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg?react';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import SavedJobsEmptyState from '@/features/savedJobs/components/SavedJobsEmptyState';
-import { type SavedJob } from '@/features/savedJobs/mocks/savedJobsMock';
+import { type SavedJobListing } from '@/features/savedJobs/types/savedJob';
 import { cn } from '@/utils/cn';
 
 interface SavedJobsSavedContentProps {
-  jobs: SavedJob[];
+  jobs: SavedJobListing[];
   onBrowseRecommendations: () => void;
   onExplore: () => void;
 }
 
-function SavedJobRow({ job }: { job: SavedJob }) {
+function SavedJobRow({ job }: { job: SavedJobListing }) {
   return (
     <div className="flex w-full items-center justify-between rounded-xs border border-gray-400 bg-white p-6">
       <div>

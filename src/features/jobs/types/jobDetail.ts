@@ -3,17 +3,12 @@ export interface JobDetailGlanceItem {
   value: string;
 }
 
-export type JobDetailFitStatus = 'met' | 'estimated' | 'caution';
+export type JobDetailFitStatus = 'met' | 'estimated' | 'caution' | 'unknown';
 
 export interface JobDetailFitCriterionItem {
   status: JobDetailFitStatus;
   title: string;
-  description: string;
-}
-
-export interface JobDetailMatchReason {
-  label: string;
-  progress: number;
+  description?: string;
 }
 
 export interface JobDetailContentSection {
@@ -30,7 +25,7 @@ export interface JobDetailCompanyInfo {
 
 export interface JobDetailSource {
   siteName: string;
-  collectedDate: string;
+  collectedDate?: string;
   notice: string;
   originalUrl: string;
 }
@@ -38,8 +33,8 @@ export interface JobDetailSource {
 export interface JobDetail {
   id: string;
   sourceName: string;
-  postedDate: string;
-  rating: number;
+  postedDate?: string;
+  rating?: number;
   title: string;
   subtitle: string;
   employmentType: string;
@@ -47,9 +42,8 @@ export interface JobDetail {
   dDayLabel: string;
   glanceItems: JobDetailGlanceItem[];
   fitCriteria: JobDetailFitCriterionItem[];
-  editorNote: string;
-  matchScore: number;
-  matchReasons: JobDetailMatchReason[];
+  matchScore?: number;
+  matchReasons: string[];
   contentSections: JobDetailContentSection[];
   techStack: string[];
   company: JobDetailCompanyInfo;

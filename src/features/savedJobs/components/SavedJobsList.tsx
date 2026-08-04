@@ -1,13 +1,16 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import type { HistoryFilter } from '@/api/history';
+import { Button, NoticePanel } from '@/components/common';
 import Tab from '@/components/common/Tab';
+import { Spinner } from '@/components/feedback';
 import SavedJobsHistoryContent from '@/features/savedJobs/components/SavedJobsHistoryContent';
 import SavedJobsSavedContent from '@/features/savedJobs/components/SavedJobsSavedContent';
-import {
-  SAVED_JOB_HISTORY,
-  SAVED_JOBS,
-  type SavedJobHistoryStatus,
-} from '@/features/savedJobs/mocks/savedJobsMock';
+import { useJobHistory } from '@/features/savedJobs/hooks/useJobHistory';
+import { useSavedJobs } from '@/features/savedJobs/hooks/useSavedJobs';
+import type { SavedJobHistoryStatus } from '@/features/savedJobs/types/savedJob';
+import { mapHistoryItem } from '@/features/savedJobs/utils/mapHistoryItem';
+import { mapSavedJob } from '@/features/savedJobs/utils/mapSavedJob';
 
 const LIST_TABS = [
   { label: '저장', value: 'saved' },
@@ -15,6 +18,13 @@ const LIST_TABS = [
 ] as const;
 
 type SavedJobsTab = (typeof LIST_TABS)[number]['value'];
+
+const HISTORY_FILTER_TO_API: Record<SavedJobHistoryStatus | 'all', HistoryFilter> = {
+  all: 'ALL',
+  viewed: 'VIEWED',
+  skipped: 'SKIPPED',
+  intended: 'APPLY_INTENT',
+};
 
 interface SavedJobsListProps {
   isEmptyPreview?: boolean;
@@ -24,10 +34,23 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
   const [activeTab, setActiveTab] = useState<SavedJobsTab>('saved');
   const [activeFilter, setActiveFilter] = useState<SavedJobHistoryStatus | 'all'>('all');
   const navigate = useNavigate();
-  const savedJobs = isEmptyPreview ? [] : SAVED_JOBS;
-  const intendedJobCount = savedJobs.filter((job) =>
-    job.badges.some((badge) => badge.label === '지원 의향'),
-  ).length;
+
+  const savedJobsQuery = useSavedJobs({ page: 1, sort: 'SAVED_DESC' });
+  const historyQuery = useJobHistory(HISTORY_FILTER_TO_API[activeFilter]);
+
+  const savedJobs = isEmptyPreview
+    ? []
+    : (savedJobsQuery.data?.saves.content ?? []).map(mapSavedJob);
+  const totalSaved = isEmptyPreview ? 0 : (savedJobsQuery.data?.totalSaved ?? 0);
+  const totalApplyIntent = isEmptyPreview ? 0 : (savedJobsQuery.data?.totalApplyIntent ?? 0);
+
+  const historyItems = useMemo(() => {
+    const items = historyQuery.data?.pages.flatMap((page) => page.content) ?? [];
+    return items
+      .map(mapHistoryItem)
+      .filter((item): item is NonNullable<typeof item> => item !== null);
+  }, [historyQuery.data]);
+
   const handleBrowseRecommendations = () => navigate('/recommendations');
   const handleExplore = () => navigate('/explore');
 
@@ -37,7 +60,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
         <p className="text-heading-medium font-bold text-text-primary">저장 목록</p>
         {savedJobs.length > 0 && (
           <p className="text-label-medium font-medium text-text-secondary">
-            저장 {savedJobs.length}건 · 지원 의향 {intendedJobCount}건
+            저장 {totalSaved}건 · 지원 의향 {totalApplyIntent}건
           </p>
         )}
 
@@ -55,18 +78,37 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
 
         <div key={activeTab} className="saved-jobs-tab-content-enter flex w-full flex-col gap-5">
           {activeTab === 'saved' ? (
-            <SavedJobsSavedContent
-              jobs={savedJobs}
-              onBrowseRecommendations={handleBrowseRecommendations}
-              onExplore={handleExplore}
-            />
+            !isEmptyPreview && savedJobsQuery.isLoading ? (
+              <div className="flex w-full items-center justify-center py-20">
+                <Spinner />
+              </div>
+            ) : !isEmptyPreview && savedJobsQuery.isError ? (
+              <NoticePanel resultIconVariant="danger" title="저장 목록을 불러오지 못했어요">
+                <Button onClick={() => savedJobsQuery.refetch()}>다시 시도</Button>
+              </NoticePanel>
+            ) : (
+              <SavedJobsSavedContent
+                jobs={savedJobs}
+                onBrowseRecommendations={handleBrowseRecommendations}
+                onExplore={handleExplore}
+              />
+            )
+          ) : historyQuery.isLoading ? (
+            <div className="flex w-full items-center justify-center py-20">
+              <Spinner />
+            </div>
+          ) : historyQuery.isError ? (
+            <NoticePanel resultIconVariant="danger" title="내역을 불러오지 못했어요">
+              <Button onClick={() => historyQuery.refetch()}>다시 시도</Button>
+            </NoticePanel>
           ) : (
             <SavedJobsHistoryContent
-              history={SAVED_JOB_HISTORY}
+              history={historyItems}
               activeFilter={activeFilter}
               onFilterChange={setActiveFilter}
               onBrowseRecommendations={handleBrowseRecommendations}
               onExplore={handleExplore}
+              onLoadMore={historyQuery.hasNextPage ? () => historyQuery.fetchNextPage() : undefined}
             />
           )}
         </div>
