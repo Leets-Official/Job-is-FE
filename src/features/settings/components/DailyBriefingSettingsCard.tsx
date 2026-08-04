@@ -1,14 +1,26 @@
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
 import { cn } from '@/utils/cn';
 
 const DELIVERY_TIMES = ['07:30', '12:30', '18:30'];
 
-export default function DailyBriefingSettingsCard() {
+interface DailyBriefingSettingsCardProps {
+  isEnabled: boolean;
+  deliveryTime: string;
+  disabled?: boolean;
+  onEnabledChange: (isEnabled: boolean) => void;
+  onDeliveryTimeChange: (deliveryTime: string) => void;
+}
+
+export default function DailyBriefingSettingsCard({
+  isEnabled,
+  deliveryTime,
+  disabled = false,
+  onEnabledChange,
+  onDeliveryTimeChange,
+}: DailyBriefingSettingsCardProps) {
   const toggleId = useId();
   const deliveryTimeGroupName = useId();
-  const [isEnabled, setIsEnabled] = useState(true);
-  const [deliveryTime, setDeliveryTime] = useState('12:30');
 
   return (
     <section className="flex flex-col gap-5 rounded-md border border-gray-200 bg-white px-5 py-6">
@@ -19,7 +31,8 @@ export default function DailyBriefingSettingsCard() {
         <ToggleSwitch
           id={toggleId}
           checked={isEnabled}
-          onChange={(event) => setIsEnabled(event.target.checked)}
+          disabled={disabled}
+          onChange={(event) => onEnabledChange(event.target.checked)}
           aria-label="데일리 브리핑 이메일 받기"
         />
       </div>
@@ -38,7 +51,7 @@ export default function DailyBriefingSettingsCard() {
                   htmlFor={inputId}
                   className={cn(
                     'rounded-full',
-                    isEnabled ? 'cursor-pointer' : 'cursor-not-allowed',
+                    isEnabled && !disabled ? 'cursor-pointer' : 'cursor-not-allowed',
                   )}
                 >
                   <input
@@ -47,8 +60,8 @@ export default function DailyBriefingSettingsCard() {
                     name={deliveryTimeGroupName}
                     value={time}
                     checked={deliveryTime === time}
-                    disabled={!isEnabled}
-                    onChange={() => setDeliveryTime(time)}
+                    disabled={!isEnabled || disabled}
+                    onChange={() => onDeliveryTimeChange(time)}
                     className="peer sr-only"
                   />
                   <span
