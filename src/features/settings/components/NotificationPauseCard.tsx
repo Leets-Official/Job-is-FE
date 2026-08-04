@@ -1,10 +1,14 @@
-import { useState } from 'react';
 import type { NotificationSnooze, NotificationSnoozeDuration } from '@/api/notification';
 import useNotificationSnooze from '@/features/settings/hooks/useNotificationSnooze';
 import useNotificationSnoozeCancel from '@/features/settings/hooks/useNotificationSnoozeCancel';
 import { cn } from '@/utils/cn';
 
 type PausePeriod = 7 | 30 | 'indefinite';
+
+interface PauseState {
+  period: PausePeriod;
+  until: string | null;
+}
 
 const PAUSE_OPTIONS: { label: string; value: PausePeriod }[] = [
   { label: '7일', value: 7 },
@@ -18,26 +22,37 @@ const SNOOZE_DURATION_BY_PERIOD: Record<PausePeriod, NotificationSnoozeDuration>
   indefinite: 'INDEFINITE',
 };
 
-function getResumeDate(period: Exclude<PausePeriod, 'indefinite'>) {
-  const resumeDate = new Date();
-  resumeDate.setDate(resumeDate.getDate() + period);
+const PAUSE_PERIOD_BY_DURATION: Record<NotificationSnoozeDuration, PausePeriod> = {
+  SEVEN_DAYS: 7,
+  THIRTY_DAYS: 30,
+  INDEFINITE: 'indefinite',
+};
 
+function formatResumeDate(until: string) {
   return new Intl.DateTimeFormat('ko-KR', {
     month: 'long',
     day: 'numeric',
-  }).format(resumeDate);
+  }).format(new Date(until));
 }
 
-function getInitialPausePeriod(snooze: NotificationSnooze): PausePeriod | null {
+function getInitialPauseState(snooze: NotificationSnooze): PauseState | null {
   if (!snooze.snoozed) return null;
-  if (snooze.indefinite) return 'indefinite';
+  if (snooze.indefinite) return { period: 'indefinite', until: null };
   if (!snooze.until) return null;
 
   const until = new Date(snooze.until);
-  if (Number.isNaN(until.getTime())) return null;
+  if (Number.isNaN(until.getTime()) || until.getTime() <= Date.now()) return null;
 
   const remainingDays = Math.ceil((until.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  return remainingDays <= 7 ? 7 : 30;
+  return { period: remainingDays <= 7 ? 7 : 30, until: snooze.until };
+}
+
+function createPauseState(period: PausePeriod): PauseState {
+  if (period === 'indefinite') return { period, until: null };
+
+  const until = new Date();
+  until.setDate(until.getDate() + period);
+  return { period, until: until.toISOString() };
 }
 
 interface NotificationPauseCardProps {
@@ -45,37 +60,30 @@ interface NotificationPauseCardProps {
 }
 
 export default function NotificationPauseCard({ initialSnooze }: NotificationPauseCardProps) {
-  const [pausePeriod, setPausePeriod] = useState<PausePeriod | null>(() =>
-    getInitialPausePeriod(initialSnooze),
-  );
   const snoozeMutation = useNotificationSnooze();
   const snoozeCancelMutation = useNotificationSnoozeCancel();
   const isUpdating = snoozeMutation.isPending || snoozeCancelMutation.isPending;
+  const pauseState = snoozeMutation.isPending
+    ? createPauseState(PAUSE_PERIOD_BY_DURATION[snoozeMutation.variables.duration])
+    : snoozeCancelMutation.isPending
+      ? null
+      : getInitialPauseState(initialSnooze);
 
   const handlePausePeriodChange = (nextPausePeriod: PausePeriod) => {
-    const previousPausePeriod = pausePeriod;
     snoozeCancelMutation.reset();
-    setPausePeriod(nextPausePeriod);
-    snoozeMutation.mutate(
-      { duration: SNOOZE_DURATION_BY_PERIOD[nextPausePeriod] },
-      { onError: () => setPausePeriod(previousPausePeriod) },
-    );
+    snoozeMutation.mutate({ duration: SNOOZE_DURATION_BY_PERIOD[nextPausePeriod] });
   };
 
   const handleSnoozeCancel = () => {
-    const previousPausePeriod = pausePeriod;
     snoozeMutation.reset();
-    setPausePeriod(null);
-    snoozeCancelMutation.mutate(undefined, {
-      onError: () => setPausePeriod(previousPausePeriod),
-    });
+    snoozeCancelMutation.mutate();
   };
 
   const pauseMessage =
-    pausePeriod === 'indefinite'
+    pauseState?.period === 'indefinite'
       ? '직접 다시 켤 때까지 쉬는 중이에요.'
-      : pausePeriod
-        ? `${getResumeDate(pausePeriod)}까지 쉬는 중이에요.`
+      : pauseState?.until
+        ? `${formatResumeDate(pauseState.until)}까지 쉬는 중이에요.`
         : '현재 알림을 정상적으로 받고 있어요.';
 
   return (
@@ -96,12 +104,12 @@ export default function NotificationPauseCard({ initialSnooze }: NotificationPau
               key={option.label}
               type="button"
               role="radio"
-              aria-checked={pausePeriod === option.value}
+              aria-checked={pauseState?.period === option.value}
               disabled={isUpdating}
               onClick={() => handlePausePeriodChange(option.value)}
               className={cn(
                 'h-10 cursor-pointer rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-500 disabled:hover:bg-white',
-                pausePeriod === option.value &&
+                pauseState?.period === option.value &&
                   'border-primary-600 bg-primary-600 hover:bg-primary-600',
               )}
             >
@@ -125,7 +133,7 @@ export default function NotificationPauseCard({ initialSnooze }: NotificationPau
 
       <div className="flex min-h-18 items-center justify-between gap-5 rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6">
         <span className="text-label-medium font-medium text-text-tertiary">{pauseMessage}</span>
-        {pausePeriod && (
+        {pauseState && (
           <button
             type="button"
             disabled={isUpdating}

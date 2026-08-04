@@ -1,13 +1,17 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { snoozeNotification } from '@/api/notification';
+import { getNotificationSettings, snoozeNotification } from '@/api/notification';
 
 export default function useNotificationSnooze() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: snoozeNotification,
-    onSuccess: () => {
-      void queryClient.invalidateQueries({ queryKey: ['settings', 'notification'] });
+    mutationFn: async (request: Parameters<typeof snoozeNotification>[0]) => {
+      await snoozeNotification(request);
+      return queryClient.fetchQuery({
+        queryKey: ['settings', 'notification'],
+        queryFn: getNotificationSettings,
+        staleTime: 0,
+      });
     },
   });
 }

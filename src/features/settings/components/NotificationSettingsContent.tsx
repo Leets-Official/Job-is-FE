@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import type {
   NotificationSettingsResponse,
   NotificationSettingsUpdateRequest,
@@ -15,26 +14,16 @@ function NotificationSettingsForm({
 }: {
   initialSettings: NotificationSettingsResponse;
 }) {
-  const [settings, setSettings] = useState(initialSettings);
-  const { mutateAsync, isPending, isError } = useNotificationSettingsUpdate();
-
-  const saveSettings = async (request: NotificationSettingsUpdateRequest) => {
-    const previousSettings = settings;
-    setSettings((currentSettings) => ({ ...currentSettings, ...request }));
-
-    try {
-      const updatedSettings = await mutateAsync(request);
-      setSettings(updatedSettings);
-    } catch {
-      setSettings(previousSettings);
-    }
-  };
+  const settingsUpdateMutation = useNotificationSettingsUpdate();
+  const settings = settingsUpdateMutation.isPending
+    ? { ...initialSettings, ...settingsUpdateMutation.variables }
+    : initialSettings;
 
   const updateField = <Key extends keyof NotificationSettingsUpdateRequest>(
     key: Key,
     value: NotificationSettingsUpdateRequest[Key],
   ) => {
-    void saveSettings({
+    settingsUpdateMutation.mutate({
       briefingEnabled: settings.briefingEnabled,
       sendSlot: settings.sendSlot,
       marketingSubscribed: settings.marketingSubscribed,
@@ -44,7 +33,7 @@ function NotificationSettingsForm({
 
   return (
     <>
-      {isError && (
+      {settingsUpdateMutation.isError && (
         <p
           className="rounded-xs border border-danger-500 bg-white px-6 py-4 text-label-medium font-medium text-danger-500"
           role="alert"
@@ -55,14 +44,14 @@ function NotificationSettingsForm({
       <DailyBriefingSettingsCard
         isEnabled={settings.briefingEnabled}
         deliveryTime={settings.sendSlot}
-        disabled={isPending}
+        disabled={settingsUpdateMutation.isPending}
         onEnabledChange={(isEnabled) => updateField('briefingEnabled', isEnabled)}
         onDeliveryTimeChange={(deliveryTime) => updateField('sendSlot', deliveryTime)}
       />
       <NotificationPauseCard initialSnooze={settings.snooze} />
       <MarketingConsentCard
         isEnabled={settings.marketingSubscribed}
-        disabled={isPending}
+        disabled={settingsUpdateMutation.isPending}
         onEnabledChange={(isEnabled) => updateField('marketingSubscribed', isEnabled)}
       />
     </>
