@@ -10,11 +10,16 @@ interface ExploreFiltersProps {
   regionOptions: MultiSelectOption[];
   selectedRegion: string;
   onRegionChange: (value: string) => void;
+  careerLevelOptions: MultiSelectOption[];
+  selectedCareerLevel: string;
+  onCareerLevelChange: (value: string) => void;
   employmentTypeOptions: string[];
   selectedEmploymentType: string;
   onEmploymentTypeChange: (value: string) => void;
   isRemoteSelected: boolean;
   onToggleRemote: () => void;
+  isAlwaysOpenIncluded: boolean;
+  onToggleAlwaysOpen: () => void;
 }
 
 export default function ExploreFilters({
@@ -25,11 +30,16 @@ export default function ExploreFilters({
   regionOptions,
   selectedRegion,
   onRegionChange,
+  careerLevelOptions,
+  selectedCareerLevel,
+  onCareerLevelChange,
   employmentTypeOptions,
   selectedEmploymentType,
   onEmploymentTypeChange,
   isRemoteSelected,
   onToggleRemote,
+  isAlwaysOpenIncluded,
+  onToggleAlwaysOpen,
 }: ExploreFiltersProps) {
   return (
     <div className="flex w-full flex-col gap-3">
@@ -59,6 +69,18 @@ export default function ExploreFilters({
           ))}
         </Select>
         <Select
+          placeholder="경력"
+          className="w-[200px] shrink-0"
+          value={selectedCareerLevel}
+          onChange={(event) => onCareerLevelChange(event.target.value)}
+        >
+          {careerLevelOptions.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </Select>
+        <Select
           placeholder="고용 형태"
           className="w-[200px] shrink-0"
           value={selectedEmploymentType}
@@ -71,6 +93,12 @@ export default function ExploreFilters({
           ))}
         </Select>
         <Tag variant="select" label="원격" selected={isRemoteSelected} onClick={onToggleRemote} />
+        <Tag
+          variant="select"
+          label="상시포함"
+          selected={isAlwaysOpenIncluded}
+          onClick={onToggleAlwaysOpen}
+        />
       </div>
     </div>
   );

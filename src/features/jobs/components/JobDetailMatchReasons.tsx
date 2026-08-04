@@ -1,10 +1,8 @@
 import { Badge } from '@/components/common';
-import { ProgressStepper } from '@/components/feedback';
-import type { JobDetailMatchReason } from '@/features/jobs/types/jobDetail';
 
 interface JobDetailMatchReasonsProps {
   matchScore: number;
-  reasons: JobDetailMatchReason[];
+  reasons: string[];
 }
 
 export default function JobDetailMatchReasons({ matchScore, reasons }: JobDetailMatchReasonsProps) {
@@ -16,9 +14,18 @@ export default function JobDetailMatchReasons({ matchScore, reasons }: JobDetail
           적합도 {matchScore}%
         </Badge>
       </div>
-      <ProgressStepper
-        steps={reasons.map((reason) => ({ label: reason.label, progress: reason.progress }))}
-      />
+      {reasons.length > 0 && (
+        <ul className="flex flex-col gap-1.5 pl-5">
+          {reasons.map((reason, index) => (
+            <li
+              key={`${reason}-${index}`}
+              className="list-disc text-body-small font-medium text-text-secondary"
+            >
+              {reason}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 }

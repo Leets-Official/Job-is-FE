@@ -1,33 +1,6 @@
 import { client } from '@/api/client';
 import type { ApiEnvelope, PageResponse } from '@/api/types';
 
-export type JobSkillTag =
-  | 'PYTHON'
-  | 'REACT'
-  | 'JAVA'
-  | 'SPRING_BOOT'
-  | 'JAVASCRIPT'
-  | 'TYPESCRIPT'
-  | 'NODE_JS'
-  | 'VUE_JS'
-  | 'NEXT_JS'
-  | 'KOTLIN'
-  | 'GO'
-  | 'C_PLUS_PLUS'
-  | 'MYSQL'
-  | 'POSTGRESQL'
-  | 'REDIS'
-  | 'DOCKER'
-  | 'AWS';
-
-export type JobRegionName = '서울' | '경기' | '인천' | '부산';
-
-const JOB_REGION_NAMES: readonly string[] = ['서울', '경기', '인천', '부산'];
-
-export function isJobRegionName(value: string): value is JobRegionName {
-  return JOB_REGION_NAMES.includes(value);
-}
-
 export interface JobCategory {
   id: number;
   name: string;
@@ -60,22 +33,39 @@ export interface JobSummary {
   dueTime: string;
   thumbnailUrl: string;
   skillTags: string[];
+  locationCity: string;
+  locationDistrict: string;
+  // 적합도 배지 점수(0~100). 산출 불가 시 null — 배지 생략
+  fitScore: number | null;
+}
+
+export type JobCareerRange = 'NEWCOMER' | 'JUNIOR' | 'SENIOR';
+export type JobSortOption = 'FIT' | 'RECENT' | 'DEADLINE';
+
+const JOB_CAREER_RANGES: readonly string[] = ['NEWCOMER', 'JUNIOR', 'SENIOR'];
+
+export function isJobCareerRange(value: string): value is JobCareerRange {
+  return JOB_CAREER_RANGES.includes(value);
 }
 
 export interface SearchJobsParams {
   keyword?: string;
-  categoryChild?: string;
-  skillTags?: JobSkillTag[];
-  regions?: JobRegionName[];
+  categoryChildren?: string[];
+  cities?: string[];
+  districts?: string[];
+  careerRanges?: JobCareerRange[];
+  employmentTypes?: string[];
+  remoteOnly?: boolean;
+  includeAlwaysOpen?: boolean;
+  sort?: JobSortOption;
   page?: number;
   size?: number;
-  sort?: string[];
 }
 
 export async function searchJobs(params: SearchJobsParams = {}) {
-  const { data } = await client.get<ApiEnvelope<PageResponse<JobSummary>>>('/api/jobs', {
+  const { data } = await client.get<ApiEnvelope<PageResponse<JobSummary>>>('/api/jobs/search', {
     params,
-    // 기본 직렬화는 배열을 regions[]=... 형태로 보내는데, 백엔드는 regions=...&regions=... 형태를 기대함
+    // 기본 직렬화는 배열을 cities[]=... 형태로 보내는데, 백엔드는 cities=...&cities=... 형태를 기대함
     paramsSerializer: { indexes: null },
   });
   return data.data;
@@ -108,6 +98,24 @@ export async function getEmploymentTypes() {
   return data.data;
 }
 
+export type FitCriteriaVerdict = 'MATCH' | 'ESTIMATED' | 'CAUTION' | 'UNKNOWN';
+
+export interface CriteriaMatrix {
+  jobType: FitCriteriaVerdict;
+  career: FitCriteriaVerdict;
+  location: FitCriteriaVerdict;
+  skills: FitCriteriaVerdict;
+  preference: FitCriteriaVerdict;
+  salary: FitCriteriaVerdict;
+}
+
+export interface JobMatching {
+  matchScore: number;
+  rating: number;
+  matchReasons: string[];
+  fitCriteria: CriteriaMatrix;
+}
+
 export interface JobDetail {
   id: number;
   companyName: string;
@@ -128,6 +136,8 @@ export interface JobDetail {
   stockStatus: string;
   skillTags: string[];
   locationFull: string;
+  // 비로그인 · 온보딩 퀴즈 미완료 시 null
+  matching: JobMatching | null;
 }
 
 export async function getJobDetail(jobId: number) {
@@ -181,37 +191,5 @@ export async function recordJobApply(jobId: number, applyIntent?: boolean) {
     `/api/jobs/${jobId}/apply`,
     applyIntent === undefined ? undefined : { applyIntent },
   );
-  return data.data;
-}
-
-export interface CriteriaMatrix {
-  jobType: string;
-  career: string;
-  location: string;
-  skills: string;
-  preference: string;
-  salary: string;
-}
-
-export interface SimilarJobItem {
-  jobId: string;
-  title: string;
-  companyName: string;
-  fitScore: number;
-  reason: string;
-  fitPoints: string[];
-  criteriaMatrix: CriteriaMatrix;
-}
-
-export interface SimilarJobs {
-  targetJobId: string;
-  label: string;
-  items: SimilarJobItem[];
-}
-
-// NOTE: 명세상 targetJobId를 넘길 파라미터(쿼리/패스)가 없어서 어떤 공고 기준으로
-// 유사 공고를 찾는지 지정할 방법이 없음. 백엔드 확인 후 UI 연결 예정.
-export async function getSimilarJobs() {
-  const { data } = await client.get<ApiEnvelope<SimilarJobs>>('/api/jobs/similar');
   return data.data;
 }

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { isJobRegionName } from '@/api/jobs';
+import { isJobCareerRange, type JobSortOption } from '@/api/jobs';
 import Pagination from '@/components/common/Pagination';
 import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults';
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
@@ -11,6 +11,7 @@ import ExploreResultsToolbar, {
 } from '@/features/jobs/components/ExploreResultsToolbar';
 import { useExploreJobs } from '@/features/jobs/hooks/useExploreJobs';
 import {
+  useCareerLevels,
   useEmploymentTypes,
   useJobCategories,
   useRegions,
@@ -24,11 +25,15 @@ export default function ExplorePage() {
   const [keyword, setKeyword] = useState('');
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState('');
+  const [selectedCareerLevel, setSelectedCareerLevel] = useState('');
   const [selectedEmploymentType, setSelectedEmploymentType] = useState('');
   const [isRemoteSelected, setIsRemoteSelected] = useState(false);
+  const [isAlwaysOpenIncluded, setIsAlwaysOpenIncluded] = useState(true);
+  const [sort, setSort] = useState<JobSortOption>('FIT');
 
   const categoriesQuery = useJobCategories();
   const regionsQuery = useRegions();
+  const careerLevelsQuery = useCareerLevels();
   const employmentTypesQuery = useEmploymentTypes();
   const categoryOptions = (categoriesQuery.data ?? []).map((category) => ({
     label: category.name,
@@ -38,20 +43,30 @@ export default function ExplorePage() {
     label: region.name,
     value: region.name,
   }));
+  const careerLevelOptions = (careerLevelsQuery.data ?? []).map((level) => ({
+    label: level.description,
+    value: level.key,
+  }));
   const employmentTypeOptions = employmentTypesQuery.data ?? [];
 
   const jobsQuery = useExploreJobs({
     keyword: keyword || undefined,
-    categoryChild: selectedJobRoles[0],
-    regions: isJobRegionName(selectedRegion) ? [selectedRegion] : undefined,
+    categoryChildren: selectedJobRoles.length > 0 ? selectedJobRoles : undefined,
+    cities: selectedRegion ? [selectedRegion] : undefined,
+    careerRanges: isJobCareerRange(selectedCareerLevel) ? [selectedCareerLevel] : undefined,
+    employmentTypes: selectedEmploymentType ? [selectedEmploymentType] : undefined,
+    remoteOnly: isRemoteSelected,
+    includeAlwaysOpen: isAlwaysOpenIncluded,
+    sort,
     page,
     size: PAGE_SIZE,
   });
 
-  // categoryChild는 서버가 값 하나만 받아서, UI도 한 번에 하나만 선택되게 제한한다
   const toggleJobRole = (value: string) => {
     setPage(0);
-    setSelectedJobRoles((prev) => (prev.includes(value) ? [] : [value]));
+    setSelectedJobRoles((prev) =>
+      prev.includes(value) ? prev.filter((role) => role !== value) : [...prev, value],
+    );
   };
 
   const handleSearchSubmit = (value: string) => {
@@ -64,12 +79,30 @@ export default function ExplorePage() {
     setSelectedRegion(value);
   };
 
+  const handleCareerLevelChange = (value: string) => {
+    setPage(0);
+    setSelectedCareerLevel(value);
+  };
+
   const handleEmploymentTypeChange = (value: string) => {
     setPage(0);
     setSelectedEmploymentType(value);
   };
 
-  const toggleRemote = () => setIsRemoteSelected((prev) => !prev);
+  const toggleRemote = () => {
+    setPage(0);
+    setIsRemoteSelected((prev) => !prev);
+  };
+
+  const toggleAlwaysOpen = () => {
+    setPage(0);
+    setIsAlwaysOpenIncluded((prev) => !prev);
+  };
+
+  const handleSortChange = (value: JobSortOption) => {
+    setPage(0);
+    setSort(value);
+  };
 
   const activeFilters: ExploreActiveFilter[] = [
     ...selectedJobRoles.map((role) => ({
@@ -83,6 +116,17 @@ export default function ExplorePage() {
             key: selectedRegion,
             label: selectedRegion,
             onRemove: () => handleRegionChange(''),
+          },
+        ]
+      : []),
+    ...(selectedCareerLevel
+      ? [
+          {
+            key: selectedCareerLevel,
+            label:
+              careerLevelOptions.find((option) => option.value === selectedCareerLevel)?.label ??
+              selectedCareerLevel,
+            onRemove: () => handleCareerLevelChange(''),
           },
         ]
       : []),
@@ -108,25 +152,21 @@ export default function ExplorePage() {
 
   const hasActiveFilters = activeFilters.length > 0;
 
-  const visibleJobs = (jobsQuery.data?.content ?? [])
-    .filter((job) => !isRemoteSelected || job.remoteAvailable)
-    .filter((job) => !selectedEmploymentType || job.employmentType === selectedEmploymentType)
-    .map(mapJobSummary);
+  const visibleJobs = (jobsQuery.data?.content ?? []).map(mapJobSummary);
 
   const isSearching = jobsQuery.isLoading;
+  const hasResults = visibleJobs.length > 0;
   const totalPages = jobsQuery.data?.totalPages ?? 1;
   const resultCount = jobsQuery.data?.totalElements ?? 0;
-  // 원격/고용형태는 서버 검색 파라미터로 못 보내서 현재 페이지 안에서만 걸러진다.
-  // 그래서 서버 결과 자체는 있는데 이 페이지엔 조건에 맞는 게 없을 수 있어, 페이지네이션은 유지한다.
-  const hasServerResults = resultCount > 0;
-  const hasVisibleResults = visibleJobs.length > 0;
 
   const resetFilters = () => {
     setPage(0);
     setSelectedJobRoles([]);
     setSelectedRegion('');
+    setSelectedCareerLevel('');
     setSelectedEmploymentType('');
     setIsRemoteSelected(false);
+    setIsAlwaysOpenIncluded(true);
   };
 
   return (
@@ -146,32 +186,33 @@ export default function ExplorePage() {
           regionOptions={regionOptions}
           selectedRegion={selectedRegion}
           onRegionChange={handleRegionChange}
+          careerLevelOptions={careerLevelOptions}
+          selectedCareerLevel={selectedCareerLevel}
+          onCareerLevelChange={handleCareerLevelChange}
           employmentTypeOptions={employmentTypeOptions}
           selectedEmploymentType={selectedEmploymentType}
           onEmploymentTypeChange={handleEmploymentTypeChange}
           isRemoteSelected={isRemoteSelected}
           onToggleRemote={toggleRemote}
+          isAlwaysOpenIncluded={isAlwaysOpenIncluded}
+          onToggleAlwaysOpen={toggleAlwaysOpen}
         />
         <ExploreResultsToolbar
           resultCount={resultCount}
           activeFilters={activeFilters}
           onReset={resetFilters}
           isLoading={isSearching}
+          sort={sort}
+          onSortChange={handleSortChange}
         />
         {isSearching ? (
           <>
             <ExploreJobGridSkeleton />
             <ExploreLoadingIndicator />
           </>
-        ) : hasServerResults ? (
+        ) : hasResults ? (
           <>
-            {hasVisibleResults ? (
-              <ExploreJobGrid jobs={visibleJobs} />
-            ) : (
-              <p className="w-full py-16 text-center text-body-medium font-medium text-text-secondary">
-                이 페이지엔 조건에 맞는 공고가 없어요. 다음 페이지를 확인해보세요.
-              </p>
-            )}
+            <ExploreJobGrid jobs={visibleJobs} />
             <Pagination
               currentPage={page + 1}
               totalPages={totalPages}

@@ -11,7 +11,8 @@ export default function JobDetailSourceCard({ source }: JobDetailSourceCardProps
       <p className="text-heading-xxsmall font-bold text-text-primary">출처</p>
       <div className="flex flex-col gap-1">
         <p className="text-body-small font-bold text-text-tertiary">
-          {source.siteName} · 수집일 {source.collectedDate}
+          {source.siteName}
+          {source.collectedDate && ` · 수집일 ${source.collectedDate}`}
         </p>
         <p className="text-body-small font-medium text-text-tertiary">{source.notice}</p>
       </div>

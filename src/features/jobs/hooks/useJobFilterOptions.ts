@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getEmploymentTypes, getJobCategories, getRegions } from '@/api/jobs';
+import { getCareerLevels, getEmploymentTypes, getJobCategories, getRegions } from '@/api/jobs';
 
 const FILTER_METADATA_STALE_TIME = 60 * 60 * 1000;
 
@@ -23,6 +23,14 @@ export function useEmploymentTypes() {
   return useQuery({
     queryKey: ['jobs', 'filters', 'employment-types'],
     queryFn: getEmploymentTypes,
+    staleTime: FILTER_METADATA_STALE_TIME,
+  });
+}
+
+export function useCareerLevels() {
+  return useQuery({
+    queryKey: ['jobs', 'filters', 'career-levels'],
+    queryFn: getCareerLevels,
     staleTime: FILTER_METADATA_STALE_TIME,
   });
 }

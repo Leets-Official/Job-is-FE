@@ -34,6 +34,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
           className="w-full"
           thumbnailUrl={job.thumbnailUrl}
           dDayLabel={job.dDayLabel}
+          matchScoreLabel={job.matchScoreLabel}
           title={job.title}
           companyName={job.companyName}
           employmentInfo={job.employmentInfo}
