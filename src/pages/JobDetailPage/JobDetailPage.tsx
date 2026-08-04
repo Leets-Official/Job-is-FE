@@ -44,15 +44,28 @@ export default function JobDetailPage() {
   const jobDetailQuery = useJobDetail(jobId);
 
   useEffect(() => {
-    if (jobId === null) return;
+    if (jobId === null || !jobDetailQuery.isSuccess) return;
     recordJobView(jobId).catch(console.error);
-  }, [jobId]);
+  }, [jobId, jobDetailQuery.isSuccess]);
 
   function handleConfirmApply(intendToApply: boolean, sourceUrl: string) {
     if (jobId === null) return;
+    setIsApplyModalOpen(false);
+
+    let isValidSourceUrl = false;
+    try {
+      isValidSourceUrl = new URL(sourceUrl).protocol === 'https:';
+    } catch {
+      isValidSourceUrl = false;
+    }
+
+    if (!isValidSourceUrl) {
+      console.error(`유효하지 않은 원문 링크입니다: ${sourceUrl}`);
+      return;
+    }
+
     setIntendedToApply(intendToApply);
     window.open(sourceUrl, '_blank', 'noopener,noreferrer');
-    setIsApplyModalOpen(false);
     recordJobApply(jobId, intendToApply).catch(console.error);
   }
 

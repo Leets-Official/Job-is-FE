@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { isJobCareerRange, type JobSortOption } from '@/api/jobs';
+import { Button, NoticePanel } from '@/components/common';
 import Pagination from '@/components/common/Pagination';
 import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults';
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
@@ -155,6 +156,7 @@ export default function ExplorePage() {
   const visibleJobs = (jobsQuery.data?.content ?? []).map(mapJobSummary);
 
   const isSearching = jobsQuery.isLoading;
+  const isRefetchingInBackground = jobsQuery.isPlaceholderData && jobsQuery.isFetching;
   const hasResults = visibleJobs.length > 0;
   const totalPages = jobsQuery.data?.totalPages ?? 1;
   const resultCount = jobsQuery.data?.totalElements ?? 0;
@@ -210,9 +212,14 @@ export default function ExplorePage() {
             <ExploreJobGridSkeleton />
             <ExploreLoadingIndicator />
           </>
+        ) : jobsQuery.isError ? (
+          <NoticePanel resultIconVariant="danger" title="공고를 불러오지 못했어요">
+            <Button onClick={() => jobsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
         ) : hasResults ? (
           <>
             <ExploreJobGrid jobs={visibleJobs} />
+            {isRefetchingInBackground && <ExploreLoadingIndicator />}
             <Pagination
               currentPage={page + 1}
               totalPages={totalPages}
