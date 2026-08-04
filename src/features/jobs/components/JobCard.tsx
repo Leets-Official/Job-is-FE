@@ -7,8 +7,8 @@ interface JobCardProps extends ComponentPropsWithRef<'article'> {
   thumbnailUrl: string;
   thumbnailAlt?: string;
   dDayLabel: string;
-  matchScoreLabel: string;
-  avatarUrl: string;
+  matchScoreLabel?: string;
+  avatarUrl?: string;
   avatarAlt?: string;
   title: string;
   companyName: string;
@@ -42,16 +42,20 @@ export default function JobCard({
         <Badge type="outline" color="primary" className="absolute top-2 left-2.5">
           {dDayLabel}
         </Badge>
-        <Badge type="solid" color="primary" className="absolute right-2.5 bottom-1.75">
-          {matchScoreLabel}
-        </Badge>
+        {matchScoreLabel && (
+          <Badge type="solid" color="primary" className="absolute right-2.5 bottom-1.75">
+            {matchScoreLabel}
+          </Badge>
+        )}
       </div>
       <div className="flex w-full items-start gap-3 px-2.5">
-        <img
-          src={avatarUrl}
-          alt={avatarAlt}
-          className="size-9 shrink-0 rounded-full object-cover"
-        />
+        {avatarUrl && (
+          <img
+            src={avatarUrl}
+            alt={avatarAlt}
+            className="size-9 shrink-0 rounded-full object-cover"
+          />
+        )}
         <div className="flex min-w-0 flex-1 flex-col gap-0.5 leading-[1.4]">
           <p className="truncate text-[16px] font-semibold text-text-primary">{title}</p>
           <p className="truncate text-sm font-medium text-text-secondary">{companyName}</p>

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router';
 import MoreVerticalIcon from '@/assets/icons/icon-more-vertical.svg?react';
 import JobCard from '@/features/jobs/components/JobCard';
+import { useSaveJob } from '@/features/jobs/hooks/useSaveJob';
 import type { ExploreJobSummary } from '@/features/jobs/types/exploreJob';
 
 interface ExploreJobCardProps {
@@ -12,6 +13,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { save, unsave } = useSaveJob();
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -33,7 +35,6 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
           thumbnailUrl={job.thumbnailUrl}
           dDayLabel={job.dDayLabel}
           matchScoreLabel={job.matchScoreLabel}
-          avatarUrl={job.avatarUrl}
           title={job.title}
           companyName={job.companyName}
           employmentInfo={job.employmentInfo}
@@ -54,6 +55,10 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             onClick={() => {
               setIsSaved(true);
               setIsMenuOpen(false);
+              save(job.id).catch((error) => {
+                setIsSaved(false);
+                console.error(error);
+              });
             }}
             className="text-left text-body-medium font-medium text-text-primary"
           >
@@ -66,6 +71,10 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             onClick={() => {
               setIsSaved(false);
               setIsMenuOpen(false);
+              unsave(job.id).catch((error) => {
+                setIsSaved(true);
+                console.error(error);
+              });
             }}
             className="text-left text-body-medium font-medium text-text-primary disabled:text-gray-400"
           >

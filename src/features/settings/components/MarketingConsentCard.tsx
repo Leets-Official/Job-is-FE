@@ -1,9 +1,18 @@
-import { useId, useState } from 'react';
+import { useId } from 'react';
 import ToggleSwitch from '@/components/common/ToggleSwitch';
 
-export default function MarketingConsentCard() {
+interface MarketingConsentCardProps {
+  isEnabled: boolean;
+  disabled?: boolean;
+  onEnabledChange: (isEnabled: boolean) => void;
+}
+
+export default function MarketingConsentCard({
+  isEnabled,
+  disabled = false,
+  onEnabledChange,
+}: MarketingConsentCardProps) {
   const toggleId = useId();
-  const [isEnabled, setIsEnabled] = useState(false);
 
   return (
     <section className="flex flex-col gap-5 rounded-md border border-gray-200 bg-white p-6">
@@ -18,7 +27,8 @@ export default function MarketingConsentCard() {
         <ToggleSwitch
           id={toggleId}
           checked={isEnabled}
-          onChange={(event) => setIsEnabled(event.target.checked)}
+          disabled={disabled}
+          onChange={(event) => onEnabledChange(event.target.checked)}
           aria-label="마케팅 이벤트 메일 받기"
         />
       </div>

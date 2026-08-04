@@ -17,6 +17,8 @@ interface UploadDropzoneProps {
   upload?: DocumentUpload;
   uploadError?: DocumentUploadError;
   onSelect: (file: File) => void;
+  onDownload: () => void;
+  isDownloading: boolean;
   onDelete: () => void;
   onCancelUpload: () => void;
   onClearError: () => void;
@@ -28,6 +30,8 @@ export default function UploadDropzone({
   upload,
   uploadError,
   onSelect,
+  onDownload,
+  isDownloading,
   onDelete,
   onCancelUpload,
   onClearError,
@@ -67,7 +71,7 @@ export default function UploadDropzone({
             </p>
             <Button
               variant="outline"
-              className="h-[30px] shrink-0 rounded-sm px-3 text-label-small font-normal opacity-50"
+              className="h-7.5 shrink-0 rounded-sm px-3 text-label-small font-normal opacity-50"
               onClick={onClearError}
             >
               삭제
@@ -109,7 +113,7 @@ export default function UploadDropzone({
           </div>
           <Button
             variant="outline"
-            className="ml-auto h-[30px] shrink-0 rounded-sm px-3 text-label-small font-normal"
+            className="ml-auto h-7.5 shrink-0 rounded-sm px-3 text-label-small font-normal"
             onClick={onCancelUpload}
           >
             삭제
@@ -129,15 +133,18 @@ export default function UploadDropzone({
           <div className="flex shrink-0 gap-4">
             <Button
               variant="outline"
-              className="h-[30px] rounded-sm px-3 text-label-small font-normal"
+              className="h-7.5 rounded-sm px-3 text-label-small font-normal"
+              onClick={onDownload}
+              disabled={isDownloading}
             >
-              다운로드
+              {isDownloading ? '다운로드 중…' : '다운로드'}
               <DownloadIcon className="size-4" aria-hidden="true" />
             </Button>
             <Button
               variant="outline"
-              className="h-[30px] rounded-sm px-3 text-label-small font-normal"
+              className="h-7.5 rounded-sm px-3 text-label-small font-normal"
               onClick={onDelete}
+              disabled={isDownloading}
             >
               삭제
               <CloseIcon className="size-4" aria-hidden="true" />
@@ -167,7 +174,7 @@ export default function UploadDropzone({
             </p>
           </div>
           <Button
-            className="h-12 min-w-20 text-white"
+            className="h-12 min-w-20 text-white font-normal"
             onClick={() => fileInputRef.current?.click()}
           >
             파일선택

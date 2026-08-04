@@ -1,3 +1,4 @@
+import type { JobSortOption } from '@/api/jobs';
 import { Select, Tag } from '@/components/common';
 
 export interface ExploreActiveFilter {
@@ -11,6 +12,8 @@ interface ExploreResultsToolbarProps {
   activeFilters: ExploreActiveFilter[];
   onReset?: () => void;
   isLoading?: boolean;
+  sort: JobSortOption;
+  onSortChange: (sort: JobSortOption) => void;
 }
 
 export default function ExploreResultsToolbar({
@@ -18,6 +21,8 @@ export default function ExploreResultsToolbar({
   activeFilters,
   onReset,
   isLoading = false,
+  sort,
+  onSortChange,
 }: ExploreResultsToolbarProps) {
   return (
     <div className="flex w-full items-center justify-between gap-2">
@@ -49,13 +54,14 @@ export default function ExploreResultsToolbar({
         )}
       </div>
       <Select
-        defaultValue="recommended"
         aria-label="정렬"
         className="h-10 w-25 shrink-0 px-4 text-body-small"
+        value={sort}
+        onChange={(event) => onSortChange(event.target.value as JobSortOption)}
       >
-        <option value="recommended">추천순</option>
-        <option value="latest">최신순</option>
-        <option value="deadline">마감임박순</option>
+        <option value="FIT">추천순</option>
+        <option value="RECENT">최신순</option>
+        <option value="DEADLINE">마감임박순</option>
       </Select>
     </div>
   );
