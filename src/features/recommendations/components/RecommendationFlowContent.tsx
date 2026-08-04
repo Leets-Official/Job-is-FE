@@ -1,6 +1,8 @@
 import { type ReactNode, useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import { dismissCard, generateTodayDeck } from '@/api/decks';
 import { Button, NoticePanel } from '@/components/common';
+import { Spinner } from '@/components/feedback';
 import RecommendationCompletion from './RecommendationCompletion';
 import RecommendationGreeting from './RecommendationGreeting';
 import RecommendationLetterCard from './RecommendationLetterCard';
@@ -8,13 +10,16 @@ import RecommendationLetterCarousel from './RecommendationLetterCarousel';
 import RecommendationNews from './RecommendationNews';
 import RecommendationPendingContent from './RecommendationPendingContent';
 import RecommendationStatusTabs from './RecommendationStatusTabs';
-import { RECOMMENDATION_LETTERS } from '../mocks/recommendationLetters';
-import { RECOMMENDATION_NEWS_ITEMS } from '../mocks/recommendationNews';
+import { useContents } from '../hooks/useContents';
+import { useSaveRecommendedJob } from '../hooks/useSaveRecommendedJob';
+import { useTodayBriefing, useTodayBriefingCards } from '../hooks/useTodayBriefing';
 import {
   getRecommendationLetterStatus,
   type RecommendationLetterStatus,
   useRecommendationDeckStore,
 } from '../store/useRecommendationDeckStore';
+import { mapBriefingCard, mapBriefingCardStatus } from '../utils/mapBriefingCard';
+import { mapContentSummary } from '../utils/mapContent';
 import type { RecommendationIntroAnimationMode } from '../hooks/useRecommendationIntroAnimation';
 
 export type RecommendationScreen =
@@ -27,11 +32,6 @@ export type RecommendationScreen =
   | 'empty-candidates'
   | 'empty-signup'
   | 'empty-before-send';
-
-const DECK = [
-  ...RECOMMENDATION_LETTERS.map((letter) => ({ type: 'card', letter }) as const),
-  { type: 'news' } as const,
-];
 
 const STATUS_TABS: { label: string; status: RecommendationLetterStatus }[] = [
   { label: '저장됨', status: 'saved' },
@@ -65,17 +65,84 @@ export default function RecommendationFlowContent({
   const markViewed = useRecommendationDeckStore((state) => state.markViewed);
   const statusByLetterId = useRecommendationDeckStore((state) => state.statusByLetterId);
   const viewedLetterIds = useRecommendationDeckStore((state) => state.viewedLetterIds);
+
+  const briefingQuery = useTodayBriefing();
+  const cardsQuery = useTodayBriefingCards();
+  const contentsQuery = useContents();
+  const { mutateAsync: saveRecommendedJob } = useSaveRecommendedJob();
+  const newsItems = useMemo(
+    () => (contentsQuery.data ?? []).map(mapContentSummary),
+    [contentsQuery.data],
+  );
+  const cards = useMemo(
+    () => [...(cardsQuery.data ?? [])].sort((a, b) => a.position - b.position),
+    [cardsQuery.data],
+  );
+  const letters = useMemo(() => cards.map(mapBriefingCard), [cards]);
+  const initialStatusByLetterId = useMemo(
+    () =>
+      Object.fromEntries(
+        cards.map((card) => [String(card.cardId), mapBriefingCardStatus(card.status)]),
+      ),
+    [cards],
+  );
+  const jobIdByLetterId = useMemo(
+    () => Object.fromEntries(cards.map((card) => [String(card.cardId), card.jobId])),
+    [cards],
+  );
+  const deckIdByLetterId = useMemo(
+    () => Object.fromEntries(cards.map((card) => [String(card.cardId), card.deckId])),
+    [cards],
+  );
+  const resolveStatus = (letterId: string) =>
+    getRecommendationLetterStatus(statusByLetterId, letterId, initialStatusByLetterId[letterId]);
+  const handleSaveLetter = (letterId: string) => {
+    const previousStatus = resolveStatus(letterId);
+    setStatus(letterId, 'saved');
+    const jobId = jobIdByLetterId[letterId];
+    if (jobId !== undefined) {
+      saveRecommendedJob(jobId).catch((error) => {
+        setStatus(letterId, previousStatus);
+        console.error(error);
+      });
+    }
+  };
+  const handleExpandLetter = (letterId: string) => {
+    const jobId = jobIdByLetterId[letterId];
+    const deckId = deckIdByLetterId[letterId];
+    navigate(`/jobs/${jobId ?? letterId}`, {
+      state: deckId ? { deckId, cardId: Number(letterId) } : undefined,
+    });
+  };
+  const handleDismissLetter = (letterId: string) => {
+    const previousStatus = resolveStatus(letterId);
+    setStatus(letterId, 'dismissed');
+    const deckId = deckIdByLetterId[letterId];
+    if (deckId !== undefined) {
+      dismissCard(deckId, Number(letterId)).catch((error) => {
+        setStatus(letterId, previousStatus);
+        console.error(error);
+      });
+    }
+  };
+
+  const DECK = useMemo(
+    () => [
+      ...letters.map((letter) => ({ type: 'card', letter }) as const),
+      { type: 'news' } as const,
+    ],
+    [letters],
+  );
+
   const [deckIndex, setDeckIndex] = useState(0);
   const [statusIndex, setStatusIndex] = useState(0);
   const [cardIndex, setCardIndex] = useState(0);
-  const deckStep = DECK[deckIndex];
+  const deckStep = DECK[deckIndex] ?? DECK[DECK.length - 1];
   const activeStatus = STATUS_TABS[statusIndex].status;
   const filteredLetters = useMemo(
-    () =>
-      RECOMMENDATION_LETTERS.filter(
-        (letter) => getRecommendationLetterStatus(statusByLetterId, letter.id) === activeStatus,
-      ),
-    [statusByLetterId, activeStatus],
+    () => letters.filter((letter) => resolveStatus(letter.id) === activeStatus),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [letters, statusByLetterId, initialStatusByLetterId, activeStatus],
   );
 
   useEffect(() => {
@@ -85,12 +152,30 @@ export default function RecommendationFlowContent({
   if (screen === 'pending') return <RecommendationPendingContent />;
 
   if (screen === 'intro') {
+    if (briefingQuery.isLoading) {
+      return (
+        <ScreenLayout>
+          <Spinner />
+        </ScreenLayout>
+      );
+    }
+
+    if (briefingQuery.isError) {
+      return (
+        <ScreenLayout>
+          <NoticePanel resultIconVariant="danger" title="브리핑을 불러오지 못했어요">
+            <Button onClick={() => briefingQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
+        </ScreenLayout>
+      );
+    }
+
     return (
       <ScreenLayout>
         <RecommendationGreeting
-          reviewedCount={847}
-          matchedCount={5}
-          focusDescription="오늘은 성장기 스타트업 · 데이터 직무 위주로 골랐습니다."
+          reviewedCount={briefingQuery.data?.applicableCount ?? 0}
+          matchedCount={briefingQuery.data?.curatedCount ?? 0}
+          focusDescription={briefingQuery.data?.theme ?? ''}
           animationMode={introAnimationMode}
           onStart={() =>
             navigate('/recommendations/deck', { state: { transition: 'recommendation-flow' } })
@@ -101,6 +186,24 @@ export default function RecommendationFlowContent({
   }
 
   if (screen === 'deck') {
+    if (cardsQuery.isLoading) {
+      return (
+        <ScreenLayout>
+          <Spinner />
+        </ScreenLayout>
+      );
+    }
+
+    if (cardsQuery.isError) {
+      return (
+        <ScreenLayout>
+          <NoticePanel resultIconVariant="danger" title="오늘의 추천을 불러오지 못했어요">
+            <Button onClick={() => cardsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
+        </ScreenLayout>
+      );
+    }
+
     const isLastStep = deckIndex === DECK.length - 1;
     const goNext = () => {
       if (isLastStep) {
@@ -121,17 +224,21 @@ export default function RecommendationFlowContent({
           footNote={deckStep.type === 'news' ? '' : undefined}
         >
           {deckStep.type === 'news' ? (
-            <RecommendationNews items={RECOMMENDATION_NEWS_ITEMS} />
+            contentsQuery.isLoading ? (
+              <Spinner />
+            ) : (
+              <RecommendationNews items={newsItems} />
+            )
           ) : (
             <RecommendationLetterCard
               {...deckStep.letter}
-              onExpand={() => navigate(`/jobs/${deckStep.letter.id}`)}
+              onExpand={() => handleExpandLetter(deckStep.letter.id)}
               onSave={() => {
-                setStatus(deckStep.letter.id, 'saved');
+                handleSaveLetter(deckStep.letter.id);
                 goNext();
               }}
               onDismiss={() => {
-                setStatus(deckStep.letter.id, 'dismissed');
+                handleDismissLetter(deckStep.letter.id);
                 goNext();
               }}
             />
@@ -144,21 +251,17 @@ export default function RecommendationFlowContent({
   if (screen === 'news') {
     return (
       <ScreenLayout>
-        <RecommendationNews items={RECOMMENDATION_NEWS_ITEMS} />
+        {contentsQuery.isLoading ? <Spinner /> : <RecommendationNews items={newsItems} />}
       </ScreenLayout>
     );
   }
 
   if (screen === 'complete') {
-    const savedCount = RECOMMENDATION_LETTERS.filter(
-      (letter) => getRecommendationLetterStatus(statusByLetterId, letter.id) === 'saved',
+    const savedCount = letters.filter((letter) => resolveStatus(letter.id) === 'saved').length;
+    const dismissedCount = letters.filter(
+      (letter) => resolveStatus(letter.id) === 'dismissed',
     ).length;
-    const dismissedCount = RECOMMENDATION_LETTERS.filter(
-      (letter) => getRecommendationLetterStatus(statusByLetterId, letter.id) === 'dismissed',
-    ).length;
-    const viewedCount = RECOMMENDATION_LETTERS.filter(
-      (letter) => viewedLetterIds[letter.id],
-    ).length;
+    const viewedCount = letters.filter((letter) => viewedLetterIds[letter.id]).length;
 
     return (
       <ScreenLayout>
@@ -175,6 +278,24 @@ export default function RecommendationFlowContent({
   }
 
   if (screen === 'archive') {
+    if (cardsQuery.isLoading) {
+      return (
+        <ScreenLayout>
+          <Spinner />
+        </ScreenLayout>
+      );
+    }
+
+    if (cardsQuery.isError) {
+      return (
+        <ScreenLayout>
+          <NoticePanel resultIconVariant="danger" title="목록을 불러오지 못했어요">
+            <Button onClick={() => cardsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
+        </ScreenLayout>
+      );
+    }
+
     const displayIndex = Math.min(cardIndex, Math.max(filteredLetters.length - 1, 0));
     const letter = filteredLetters[displayIndex];
     const contentKey = letter?.id ?? `empty-${activeStatus}`;
@@ -206,9 +327,9 @@ export default function RecommendationFlowContent({
             {letter ? (
               <RecommendationLetterCard
                 {...letter}
-                onExpand={() => navigate(`/jobs/${letter.id}`)}
-                onSave={() => setStatus(letter.id, 'saved')}
-                onDismiss={() => setStatus(letter.id, 'dismissed')}
+                onExpand={() => handleExpandLetter(letter.id)}
+                onSave={() => handleSaveLetter(letter.id)}
+                onDismiss={() => handleDismissLetter(letter.id)}
               />
             ) : (
               <div className="flex min-h-142 w-190 items-center justify-center rounded-md border border-gray-200 bg-white p-6 text-center">
@@ -257,7 +378,9 @@ export default function RecommendationFlowContent({
       return;
     }
 
-    window.location.reload();
+    generateTodayDeck()
+      .catch(console.error)
+      .finally(() => window.location.reload());
   };
 
   return (

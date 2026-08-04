@@ -16,6 +16,8 @@ export default function Select({
   helperText,
   placeholder,
   children,
+  value,
+  defaultValue,
   ...props
 }: SelectProps) {
   const generatedId = useId();
@@ -27,7 +29,7 @@ export default function Select({
         <select
           id={selectId}
           required
-          defaultValue=""
+          {...(value === undefined ? { defaultValue: (defaultValue ?? '') as string } : { value })}
           aria-describedby={helperText ? `${selectId}-helper-text` : undefined}
           className={cn(
             'h-14 w-full appearance-none rounded-sm border border-gray-700 bg-white px-4 pr-12 text-body-large font-medium text-gray-900 invalid:text-gray-600 focus:border-primary-500 focus:outline-none disabled:bg-gray-200 disabled:text-gray-600',

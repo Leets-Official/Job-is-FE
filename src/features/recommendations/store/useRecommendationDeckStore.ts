@@ -27,6 +27,7 @@ export const useRecommendationDeckStore = create<RecommendationDeckState>((set) 
 export function getRecommendationLetterStatus(
   statusByLetterId: Record<string, RecommendationLetterStatus>,
   letterId: string,
+  fallback: RecommendationLetterStatus = 'unprocessed',
 ): RecommendationLetterStatus {
-  return statusByLetterId[letterId] ?? 'unprocessed';
+  return statusByLetterId[letterId] ?? fallback;
 }
