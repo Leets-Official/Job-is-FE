@@ -21,16 +21,18 @@ const EMPTY_SCREEN_BY_BRIEFING_STATE: Partial<Record<BriefingState, Recommendati
 
 export default function RecommendationFlowContent({ screen }: { screen: RecommendationScreen }) {
   const navigate = useNavigate();
-  const { cardsQuery, letters } = useRecommendationDeck();
+  const { cardsQuery, letters, isDeckCompleted } = useRecommendationDeck();
   const briefingQuery = useTodayBriefing();
 
   const isEntryScreen = screen === 'pending';
   const hasTodayCards = letters.length > 0;
   const briefingState = briefingQuery.data?.state;
   const resolvedScreen: RecommendationScreen = isEntryScreen
-    ? hasTodayCards
-      ? 'intro'
-      : (briefingState && EMPTY_SCREEN_BY_BRIEFING_STATE[briefingState]) || screen
+    ? isDeckCompleted
+      ? 'complete'
+      : hasTodayCards
+        ? 'intro'
+        : (briefingState && EMPTY_SCREEN_BY_BRIEFING_STATE[briefingState]) || screen
     : screen;
 
   if (isEntryScreen && (cardsQuery.isLoading || briefingQuery.isLoading)) {

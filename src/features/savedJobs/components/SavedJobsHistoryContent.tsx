@@ -33,13 +33,19 @@ interface SavedJobsHistoryContentProps {
   onFilterChange: (filter: SavedJobHistoryStatus | 'all') => void;
   onBrowseRecommendations: () => void;
   onExplore: () => void;
+  onView: (jobId: number) => void;
   onLoadMore?: () => void;
   isLoading?: boolean;
   isError?: boolean;
   onRetry?: () => void;
 }
 
-function SavedJobHistoryRow({ item }: { item: SavedJobHistoryItem }) {
+interface SavedJobHistoryRowProps {
+  item: SavedJobHistoryItem;
+  onView: (jobId: number) => void;
+}
+
+function SavedJobHistoryRow({ item, onView }: SavedJobHistoryRowProps) {
   return (
     <div className="grid w-full grid-cols-[7rem_minmax(0,1fr)_auto] items-center gap-2.5 rounded-xs border border-gray-400 bg-white p-6">
       <p className="text-body-small font-bold text-text-primary">
@@ -50,7 +56,9 @@ function SavedJobHistoryRow({ item }: { item: SavedJobHistoryItem }) {
         <p className="text-body-xsmall leading-[1.3] font-semibold text-text-tertiary">
           {item.time}
         </p>
-        <Button className="h-10">다시 보기</Button>
+        <Button className="h-10" onClick={() => onView(item.jobId)}>
+          다시 보기
+        </Button>
         {item.canRestore && (
           <Button variant="outline" className="h-10">
             저장으로 되돌리기
@@ -67,6 +75,7 @@ export default function SavedJobsHistoryContent({
   onFilterChange,
   onBrowseRecommendations,
   onExplore,
+  onView,
   onLoadMore,
   isLoading = false,
   isError = false,
@@ -122,7 +131,7 @@ export default function SavedJobsHistoryContent({
             <p className="text-label-medium font-medium text-text-primary">{group.dateLabel}</p>
             <div className="h-0 w-full border-t border-gray-400" />
             {group.items.map((item) => (
-              <SavedJobHistoryRow key={item.id} item={item} />
+              <SavedJobHistoryRow key={item.id} item={item} onView={onView} />
             ))}
           </section>
         ))

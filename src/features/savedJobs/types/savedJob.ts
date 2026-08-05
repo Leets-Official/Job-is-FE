@@ -17,6 +17,7 @@ export type SavedJobHistoryStatus = 'viewed' | 'skipped' | 'intended';
 
 export interface SavedJobHistoryItem {
   id: string;
+  jobId: number;
   date: string;
   dateLabel: string;
   status: SavedJobHistoryStatus;

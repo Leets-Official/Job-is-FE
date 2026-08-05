@@ -24,7 +24,7 @@ export default function RecommendationNewsDetailMain({
     <div className="flex w-full flex-col gap-6 rounded-sm border border-gray-300 bg-white p-6">
       <Button
         variant="outline"
-        onClick={() => navigate(backTo)}
+        onClick={() => navigate(backTo, { replace: true })}
         className="h-8.75 w-fit gap-1 rounded-sm border-primary-400 bg-white px-5 text-body-small font-medium text-text-secondary hover:bg-primary-50"
       >
         <ChevronLeftIcon className="size-4" />

@@ -1,3 +1,4 @@
+import { createPortal } from 'react-dom';
 import Button from '@/components/common/Button';
 import Modal from '@/components/common/Modal';
 
@@ -16,9 +17,9 @@ export default function DeleteDocumentModal({
   isSubmitting,
   errorMessage,
 }: DeleteDocumentModalProps) {
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-30 flex items-center justify-center bg-black-alpha-40 px-5"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black-alpha-40 px-5"
       role="presentation"
       onMouseDown={(event) => {
         if (!isSubmitting && event.target === event.currentTarget) onCancel();
@@ -41,11 +42,7 @@ export default function DeleteDocumentModal({
             >
               취소
             </Button>
-            <Button
-              className="h-12 bg-gray-1000 text-white hover:bg-gray-800"
-              onClick={onConfirm}
-              disabled={isSubmitting}
-            >
+            <Button className="h-12" onClick={onConfirm} disabled={isSubmitting}>
               {isSubmitting ? '삭제 중…' : '삭제'}
             </Button>
           </>
@@ -63,6 +60,7 @@ export default function DeleteDocumentModal({
           </p>
         )}
       </Modal>
-    </div>
+    </div>,
+    document.body,
   );
 }

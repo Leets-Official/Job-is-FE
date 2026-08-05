@@ -57,7 +57,7 @@ export default function RecommendationLetterCarousel({
       transitionTimer = window.setTimeout(() => {
         setLeavingContent(undefined);
         setIsAnimating(false);
-      }, 440);
+      }, 280);
     });
 
     return () => {
@@ -88,12 +88,12 @@ export default function RecommendationLetterCarousel({
           <CarouselArrow direction="left" onClick={handlePrev} disabled={prevDisabled} />
         )}
         {enableStackTransition ? (
-          <div className="relative flex min-h-[524px] w-[802px] translate-x-[21px] items-center overflow-x-clip">
+          <div className="relative flex min-h-[608px] w-[844px] items-center overflow-x-clip">
             {leavingContent && (
               <div
                 aria-hidden="true"
                 inert
-                className="pointer-events-none absolute top-1/2 left-0 z-10 w-full -translate-y-1/2"
+                className="pointer-events-none absolute top-1/2 left-0 z-10 flex w-full -translate-y-1/2 justify-center"
               >
                 <div
                   className={cn(
@@ -109,7 +109,7 @@ export default function RecommendationLetterCarousel({
             <div
               key={activeContent.key}
               className={cn(
-                'relative z-20 w-full',
+                'relative z-20 flex w-full justify-center',
                 leavingContent &&
                   (transitionDirection === 'forward'
                     ? 'recommendation-card-enter-from-right'

@@ -71,9 +71,11 @@ export default function RecommendationLetterCard({
           <p className="text-body-small font-bold text-text-secondary">
             추천 이유 : {recommendReason}
           </p>
-          <div className="flex items-center gap-2">
-            <h2 className="text-heading-xlarge text-center font-bold text-text-primary">{title}</h2>
-            <Badge>{matchScoreLabel}</Badge>
+          <div className="flex min-w-0 items-start gap-2">
+            <h2 className="min-w-0 flex-1 text-heading-xlarge text-left font-bold text-text-primary">
+              {title}
+            </h2>
+            <Badge className="shrink-0">{matchScoreLabel}</Badge>
           </div>
           <p className="text-body-medium font-bold text-text-secondary">{companyInfo}</p>
           <div className="flex flex-wrap items-center gap-1.5">

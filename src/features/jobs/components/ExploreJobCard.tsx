@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router';
 import MoreVerticalIcon from '@/assets/icons/icon-more-vertical.svg?react';
+import { showAlert } from '@/components/feedback';
 import JobCard from '@/features/jobs/components/JobCard';
 import { useSaveJob } from '@/features/jobs/hooks/useSaveJob';
 import type { ExploreJobSummary } from '@/features/jobs/types/exploreJob';
@@ -24,8 +25,9 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
       await save(job.id);
       setIsSaved(true);
       setIsMenuOpen(false);
-    } catch (error) {
-      console.error(error);
+      showAlert('success', '공고를 저장했어요.');
+    } catch {
+      showAlert('danger', '공고를 저장하지 못했어요. 다시 시도해주세요.');
     } finally {
       setIsSavePending(false);
     }
@@ -39,8 +41,9 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
       await unsave(job.id);
       setIsSaved(false);
       setIsMenuOpen(false);
-    } catch (error) {
-      console.error(error);
+      showAlert('success', '공고 저장을 해제했어요.');
+    } catch {
+      showAlert('danger', '공고 저장을 해제하지 못했어요. 다시 시도해주세요.');
     } finally {
       setIsSavePending(false);
     }
@@ -70,12 +73,12 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
         <MoreVerticalIcon className="size-5" />
       </button>
       {isMenuOpen && (
-        <div className="absolute top-9 right-2.5 z-10 flex w-36 origin-bottom-right flex-col gap-3 rounded-sm border border-gray-200 bg-white p-4 shadow-md motion-safe:animate-[explore-job-menu-enter_160ms_cubic-bezier(0.16,1,0.3,1)_both]">
+        <div className="absolute top-9 right-2.5 z-10 flex w-36 origin-bottom-right flex-col gap-3 rounded-sm border border-gray-200 bg-white p-4 shadow-md motion-safe:animate-[explore-job-menu-enter_180ms_cubic-bezier(0.16,1,0.3,1)_both]">
           <button
             type="button"
             onClick={handleSave}
             disabled={isSaved || isSavePending}
-            className="text-left text-body-medium font-medium text-text-primary disabled:cursor-not-allowed disabled:text-gray-400"
+            className="rounded-xs px-1 py-0.5 text-left text-body-medium font-medium text-text-primary transition-colors duration-150 ease-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-transparent"
           >
             저장
           </button>
@@ -84,7 +87,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             type="button"
             disabled={!isSaved || isSavePending}
             onClick={handleUnsave}
-            className="text-left text-body-medium font-medium text-text-primary disabled:cursor-not-allowed disabled:text-gray-400"
+            className="rounded-xs px-1 py-0.5 text-left text-body-medium font-medium text-text-primary transition-colors duration-150 ease-out hover:bg-gray-100 disabled:cursor-not-allowed disabled:text-gray-400 disabled:hover:bg-transparent"
           >
             저장 해제
           </button>
@@ -92,7 +95,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
           <button
             type="button"
             onClick={() => setIsMenuOpen(false)}
-            className="text-left text-body-medium font-medium text-text-primary"
+            className="rounded-xs px-1 py-0.5 text-left text-body-medium font-medium text-text-primary transition-colors duration-150 ease-out hover:bg-gray-100"
           >
             관심 없음
           </button>

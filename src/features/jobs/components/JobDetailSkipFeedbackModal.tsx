@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { Button, Modal, TextInput } from '@/components/common';
 import Chip from '@/components/common/Chip';
 
@@ -22,9 +23,9 @@ export default function JobDetailSkipFeedbackModal({
     );
   }
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black-alpha-40 px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black-alpha-40 px-4"
       onClick={onClose}
     >
       <Modal
@@ -62,6 +63,7 @@ export default function JobDetailSkipFeedbackModal({
           className="h-12 w-[360px] rounded-[6px]"
         />
       </Modal>
-    </div>
+    </div>,
+    document.body,
   );
 }
