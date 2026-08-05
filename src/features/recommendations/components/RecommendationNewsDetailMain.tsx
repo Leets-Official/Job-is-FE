@@ -25,7 +25,7 @@ export default function RecommendationNewsDetailMain({
       <Button
         variant="outline"
         onClick={() => navigate(backTo)}
-        className="h-[35px] w-fit gap-1 rounded-sm border-primary-400 bg-white px-5 text-body-small font-medium text-text-secondary hover:bg-primary-50"
+        className="h-8.75 w-fit gap-1 rounded-sm border-primary-400 bg-white px-5 text-body-small font-medium text-text-secondary hover:bg-primary-50"
       >
         <ChevronLeftIcon className="size-4" />
         {backLabel}

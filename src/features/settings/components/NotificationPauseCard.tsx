@@ -1,14 +1,8 @@
-import type { NotificationSnooze, NotificationSnoozeDuration } from '@/api/notification';
-import useNotificationSnooze from '@/features/settings/hooks/useNotificationSnooze';
-import useNotificationSnoozeCancel from '@/features/settings/hooks/useNotificationSnoozeCancel';
+import type { NotificationSnooze } from '@/api/types/notification.types';
+import useNotificationPause, {
+  type PausePeriod,
+} from '@/features/settings/hooks/useNotificationPause';
 import { cn } from '@/utils/cn';
-
-type PausePeriod = 7 | 30 | 'indefinite';
-
-interface PauseState {
-  period: PausePeriod;
-  until: string | null;
-}
 
 const PAUSE_OPTIONS: { label: string; value: PausePeriod }[] = [
   { label: '7일', value: 7 },
@@ -16,75 +10,20 @@ const PAUSE_OPTIONS: { label: string; value: PausePeriod }[] = [
   { label: '직접 해제', value: 'indefinite' },
 ];
 
-const SNOOZE_DURATION_BY_PERIOD: Record<PausePeriod, NotificationSnoozeDuration> = {
-  7: 'SEVEN_DAYS',
-  30: 'THIRTY_DAYS',
-  indefinite: 'INDEFINITE',
-};
-
-const PAUSE_PERIOD_BY_DURATION: Record<NotificationSnoozeDuration, PausePeriod> = {
-  SEVEN_DAYS: 7,
-  THIRTY_DAYS: 30,
-  INDEFINITE: 'indefinite',
-};
-
-function formatResumeDate(until: string) {
-  return new Intl.DateTimeFormat('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-  }).format(new Date(until));
-}
-
-function getInitialPauseState(snooze: NotificationSnooze): PauseState | null {
-  if (!snooze.snoozed) return null;
-  if (snooze.indefinite) return { period: 'indefinite', until: null };
-  if (!snooze.until) return null;
-
-  const until = new Date(snooze.until);
-  if (Number.isNaN(until.getTime()) || until.getTime() <= Date.now()) return null;
-
-  const remainingDays = Math.ceil((until.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
-  return { period: remainingDays <= 7 ? 7 : 30, until: snooze.until };
-}
-
-function createPauseState(period: PausePeriod): PauseState {
-  if (period === 'indefinite') return { period, until: null };
-
-  const until = new Date();
-  until.setDate(until.getDate() + period);
-  return { period, until: until.toISOString() };
-}
-
 interface NotificationPauseCardProps {
   initialSnooze: NotificationSnooze;
 }
 
 export default function NotificationPauseCard({ initialSnooze }: NotificationPauseCardProps) {
-  const snoozeMutation = useNotificationSnooze();
-  const snoozeCancelMutation = useNotificationSnoozeCancel();
-  const isUpdating = snoozeMutation.isPending || snoozeCancelMutation.isPending;
-  const pauseState = snoozeMutation.isPending
-    ? createPauseState(PAUSE_PERIOD_BY_DURATION[snoozeMutation.variables.duration])
-    : snoozeCancelMutation.isPending
-      ? null
-      : getInitialPauseState(initialSnooze);
-
-  const handlePausePeriodChange = (nextPausePeriod: PausePeriod) => {
-    snoozeCancelMutation.reset();
-    snoozeMutation.mutate({ duration: SNOOZE_DURATION_BY_PERIOD[nextPausePeriod] });
-  };
-
-  const handleSnoozeCancel = () => {
-    snoozeMutation.reset();
-    snoozeCancelMutation.mutate();
-  };
-
-  const pauseMessage =
-    pauseState?.period === 'indefinite'
-      ? '직접 다시 켤 때까지 쉬는 중이에요.'
-      : pauseState?.until
-        ? `${formatResumeDate(pauseState.until)}까지 쉬는 중이에요.`
-        : '현재 알림을 정상적으로 받고 있어요.';
+  const {
+    pauseState,
+    pauseMessage,
+    isUpdating,
+    isSnoozeError,
+    isCancelError,
+    handlePausePeriodChange,
+    handleSnoozeCancel,
+  } = useNotificationPause(initialSnooze);
 
   return (
     <section className="flex flex-col gap-5 rounded-md border border-gray-200 bg-white p-6">
@@ -119,13 +58,13 @@ export default function NotificationPauseCard({ initialSnooze }: NotificationPau
         </div>
       </div>
 
-      {snoozeMutation.isError && (
+      {isSnoozeError && (
         <p className="text-label-small font-medium text-danger-500" role="alert">
           알림 일시 정지를 설정하지 못했어요. 다시 시도해주세요.
         </p>
       )}
 
-      {snoozeCancelMutation.isError && (
+      {isCancelError && (
         <p className="text-label-small font-medium text-danger-500" role="alert">
           알림 일시 정지를 해제하지 못했어요. 다시 시도해주세요.
         </p>

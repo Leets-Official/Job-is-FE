@@ -1,4 +1,4 @@
-import type { JobSummary } from '@/api/jobs';
+import type { JobSummary } from '@/api/types/jobs.types';
 import type { ExploreJobSummary } from '@/features/jobs/types/exploreJob';
 import { formatDDayLabel } from '@/utils/formatDDayLabel';
 

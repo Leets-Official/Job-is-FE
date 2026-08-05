@@ -1,24 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-  applyQuizResult,
-  getQuizQuestions,
-  getQuizResult,
-  saveQuizAnswer,
-  type QuizQuestionsResponse,
-  type QuizSource,
-} from '@/api/quiz';
+import { applyQuizResult, getQuizQuestions, getQuizResult, saveQuizAnswer } from '@/api/quiz';
+import type { QuizQuestionsResponse, QuizSource } from '@/api/types/quiz.types';
+import { QUERY_KEYS } from '@/constants/queryKey';
 
 type QuizScreen = 'start' | 'questions' | 'result';
 
 export default function useQuizApi(source: QuizSource, screen: QuizScreen) {
   const queryClient = useQueryClient();
   const quizQuestionsQuery = useQuery({
-    queryKey: ['quizQuestions', source],
+    queryKey: QUERY_KEYS.QUIZ.QUESTIONS(source),
     queryFn: () => getQuizQuestions(source),
     enabled: screen === 'questions',
   });
   const quizResultQuery = useQuery({
-    queryKey: ['quizResult', quizQuestionsQuery.data?.testId],
+    queryKey: QUERY_KEYS.QUIZ.RESULT(quizQuestionsQuery.data?.testId),
     queryFn: () => getQuizResult(quizQuestionsQuery.data?.testId as number),
     enabled:
       (screen === 'result' ||
@@ -35,21 +30,24 @@ export default function useQuizApi(source: QuizSource, screen: QuizScreen) {
       choiceValue,
     });
 
-    queryClient.setQueryData<QuizQuestionsResponse>(['quizQuestions', source], (previous) => {
-      if (!previous) return previous;
+    queryClient.setQueryData<QuizQuestionsResponse>(
+      QUERY_KEYS.QUIZ.QUESTIONS(source),
+      (previous) => {
+        if (!previous) return previous;
 
-      return {
-        ...previous,
-        answeredCount: savedAnswer.answeredCount,
-        totalCount: savedAnswer.totalCount,
-        completed: savedAnswer.completed,
-        questions: previous.questions.map((question) =>
-          question.questionNo === questionNo
-            ? { ...question, selectedChoiceValue: choiceValue }
-            : question,
-        ),
-      };
-    });
+        return {
+          ...previous,
+          answeredCount: savedAnswer.answeredCount,
+          totalCount: savedAnswer.totalCount,
+          completed: savedAnswer.completed,
+          questions: previous.questions.map((question) =>
+            question.questionNo === questionNo
+              ? { ...question, selectedChoiceValue: choiceValue }
+              : question,
+          ),
+        };
+      },
+    );
 
     return savedAnswer;
   };
@@ -57,8 +55,8 @@ export default function useQuizApi(source: QuizSource, screen: QuizScreen) {
   const applyResult = async (testId: number) => {
     await applyResultMutation.mutateAsync(testId);
     await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['profile'] }),
-      queryClient.invalidateQueries({ queryKey: ['profileDraft'] }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROFILE.BASE() }),
+      queryClient.invalidateQueries({ queryKey: QUERY_KEYS.PROFILE.DRAFT() }),
     ]);
   };
 

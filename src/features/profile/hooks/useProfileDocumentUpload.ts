@@ -1,10 +1,7 @@
 import { useMutation } from '@tanstack/react-query';
 import axios from 'axios';
-import {
-  confirmProfileFile,
-  issueProfileFilePresignedUrl,
-  type ProfileFileCategory,
-} from '@/api/profile';
+import { confirmProfileFile, issueProfileFilePresignedUrl } from '@/api/profile';
+import type { ProfileFileCategory } from '@/api/types/profile.types';
 import type { DocumentType, ProfileDocument } from '@/features/profile/types/profileDocument';
 import { formatDocumentUploadedAt } from '@/features/profile/utils/profileDocument';
 

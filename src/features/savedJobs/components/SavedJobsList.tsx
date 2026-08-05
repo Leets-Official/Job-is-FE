@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import type { HistoryFilter } from '@/api/history';
+import type { HistoryFilter } from '@/api/types/savedJobs.types';
 import { Button, NoticePanel } from '@/components/common';
 import Tab from '@/components/common/Tab';
 import { Spinner } from '@/components/feedback';
@@ -76,16 +76,21 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
           ))}
         </div>
 
-        <div key={activeTab} className="saved-jobs-tab-content-enter flex w-full flex-col gap-5">
+        <div
+          key={activeTab}
+          className="saved-jobs-tab-content-enter flex w-full flex-1 flex-col gap-5"
+        >
           {activeTab === 'saved' ? (
             !isEmptyPreview && savedJobsQuery.isLoading ? (
-              <div className="flex w-full items-center justify-center py-20">
+              <div className="flex w-full flex-1 items-center justify-center">
                 <Spinner />
               </div>
             ) : !isEmptyPreview && savedJobsQuery.isError ? (
-              <NoticePanel resultIconVariant="danger" title="저장 목록을 불러오지 못했어요">
-                <Button onClick={() => savedJobsQuery.refetch()}>다시 시도</Button>
-              </NoticePanel>
+              <div className="flex w-full flex-1 items-center justify-center">
+                <NoticePanel resultIconVariant="danger" title="저장 목록을 불러오지 못했어요">
+                  <Button onClick={() => savedJobsQuery.refetch()}>다시 시도</Button>
+                </NoticePanel>
+              </div>
             ) : (
               <SavedJobsSavedContent
                 jobs={savedJobs}
@@ -93,14 +98,6 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
                 onExplore={handleExplore}
               />
             )
-          ) : historyQuery.isLoading ? (
-            <div className="flex w-full items-center justify-center py-20">
-              <Spinner />
-            </div>
-          ) : historyQuery.isError ? (
-            <NoticePanel resultIconVariant="danger" title="내역을 불러오지 못했어요">
-              <Button onClick={() => historyQuery.refetch()}>다시 시도</Button>
-            </NoticePanel>
           ) : (
             <SavedJobsHistoryContent
               history={historyItems}
@@ -109,6 +106,9 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
               onBrowseRecommendations={handleBrowseRecommendations}
               onExplore={handleExplore}
               onLoadMore={historyQuery.hasNextPage ? () => historyQuery.fetchNextPage() : undefined}
+              isLoading={historyQuery.isLoading}
+              isError={historyQuery.isError}
+              onRetry={() => historyQuery.refetch()}
             />
           )}
         </div>

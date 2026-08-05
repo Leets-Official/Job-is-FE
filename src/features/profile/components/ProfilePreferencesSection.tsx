@@ -50,8 +50,8 @@ export default function ProfilePreferencesSection({
             options={techStackOptions}
             selectedValues={techStacks}
             onAdd={onAddTechStack}
-            placeholder="기술 입력"
-            ariaLabel="기술 스택 추가"
+            placeholder="기술 검색"
+            ariaLabel="기술 스택 검색"
           />
         </div>
       </div>

@@ -1,10 +1,10 @@
-import { type ReactNode, useEffect, useRef, useState } from 'react';
+import { type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
 import LogoIcon from '@/assets/icons/logo.svg?react';
 import Button from '@/components/common/Button';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
 import Tab from '@/components/common/Tab';
-import { useAuthStore } from '@/features/login/store/useAuthStore';
+import useDismissableOpen from '@/hooks/useDismissableOpen';
 import { cn } from '@/utils/cn';
 
 interface HeaderTabItem {
@@ -58,7 +58,7 @@ function HeaderTabShell({ className, children }: { className?: string; children:
         className,
       )}
     >
-      <div className="flex h-15 w-full max-w-320 items-center">{children}</div>
+      <div className="flex h-15 w-full max-w-7xl items-center">{children}</div>
     </header>
   );
 }
@@ -105,32 +105,12 @@ function HeaderTabNav({
 export default function Header(props: HeaderProps) {
   const { className } = props;
   const navigate = useNavigate();
-  const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const profileMenuRef = useRef<HTMLDivElement>(null);
-  const homeDestination = onboardingCompleted
-    ? '/recommendations?preview=intro'
-    : '/recommendations';
-
-  useEffect(() => {
-    if (!isProfileMenuOpen) return;
-
-    function handlePointerDown(event: PointerEvent) {
-      if (profileMenuRef.current?.contains(event.target as Node)) return;
-      setIsProfileMenuOpen(false);
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setIsProfileMenuOpen(false);
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isProfileMenuOpen]);
+  const {
+    isOpen: isProfileMenuOpen,
+    setIsOpen: setIsProfileMenuOpen,
+    containerRef: profileMenuRef,
+  } = useDismissableOpen();
+  const homeDestination = '/recommendations';
 
   if (props.variant === 'carousel') {
     return (

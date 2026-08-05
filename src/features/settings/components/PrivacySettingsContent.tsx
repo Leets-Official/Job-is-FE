@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router';
 import TableCell from '@/components/common/TableCell';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@/constants/legalLinks';
 
 const DATA_RETENTION_ROWS = [
   ['소셜 식별자 · 이메일', '로그인 · 브리핑 발송', '필수', '탈퇴 후 30일'],
@@ -10,9 +11,9 @@ const DATA_RETENTION_ROWS = [
 ];
 
 const PRIVACY_LINKS = [
-  { label: '개인정보처리방침 전문', path: '/privacy' },
-  { label: '이용약관', path: '/terms' },
-  { label: '문의하기', path: '/contact' },
+  { label: '개인정보처리방침 전문', href: PRIVACY_POLICY_URL },
+  { label: '이용약관', href: TERMS_OF_SERVICE_URL },
+  { label: '문의하기', href: null },
 ];
 
 function PrivacyCard({ title, description }: { title: string; description: ReactNode }) {
@@ -86,15 +87,39 @@ export default function PrivacySettingsContent() {
       />
 
       <nav className="flex flex-wrap gap-2.5" aria-label="개인정보 관련 링크">
-        {PRIVACY_LINKS.map((link) => (
-          <Link
-            key={link.path}
-            to={link.path}
-            className="flex h-10 items-center justify-center rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50"
-          >
-            {link.label}
-          </Link>
-        ))}
+        {PRIVACY_LINKS.map((link) => {
+          const linkClassName =
+            'flex h-10 cursor-pointer items-center justify-center rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50';
+
+          if (!link.href) {
+            return (
+              <button
+                key={link.label}
+                type="button"
+                onClick={() => alert('문의하기는 준비 중이에요.')}
+                className={linkClassName}
+              >
+                {link.label}
+              </button>
+            );
+          }
+
+          return link.href.startsWith('http') ? (
+            <a
+              key={link.href}
+              href={link.href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={linkClassName}
+            >
+              {link.label}
+            </a>
+          ) : (
+            <Link key={link.href} to={link.href} className={linkClassName}>
+              {link.label}
+            </Link>
+          );
+        })}
       </nav>
     </div>
   );

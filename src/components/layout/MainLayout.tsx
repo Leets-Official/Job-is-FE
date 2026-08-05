@@ -42,6 +42,7 @@ export default function MainLayout() {
     new URLSearchParams(location.search).get('preview') === 'intro';
   const shouldAnimateContent =
     location.pathname === '/onboarding' ||
+    location.pathname === '/profile' ||
     location.pathname === '/profile/documents' ||
     location.pathname === '/profile/aptitude-test' ||
     (location.state as { transition?: string } | null)?.transition === 'recommendation-flow';

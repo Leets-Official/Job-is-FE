@@ -34,8 +34,14 @@ export default function useProfileSettingsForm({
   const [isSaved, setIsSaved] = useState(false);
   const [defaultSubmitError, setDefaultSubmitError] = useState<string>();
   const hasHydratedProfile = useRef(false);
-  const { techStackMetadata, jobCategoryMetadata, regionMetadata, careerLevelMetadata, profile } =
-    useProfileFormMetadata(loadProfile);
+  const {
+    techStackMetadata,
+    jobCategoryMetadata,
+    regionMetadata,
+    careerLevelMetadata,
+    profile,
+    isProfilePending,
+  } = useProfileFormMetadata(loadProfile);
   const { saveProfile, isSavingProfile } = useProfileUpdate({
     jobCategories: jobCategoryMetadata,
     regions: regionMetadata,
@@ -100,6 +106,7 @@ export default function useProfileSettingsForm({
     defaultSubmitError,
     isSavingProfile,
     profile,
+    isProfilePending,
     documentsStatus: profileFiles.length === 0 ? '미등록' : `${profileFiles.length}개 첨부 / 2개`,
     techStackOptions: techStackMetadata.map((techStack) => techStack.name),
     jobCategoryOptions: jobCategoryMetadata.map((category) => category.name),
@@ -125,12 +132,6 @@ export default function useProfileSettingsForm({
       } else if (!primaryInterest) {
         setPrimaryInterest(nextInterests[0]);
       }
-      markUnsaved();
-    },
-    addInterest: (interest: string) => {
-      const nextInterests = addUniqueValue(interests, interest);
-      setInterests(nextInterests);
-      setPrimaryInterest(primaryInterest ?? nextInterests[0]);
       markUnsaved();
     },
     toggleTechStack: (techStack: string) => {

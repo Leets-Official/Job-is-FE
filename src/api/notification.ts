@@ -1,52 +1,22 @@
-import { client } from '@/api/client';
-import type { ApiEnvelope } from '@/api/types';
-
-export interface NotificationSnooze {
-  snoozed: boolean;
-  until: string | null;
-  indefinite: boolean;
-}
-
-export interface NotificationSettingsResponse {
-  briefingEnabled: boolean;
-  sendSlot: string;
-  marketingSubscribed: boolean;
-  snooze: NotificationSnooze;
-}
-
-export interface NotificationSettingsUpdateRequest {
-  briefingEnabled: boolean;
-  sendSlot: string;
-  marketingSubscribed: boolean;
-}
-
-export type NotificationSnoozeDuration = 'SEVEN_DAYS' | 'THIRTY_DAYS' | 'INDEFINITE';
-
-export interface NotificationSnoozeRequest {
-  duration: NotificationSnoozeDuration;
-}
+import { api } from '@/api/base/request';
+import type {
+  NotificationSettingsResponse,
+  NotificationSettingsUpdateRequest,
+  NotificationSnoozeRequest,
+} from './types/notification.types';
 
 export async function getNotificationSettings() {
-  const { data } = await client.get<ApiEnvelope<NotificationSettingsResponse>>(
-    '/api/settings/notification',
-  );
-
-  return data.data;
+  return api.get<NotificationSettingsResponse>('/api/settings/notification');
 }
 
 export async function updateNotificationSettings(request: NotificationSettingsUpdateRequest) {
-  const { data } = await client.patch<ApiEnvelope<NotificationSettingsResponse>>(
-    '/api/settings/notification',
-    request,
-  );
-
-  return data.data;
+  return api.patch<NotificationSettingsResponse>('/api/settings/notification', request);
 }
 
 export async function snoozeNotification(request: NotificationSnoozeRequest) {
-  await client.post<ApiEnvelope<string>>('/api/settings/notification/snooze', request);
+  await api.post<void>('/api/settings/notification/snooze', request);
 }
 
 export async function cancelNotificationSnooze() {
-  await client.delete<ApiEnvelope<string>>('/api/settings/notification/snooze');
+  await api.delete<void>('/api/settings/notification/snooze');
 }

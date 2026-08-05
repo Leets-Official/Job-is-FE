@@ -1,11 +1,12 @@
+import { useState } from 'react';
 import type {
   NotificationSettingsResponse,
   NotificationSettingsUpdateRequest,
-} from '@/api/notification';
+} from '@/api/types/notification.types';
+import { Spinner } from '@/components/feedback';
 import DailyBriefingSettingsCard from '@/features/settings/components/DailyBriefingSettingsCard';
 import MarketingConsentCard from '@/features/settings/components/MarketingConsentCard';
 import NotificationPauseCard from '@/features/settings/components/NotificationPauseCard';
-import SettingsStatusBanner from '@/features/settings/components/SettingsStatusBanner';
 import useNotificationSettings from '@/features/settings/hooks/useNotificationSettings';
 import useNotificationSettingsUpdate from '@/features/settings/hooks/useNotificationSettingsUpdate';
 
@@ -15,6 +16,9 @@ function NotificationSettingsForm({
   initialSettings: NotificationSettingsResponse;
 }) {
   const settingsUpdateMutation = useNotificationSettingsUpdate();
+  const [pendingField, setPendingField] = useState<keyof NotificationSettingsUpdateRequest | null>(
+    null,
+  );
   const settings = settingsUpdateMutation.isPending
     ? { ...initialSettings, ...settingsUpdateMutation.variables }
     : initialSettings;
@@ -23,12 +27,16 @@ function NotificationSettingsForm({
     key: Key,
     value: NotificationSettingsUpdateRequest[Key],
   ) => {
-    settingsUpdateMutation.mutate({
-      briefingEnabled: settings.briefingEnabled,
-      sendSlot: settings.sendSlot,
-      marketingSubscribed: settings.marketingSubscribed,
-      [key]: value,
-    });
+    setPendingField(key);
+    settingsUpdateMutation.mutate(
+      {
+        briefingEnabled: settings.briefingEnabled,
+        sendSlot: settings.sendSlot,
+        marketingSubscribed: settings.marketingSubscribed,
+        [key]: value,
+      },
+      { onSettled: () => setPendingField(null) },
+    );
   };
 
   return (
@@ -44,14 +52,14 @@ function NotificationSettingsForm({
       <DailyBriefingSettingsCard
         isEnabled={settings.briefingEnabled}
         deliveryTime={settings.sendSlot}
-        disabled={settingsUpdateMutation.isPending}
+        disabled={pendingField === 'briefingEnabled' || pendingField === 'sendSlot'}
         onEnabledChange={(isEnabled) => updateField('briefingEnabled', isEnabled)}
         onDeliveryTimeChange={(deliveryTime) => updateField('sendSlot', deliveryTime)}
       />
       <NotificationPauseCard initialSnooze={settings.snooze} />
       <MarketingConsentCard
         isEnabled={settings.marketingSubscribed}
-        disabled={settingsUpdateMutation.isPending}
+        disabled={pendingField === 'marketingSubscribed'}
         onEnabledChange={(isEnabled) => updateField('marketingSubscribed', isEnabled)}
       />
     </>
@@ -63,12 +71,12 @@ export default function NotificationSettingsContent() {
 
   return (
     <div className="flex min-w-0 max-w-185 flex-1 flex-col gap-5">
-      <SettingsStatusBanner />
       {isPending ? (
-        <div className="rounded-md border border-gray-200 bg-white p-6" role="status">
-          <p className="text-label-medium font-medium text-text-tertiary">
-            알림 설정을 불러오는 중이에요.
-          </p>
+        <div
+          className="flex min-h-185 items-center justify-center rounded-md border border-gray-200 bg-white p-6"
+          role="status"
+        >
+          <Spinner />
         </div>
       ) : isError || !settings ? (
         <div className="rounded-md border border-gray-200 bg-white p-6" role="alert">
