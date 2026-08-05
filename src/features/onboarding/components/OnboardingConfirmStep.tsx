@@ -1,4 +1,4 @@
-import type { ProfileDraftResponse } from '@/api/profile';
+import type { ProfileDraftResponse } from '@/api/types/profile.types';
 import { Button, Tag } from '@/components/common';
 
 interface OnboardingConfirmStepProps {

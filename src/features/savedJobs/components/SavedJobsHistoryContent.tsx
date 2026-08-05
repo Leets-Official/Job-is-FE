@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import Button from '@/components/common/Button';
+import { Button, NoticePanel } from '@/components/common';
 import Tag from '@/components/common/Tag';
+import { Spinner } from '@/components/feedback';
 import SavedJobsEmptyState from '@/features/savedJobs/components/SavedJobsEmptyState';
 import {
   type SavedJobHistoryItem,
@@ -33,6 +34,9 @@ interface SavedJobsHistoryContentProps {
   onBrowseRecommendations: () => void;
   onExplore: () => void;
   onLoadMore?: () => void;
+  isLoading?: boolean;
+  isError?: boolean;
+  onRetry?: () => void;
 }
 
 function SavedJobHistoryRow({ item }: { item: SavedJobHistoryItem }) {
@@ -64,6 +68,9 @@ export default function SavedJobsHistoryContent({
   onBrowseRecommendations,
   onExplore,
   onLoadMore,
+  isLoading = false,
+  isError = false,
+  onRetry,
 }: SavedJobsHistoryContentProps) {
   const historyByDate = useMemo(() => {
     const filteredHistory = history.filter(
@@ -95,7 +102,17 @@ export default function SavedJobsHistoryContent({
         ))}
       </div>
 
-      {historyByDate.length > 0 ? (
+      {isLoading ? (
+        <div className="flex w-full flex-1 items-center justify-center">
+          <Spinner />
+        </div>
+      ) : isError ? (
+        <div className="flex w-full flex-1 items-center justify-center">
+          <NoticePanel resultIconVariant="danger" title="내역을 불러오지 못했어요">
+            <Button onClick={onRetry}>다시 시도</Button>
+          </NoticePanel>
+        </div>
+      ) : historyByDate.length > 0 ? (
         historyByDate.map((group) => (
           <section key={group.dateLabel} className="flex w-full flex-col gap-5">
             <p className="text-label-medium font-medium text-text-primary">{group.dateLabel}</p>
@@ -106,15 +123,17 @@ export default function SavedJobsHistoryContent({
           </section>
         ))
       ) : (
-        <SavedJobsEmptyState
-          title="아직 열람·피드백 내역이 없어요"
-          description="오늘의 추천을 살펴보면 활동 내역이 쌓여요."
-          onBrowseRecommendations={onBrowseRecommendations}
-          onExplore={onExplore}
-        />
+        <div className="flex w-full flex-1 items-center justify-center">
+          <SavedJobsEmptyState
+            title="아직 열람·피드백 내역이 없어요"
+            description="오늘의 추천을 살펴보면 활동 내역이 쌓여요."
+            onBrowseRecommendations={onBrowseRecommendations}
+            onExplore={onExplore}
+          />
+        </div>
       )}
 
-      {onLoadMore && (
+      {!isLoading && !isError && onLoadMore && (
         <Button className="h-10 w-93.75 self-center" onClick={onLoadMore}>
           더보기
         </Button>

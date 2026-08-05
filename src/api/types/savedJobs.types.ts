@@ -1,5 +1,4 @@
-import { client } from '@/api/client';
-import type { ApiEnvelope, PageResponse } from '@/api/types';
+import type { PageResponse } from '@/api/types';
 
 export interface SavedJob {
   jobId: number;
@@ -28,7 +27,22 @@ export interface GetSavedJobsParams {
   sort?: SavedJobsSort;
 }
 
-export async function getSavedJobs(params: GetSavedJobsParams = {}) {
-  const { data } = await client.get<ApiEnvelope<SavedJobList>>('/api/saves', { params });
-  return data.data;
+export type HistoryActionType = 'VIEWED' | 'SKIPPED' | 'APPLY_INTENT' | 'SAVED';
+export type HistoryFilter = 'ALL' | HistoryActionType;
+
+export interface HistoryItem {
+  jobId: number;
+  companyName: string;
+  title: string;
+  actionType: HistoryActionType;
+  reasonCode: string | null;
+  comment: string | null;
+  actionAt: string;
+  expired: boolean;
+}
+
+export interface GetHistoryParams {
+  page?: number;
+  size?: number;
+  filter?: HistoryFilter;
 }

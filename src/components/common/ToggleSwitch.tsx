@@ -26,7 +26,7 @@ export default function ToggleSwitch({
           'relative inline-flex h-6 w-10 shrink-0 items-center rounded-full bg-gray-200 p-0.5 transition-colors',
           'has-checked:bg-primary-400',
           'has-disabled:bg-gray-200',
-          'has-focus-visible:outline has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary-500',
+          'has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-primary-500',
         )}
       >
         <input id={id} type="checkbox" disabled={disabled} className="peer sr-only" {...props} />

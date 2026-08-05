@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState } from 'react';
 import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg?react';
+import useDismissableOpen from '@/hooks/useDismissableOpen';
 import { cn } from '@/utils/cn';
 
 export interface MultiSelectOption {
@@ -22,29 +22,7 @@ export default function MultiSelect({
   onToggle,
   className,
 }: MultiSelectProps) {
-  const [isOpen, setIsOpen] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isOpen) return;
-
-    function handlePointerDown(event: PointerEvent) {
-      if (containerRef.current?.contains(event.target as Node)) return;
-      setIsOpen(false);
-    }
-
-    function handleKeyDown(event: KeyboardEvent) {
-      if (event.key === 'Escape') setIsOpen(false);
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('pointerdown', handlePointerDown);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
+  const { isOpen, setIsOpen, containerRef } = useDismissableOpen();
 
   return (
     <div ref={containerRef} className={cn('relative', className)}>
@@ -53,7 +31,7 @@ export default function MultiSelect({
         onClick={() => setIsOpen((prev) => !prev)}
         aria-expanded={isOpen}
         aria-haspopup="listbox"
-        className="flex h-14 w-full items-center justify-between gap-2 rounded-sm border border-gray-700 bg-white px-4 text-body-large font-medium text-gray-600"
+        className="flex h-14 w-full cursor-pointer items-center justify-between gap-2 rounded-sm border border-gray-700 bg-white px-4 text-body-large font-medium text-gray-600"
       >
         {placeholder}
         <ChevronDownIcon className="size-6 shrink-0 text-black" />
@@ -63,7 +41,7 @@ export default function MultiSelect({
           role="listbox"
           aria-multiselectable
           aria-label={placeholder}
-          className="absolute top-full left-0 z-20 mt-1 flex w-full flex-col overflow-hidden rounded-sm border border-gray-200 bg-white shadow-md"
+          className="absolute top-full left-0 z-20 mt-1 flex max-h-70 w-max min-w-full flex-col overflow-y-auto rounded-sm border border-gray-200 bg-white shadow-md"
         >
           {options.map((option) => {
             const isSelected = selectedValues.includes(option.value);
@@ -76,7 +54,7 @@ export default function MultiSelect({
                 aria-selected={isSelected}
                 onClick={() => onToggle(option.value)}
                 className={cn(
-                  'flex w-full items-center px-4 py-3 text-left text-body-medium font-medium transition-colors',
+                  'flex w-full cursor-pointer items-center px-4 py-3 text-left text-body-large font-medium whitespace-nowrap transition-colors',
                   isSelected ? 'bg-primary-600 text-white' : 'text-text-primary hover:bg-gray-50',
                 )}
               >

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { withdrawAccount, type WithdrawalRequest } from '@/api/auth';
+import { withdrawAccount } from '@/api/auth';
+import type { WithdrawalRequest } from '@/api/types/auth.types';
 import { clearAuth } from '@/features/login/store/useAuthStore';
 
 export default function useAccountWithdrawal(onSuccess: () => void) {

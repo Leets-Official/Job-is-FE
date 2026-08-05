@@ -1,5 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
-import { postConsent, type ConsentRequest } from '@/api/auth';
+import { postConsent } from '@/api/auth';
+import type { ConsentRequest } from '@/api/types/auth.types';
 
 export default function useConsentSubmission() {
   const consentMutation = useMutation({ mutationFn: postConsent });

@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
-import type { JobCategory, Region } from '@/api/jobs';
 import {
   completeOnboarding,
   getProfileDraft,
   getProfileFiles,
   isCareerLevel,
   saveProfileDraft,
-  type ProfileDraftResponse,
 } from '@/api/profile';
+import type { JobCategory, Region } from '@/api/types/jobs.types';
+import type { ProfileDraftResponse } from '@/api/types/profile.types';
 import { setOnboardingCompleted } from '@/features/login/store/useAuthStore';
 
 interface OnboardingProfileValues {

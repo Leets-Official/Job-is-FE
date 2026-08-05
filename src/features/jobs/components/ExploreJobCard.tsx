@@ -1,31 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 import MoreVerticalIcon from '@/assets/icons/icon-more-vertical.svg?react';
 import JobCard from '@/features/jobs/components/JobCard';
 import { useSaveJob } from '@/features/jobs/hooks/useSaveJob';
 import type { ExploreJobSummary } from '@/features/jobs/types/exploreJob';
+import useDismissableOpen from '@/hooks/useDismissableOpen';
 
 interface ExploreJobCardProps {
   job: ExploreJobSummary;
 }
 
 export default function ExploreJobCard({ job }: ExploreJobCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isOpen: isMenuOpen, setIsOpen: setIsMenuOpen, containerRef } = useDismissableOpen(false);
   const [isSaved, setIsSaved] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
   const { save, unsave } = useSaveJob();
-
-  useEffect(() => {
-    if (!isMenuOpen) return;
-
-    function handlePointerDown(event: PointerEvent) {
-      if (containerRef.current?.contains(event.target as Node)) return;
-      setIsMenuOpen(false);
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [isMenuOpen]);
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -44,7 +32,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
         type="button"
         onClick={() => setIsMenuOpen((prev) => !prev)}
         aria-label="더보기"
-        className="absolute top-[209px] right-2.5 flex size-6 items-center justify-center"
+        className="absolute top-52.25 right-2.5 flex size-6 items-center justify-center"
       >
         <MoreVerticalIcon className="size-6" />
       </button>

@@ -1,4 +1,4 @@
-import type { HistoryActionType, HistoryItem } from '@/api/history';
+import type { HistoryActionType, HistoryItem } from '@/api/types/savedJobs.types';
 import type {
   SavedJobHistoryItem,
   SavedJobHistoryStatus,

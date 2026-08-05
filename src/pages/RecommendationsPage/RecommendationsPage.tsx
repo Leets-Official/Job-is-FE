@@ -2,7 +2,6 @@ import { useSearchParams } from 'react-router';
 import RecommendationFlowContent, {
   type RecommendationScreen,
 } from '@/features/recommendations/components/RecommendationFlowContent';
-import useRecommendationIntroAnimation from '@/features/recommendations/hooks/useRecommendationIntroAnimation';
 
 interface RecommendationsPageProps {
   screen?: RecommendationScreen;
@@ -10,14 +9,8 @@ interface RecommendationsPageProps {
 
 export default function RecommendationsPage({ screen = 'pending' }: RecommendationsPageProps) {
   const [searchParams] = useSearchParams();
-  // NOTE: ?preview= 쿼리스트링, 임시 확인용, 실제 트리거 연결 후 삭제 예정
+  // NOTE: ?preview= 쿼리스트링, 디자인 QA용 강제 진입. 실제 진입은 오늘의 브리핑 카드 존재 여부로 결정된다.
   const previewScreen = searchParams.get('preview') === 'intro' ? 'intro' : undefined;
-  const introAnimationMode = useRecommendationIntroAnimation(previewScreen === 'intro');
 
-  return (
-    <RecommendationFlowContent
-      screen={previewScreen ?? screen}
-      introAnimationMode={introAnimationMode}
-    />
-  );
+  return <RecommendationFlowContent screen={previewScreen ?? screen} />;
 }

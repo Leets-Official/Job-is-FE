@@ -3,6 +3,8 @@ import ProfileAutocompleteTagInput from '@/features/profile/components/ProfileAu
 import ProfileFieldLabel from '@/features/profile/components/ProfileFieldLabel';
 import { cn } from '@/utils/cn';
 
+const DEFAULT_VISIBLE_INTEREST_COUNT = 4;
+
 interface ProfileBasicInfoSectionProps {
   interests: string[];
   interestOptions: string[];
@@ -11,7 +13,6 @@ interface ProfileBasicInfoSectionProps {
   careerOptions: Array<{ key: string; description: string }>;
   career: string;
   onToggleInterest: (interest: string) => void;
-  onAddInterest: (interest: string) => void;
   onToggleRegion: (region: string) => void;
   onAddRegion: (region: string) => void;
   onCareerChange: (career: string) => void;
@@ -25,12 +26,13 @@ export default function ProfileBasicInfoSection({
   careerOptions,
   career,
   onToggleInterest,
-  onAddInterest,
   onToggleRegion,
   onAddRegion,
   onCareerChange,
 }: ProfileBasicInfoSectionProps) {
-  const visibleInterestOptions = [...new Set([...interestOptions, ...interests])];
+  const visibleInterestOptions = [
+    ...new Set([...interestOptions.slice(0, DEFAULT_VISIBLE_INTEREST_COUNT), ...interests]),
+  ];
 
   return (
     <section className="flex flex-col gap-5">
@@ -53,9 +55,9 @@ export default function ProfileBasicInfoSection({
           <ProfileAutocompleteTagInput
             options={interestOptions}
             selectedValues={interests}
-            onAdd={onAddInterest}
-            placeholder="직무 입력"
-            ariaLabel="관심 분야·직군 추가"
+            onAdd={onToggleInterest}
+            placeholder="직무 검색"
+            ariaLabel="관심 분야·직군 검색"
           />
         </div>
       </div>
@@ -77,8 +79,8 @@ export default function ProfileBasicInfoSection({
             options={regionOptions}
             selectedValues={regions}
             onAdd={onAddRegion}
-            placeholder="지역 입력"
-            ariaLabel="희망 지역 추가"
+            placeholder="지역 검색"
+            ariaLabel="희망 지역 검색"
           />
         </div>
       </div>

@@ -1,4 +1,5 @@
 import Button from '@/components/common/Button';
+import { Spinner } from '@/components/feedback';
 import ProfileBasicInfoSection from '@/features/profile/components/ProfileBasicInfoSection';
 import ProfileLifestyleSection from '@/features/profile/components/ProfileLifestyleSection';
 import ProfileLinksSection from '@/features/profile/components/ProfileLinksSection';
@@ -41,6 +42,7 @@ export default function ProfileSettingsForm({
     defaultSubmitError,
     isSavingProfile,
     profile,
+    isProfilePending,
     documentsStatus,
     techStackOptions,
     jobCategoryOptions,
@@ -50,12 +52,19 @@ export default function ProfileSettingsForm({
     addRegion,
     changeCareer,
     toggleInterest,
-    addInterest,
     toggleTechStack,
     addTechStack,
     changePreferenceNote,
     submit,
   } = useProfileSettingsForm({ loadProfile, onSubmit });
+
+  if (isProfilePending) {
+    return (
+      <div className="flex min-h-240 w-full max-w-190 items-center justify-center rounded-md border border-gray-200 bg-white p-6">
+        <Spinner />
+      </div>
+    );
+  }
 
   return (
     <form
@@ -80,7 +89,6 @@ export default function ProfileSettingsForm({
         careerOptions={careerOptions}
         career={career}
         onToggleInterest={toggleInterest}
-        onAddInterest={addInterest}
         onToggleRegion={toggleRegion}
         onAddRegion={addRegion}
         onCareerChange={changeCareer}

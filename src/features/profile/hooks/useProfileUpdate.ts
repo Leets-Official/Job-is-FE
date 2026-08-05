@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import type { JobCategory, Region } from '@/api/jobs';
 import { isCareerLevel, updateProfile } from '@/api/profile';
+import type { JobCategory, Region } from '@/api/types/jobs.types';
+import { QUERY_KEYS } from '@/constants/queryKey';
 
 interface ProfileSettingsValues {
   regions: string[];
@@ -28,7 +29,7 @@ export default function useProfileUpdate({ jobCategories, regions }: UseProfileU
   const updateMutation = useMutation({
     mutationFn: updateProfile,
     onSuccess: (profile) => {
-      queryClient.setQueryData(['profile'], profile);
+      queryClient.setQueryData(QUERY_KEYS.PROFILE.BASE(), profile);
     },
   });
 

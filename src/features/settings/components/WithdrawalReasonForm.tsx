@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { WithdrawalRequest } from '@/api/auth';
+import type { WithdrawalRequest } from '@/api/types/auth.types';
 import Button from '@/components/common/Button';
 import RadioButton from '@/components/common/RadioButton';
 import WithdrawalConfirmModal from '@/features/settings/components/WithdrawalConfirmModal';
@@ -45,7 +45,7 @@ export default function WithdrawalReasonForm({
               checked={selectedReason.code === reason.code}
               onChange={() => setSelectedReason(reason)}
               label={reason.label}
-              className="min-h-17.5 w-full cursor-pointer gap-[13px] rounded-xs border border-gray-400 bg-white p-6 text-label-medium font-medium text-text-primary hover:bg-gray-50"
+              className="min-h-17.5 w-full cursor-pointer gap-3.25 rounded-xs border border-gray-400 bg-white p-6 text-label-medium font-medium text-text-primary hover:bg-gray-50"
             />
           );
         })}

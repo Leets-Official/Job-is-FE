@@ -1,4 +1,6 @@
-import { getOAuthAuthorizeUrl, type OAuthProvider } from '@/api/auth';
+import { getOAuthAuthorizeUrl } from '@/api/auth';
+import type { OAuthProvider } from '@/api/types/auth.types';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@/constants/legalLinks';
 import SocialLoginButton from './SocialLoginButton';
 
 function handleSocialLogin(provider: OAuthProvider) {
@@ -30,14 +32,18 @@ export default function LoginDefaultContent() {
       <p className="text-center text-body-medium font-medium text-text-tertiary">
         계속하면{' '}
         <a
-          href="/terms"
+          href={TERMS_OF_SERVICE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-text-secondary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
         >
           이용약관
         </a>{' '}
         •{' '}
         <a
-          href="/privacy"
+          href={PRIVACY_POLICY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-text-secondary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
         >
           개인정보처리방침

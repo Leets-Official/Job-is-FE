@@ -1,4 +1,4 @@
-import type { SavedJob } from '@/api/saves';
+import type { SavedJob } from '@/api/types/savedJobs.types';
 import type { SavedJobBadge, SavedJobListing } from '@/features/savedJobs/types/savedJob';
 import { formatDDayLabel } from '@/utils/formatDDayLabel';
 
