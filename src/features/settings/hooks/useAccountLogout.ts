@@ -11,7 +11,7 @@ export default function useAccountLogout() {
     onSuccess: () => {
       queryClient.clear();
       clearAuth();
-      navigate('/login', { replace: true });
+      navigate('/', { replace: true });
     },
   });
 

@@ -1,4 +1,5 @@
 import { type ComponentPropsWithRef, type ReactNode } from 'react';
+import { Link as RouterLink } from 'react-router';
 import Link from '@/components/common/Link';
 import { cn } from '@/utils/cn';
 
@@ -10,6 +11,7 @@ interface ListCardProps extends ComponentPropsWithRef<'div'> {
   captionPosition?: 'top' | 'bottom';
   linkLabel?: string;
   linkHref?: string;
+  linkState?: object;
 }
 
 export default function ListCard({
@@ -22,6 +24,7 @@ export default function ListCard({
   captionPosition = 'bottom',
   linkLabel,
   linkHref,
+  linkState,
   ...props
 }: ListCardProps) {
   const headingElement = (
@@ -69,11 +72,21 @@ export default function ListCard({
           </>
         )}
       </div>
-      {linkLabel && linkHref && (
-        <Link href={linkHref} className="px-0.5 text-[14px]" iconClassName="size-5">
-          {linkLabel}
-        </Link>
-      )}
+      {linkLabel &&
+        linkHref &&
+        (linkHref.startsWith('/') ? (
+          <RouterLink
+            to={linkHref}
+            state={linkState}
+            className="inline-flex items-center gap-1 px-0.5 text-[14px] text-primary-400 underline decoration-solid underline-offset-2"
+          >
+            {linkLabel}
+          </RouterLink>
+        ) : (
+          <Link href={linkHref} className="px-0.5 text-[14px]" iconClassName="size-5">
+            {linkLabel}
+          </Link>
+        ))}
     </div>
   );
 }

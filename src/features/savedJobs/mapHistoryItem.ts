@@ -32,6 +32,7 @@ export function mapHistoryItem(item: HistoryItem): SavedJobHistoryItem | null {
 
   return {
     id: `${item.jobId}-${item.actionAt}`,
+    jobId: item.jobId,
     date: formatLocalDateKey(actionDate),
     dateLabel: formatDateLabel(actionDate),
     status,
