@@ -146,16 +146,6 @@ export const router = createBrowserRouter([
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
       },
       {
-        path: '/recommendations/empty-signup',
-        element: <RecommendationsPage screen="empty-signup" />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
-      },
-      {
-        path: '/recommendations/empty-before-send',
-        element: <RecommendationsPage screen="empty-before-send" />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
-      },
-      {
         path: '/explore',
         element: <ExplorePage />,
         handle: {
