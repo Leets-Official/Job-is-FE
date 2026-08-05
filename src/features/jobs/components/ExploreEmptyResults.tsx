@@ -1,5 +1,5 @@
 import { Button, NoticePanel, Tag } from '@/components/common';
-import type { ExploreActiveFilter } from '@/features/jobs/components/ExploreResultsToolbar';
+import type { ExploreActiveFilter } from '@/features/jobs/types/exploreJob';
 
 interface ExploreEmptyResultsProps {
   activeFilters: ExploreActiveFilter[];
