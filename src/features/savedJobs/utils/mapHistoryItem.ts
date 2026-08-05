@@ -3,6 +3,7 @@ import type {
   SavedJobHistoryItem,
   SavedJobHistoryStatus,
 } from '@/features/savedJobs/types/savedJob';
+import { formatLocalDateKey } from '@/utils/formatLocalDateKey';
 
 const WEEKDAY_LABELS = ['일', '월', '화', '수', '목', '금', '토'];
 
@@ -14,13 +15,6 @@ function formatTimeLabel(date: Date): string {
   const hours = String(date.getHours()).padStart(2, '0');
   const minutes = String(date.getMinutes()).padStart(2, '0');
   return `${hours}:${minutes}`;
-}
-
-function toLocalDateKey(date: Date): string {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-  return `${year}-${month}-${day}`;
 }
 
 const STATUS_BY_ACTION_TYPE: Partial<Record<HistoryActionType, SavedJobHistoryStatus>> = {
@@ -38,7 +32,7 @@ export function mapHistoryItem(item: HistoryItem): SavedJobHistoryItem | null {
 
   return {
     id: `${item.jobId}-${item.actionAt}`,
-    date: toLocalDateKey(actionDate),
+    date: formatLocalDateKey(actionDate),
     dateLabel: formatDateLabel(actionDate),
     status,
     title: `${item.companyName} · ${item.title}`,

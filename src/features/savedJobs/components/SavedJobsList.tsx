@@ -56,7 +56,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
 
   return (
     <div className="flex min-h-225 w-full flex-1 justify-center bg-gray-50 px-3 py-12.5">
-      <div className="flex w-full max-w-300 flex-col items-start gap-5">
+      <div className="flex w-full max-w-300 flex-1 flex-col items-start gap-5">
         <p className="text-heading-medium font-bold text-text-primary">저장 목록</p>
         {savedJobs.length > 0 && (
           <p className="text-label-medium font-medium text-text-secondary">
@@ -86,8 +86,12 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
                 <Spinner />
               </div>
             ) : !isEmptyPreview && savedJobsQuery.isError ? (
-              <div className="flex w-full flex-1 items-center justify-center">
-                <NoticePanel resultIconVariant="danger" title="저장 목록을 불러오지 못했어요">
+              <div className="flex min-h-75 w-full flex-1">
+                <NoticePanel
+                  resultIconVariant="danger"
+                  title="저장 목록을 불러오지 못했어요"
+                  className="h-full max-w-none justify-center"
+                >
                   <Button onClick={() => savedJobsQuery.refetch()}>다시 시도</Button>
                 </NoticePanel>
               </div>
