@@ -3,12 +3,12 @@ import CloseCircleIcon from '@/assets/icons/icon-close-circle.svg?react';
 import CloseIcon from '@/assets/icons/icon-close.svg?react';
 import DownloadIcon from '@/assets/icons/icon-download.svg?react';
 import Button from '@/components/common/Button';
+import { ACCEPTED_PROFILE_DOCUMENT_TYPES } from '@/features/profile/profileDocument';
 import {
   type DocumentUpload,
   type DocumentUploadError,
   type ProfileDocument,
 } from '@/features/profile/types/profileDocument';
-import { ACCEPTED_PROFILE_DOCUMENT_TYPES } from '@/features/profile/utils/profileDocument';
 import { cn } from '@/utils/cn';
 
 interface UploadDropzoneProps {

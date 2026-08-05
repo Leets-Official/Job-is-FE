@@ -9,7 +9,7 @@ import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
 import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkipFeedbackModal';
 import { useJobDetail } from '@/features/jobs/hooks/useJobDetail';
 import useJobDetailActions from '@/features/jobs/hooks/useJobDetailActions';
-import { mapJobDetail } from '@/features/jobs/utils/mapJobDetail';
+import { mapJobDetail } from '@/features/jobs/mapJobDetail';
 
 interface JobDetailLocationState {
   deckId?: number;
@@ -32,6 +32,7 @@ export default function JobDetailPage() {
     setIsApplyModalOpen,
     intendedToApply,
     isSaved,
+    isSavePending,
     handleConfirmApply,
     handleIntendToApply,
     handleSave,
@@ -88,6 +89,7 @@ export default function JobDetailPage() {
                 onIntendToApply={handleIntendToApply}
                 onSave={handleSave}
                 isSaved={isSaved}
+                isSavePending={isSavePending}
                 onNotInterested={() => setIsSkipModalOpen(true)}
                 isIntendedToApply={intendedToApply}
               />

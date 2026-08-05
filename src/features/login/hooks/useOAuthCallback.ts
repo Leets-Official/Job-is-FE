@@ -2,10 +2,11 @@ import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { exchangeOAuthCode } from '@/api/auth';
 import {
+  getPostLoginPath,
   setAccessToken,
   setOnboardingCompleted,
   setUserId,
-} from '@/features/login/store/useAuthStore';
+} from '@/store/useAuthStore';
 
 const DEFAULT_FAILURE_MESSAGE = '로그인이 취소됐거나 실패했어요. 다시 시도해 주세요.';
 
@@ -54,9 +55,7 @@ export default function useOAuthCallback() {
 
         const destination = result.isNewUser
           ? '/policy'
-          : result.onboardingCompleted
-            ? '/recommendations'
-            : '/onboarding';
+          : getPostLoginPath(result.onboardingCompleted);
         navigate(destination, { replace: true });
       })
       .catch(() => {

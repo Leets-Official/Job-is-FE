@@ -8,3 +8,9 @@ export interface ExploreJobSummary {
   employmentInfo: string;
   isRemote: boolean;
 }
+
+export interface ExploreActiveFilter {
+  key: string;
+  label: string;
+  onRemove: () => void;
+}

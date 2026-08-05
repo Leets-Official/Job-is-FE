@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router';
+import type { BriefingState } from '@/api/types/recommendations.types';
 import { Spinner } from '@/components/feedback';
 import RecommendationArchiveScreen from './RecommendationArchiveScreen';
 import RecommendationCompleteScreen from './RecommendationCompleteScreen';
@@ -9,27 +10,30 @@ import RecommendationNewsScreen from './RecommendationNewsScreen';
 import RecommendationPendingContent from './RecommendationPendingContent';
 import RecommendationScreenLayout from './RecommendationScreenLayout';
 import useRecommendationDeck from '../hooks/useRecommendationDeck';
+import { useTodayBriefing } from '../hooks/useTodayBriefing';
 
 export type RecommendationScreen =
-  | 'pending'
-  | 'intro'
-  | 'deck'
-  | 'news'
-  | 'complete'
-  | 'archive'
-  | 'empty-candidates'
-  | 'empty-signup'
-  | 'empty-before-send';
+  'pending' | 'intro' | 'deck' | 'news' | 'complete' | 'archive' | 'empty-candidates';
+
+const EMPTY_SCREEN_BY_BRIEFING_STATE: Partial<Record<BriefingState, RecommendationScreen>> = {
+  no_candidates: 'empty-candidates',
+};
 
 export default function RecommendationFlowContent({ screen }: { screen: RecommendationScreen }) {
   const navigate = useNavigate();
   const { cardsQuery, letters } = useRecommendationDeck();
+  const briefingQuery = useTodayBriefing();
 
   const isEntryScreen = screen === 'pending';
   const hasTodayCards = letters.length > 0;
-  const resolvedScreen: RecommendationScreen = isEntryScreen && hasTodayCards ? 'intro' : screen;
+  const briefingState = briefingQuery.data?.state;
+  const resolvedScreen: RecommendationScreen = isEntryScreen
+    ? hasTodayCards
+      ? 'intro'
+      : (briefingState && EMPTY_SCREEN_BY_BRIEFING_STATE[briefingState]) || screen
+    : screen;
 
-  if (isEntryScreen && cardsQuery.isLoading) {
+  if (isEntryScreen && (cardsQuery.isLoading || briefingQuery.isLoading)) {
     return (
       <RecommendationScreenLayout>
         <Spinner />

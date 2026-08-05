@@ -1,6 +1,6 @@
 import type { BriefingCard, BriefingCardStatus } from '@/api/types/recommendations.types';
-import type { RecommendationLetterStatus } from '@/features/recommendations/store/useRecommendationDeckStore';
 import type { RecommendationLetter } from '@/features/recommendations/types/recommendationLetter';
+import type { RecommendationLetterStatus } from '@/store/useRecommendationDeckStore';
 import { formatDDayLabel } from '@/utils/formatDDayLabel';
 
 function formatIssueDate(postedAt: string): string {

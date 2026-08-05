@@ -1,4 +1,11 @@
+export type BriefingState = 'pre_slot' | 'no_candidates' | 'onboarding_incomplete';
+
 export interface BriefingSummary {
+  deckId: number;
+  deckDate: string;
+  deckSeq: number;
+  state: BriefingState | null;
+  firstOpenedAt: string | null;
   greeting: string;
   applicableCount: number;
   curatedCount: number;

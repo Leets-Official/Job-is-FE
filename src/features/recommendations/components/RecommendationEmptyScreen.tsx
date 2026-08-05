@@ -1,9 +1,8 @@
 import { useNavigate } from 'react-router';
-import { generateTodayDeck } from '@/api/recommendations';
 import { Button, NoticePanel } from '@/components/common';
 import RecommendationScreenLayout from './RecommendationScreenLayout';
 
-export type RecommendationEmptyVariant = 'empty-candidates' | 'empty-signup' | 'empty-before-send';
+export type RecommendationEmptyVariant = 'empty-candidates';
 
 const NOTICE_BY_VARIANT: Record<
   RecommendationEmptyVariant,
@@ -22,20 +21,6 @@ const NOTICE_BY_VARIANT: Record<
     footNote: '메일함에서 지난 레터를 확인할 수 있어요.',
     primary: '조건 넓히기',
   },
-  'empty-signup': {
-    icon: 'loading',
-    title: '첫 레터를 준비하고 있어요',
-    description: '내일 아침 첫 레터가 도착해요.\n프로필을 채우면 더 정확해져요.',
-    footNote: '첫 레터 도착 예정 · 07:30',
-    primary: '프로필 채우기',
-  },
-  'empty-before-send': {
-    icon: 'loading',
-    title: '오늘의 레터가 준비돼요',
-    description: '잠시 후 오늘의 추천이 도착해요.\n준비되면 메일로도 알려드려요.',
-    footNote: '발송 예정 시간 · 07:30',
-    primary: '새로고침',
-  },
 };
 
 export default function RecommendationEmptyScreen({
@@ -46,21 +31,7 @@ export default function RecommendationEmptyScreen({
   const navigate = useNavigate();
   const notice = NOTICE_BY_VARIANT[variant];
 
-  const handlePrimaryAction = () => {
-    if (variant === 'empty-candidates') {
-      navigate('/explore');
-      return;
-    }
-
-    if (variant === 'empty-signup') {
-      navigate('/onboarding');
-      return;
-    }
-
-    generateTodayDeck()
-      .catch(console.error)
-      .finally(() => window.location.reload());
-  };
+  const handlePrimaryAction = () => navigate('/profile');
 
   return (
     <RecommendationScreenLayout>

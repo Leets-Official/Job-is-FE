@@ -7,6 +7,7 @@ interface JobDetailApplyPanelProps {
   onIntendToApply?: () => void;
   onSave?: () => void;
   isSaved?: boolean;
+  isSavePending?: boolean;
   onNotInterested?: () => void;
   isIntendedToApply?: boolean;
 }
@@ -16,6 +17,7 @@ export default function JobDetailApplyPanel({
   onIntendToApply,
   onSave,
   isSaved,
+  isSavePending,
   onNotInterested,
   isIntendedToApply,
 }: JobDetailApplyPanelProps) {
@@ -43,6 +45,7 @@ export default function JobDetailApplyPanel({
             isSaved && 'border-transparent bg-primary-400 hover:bg-primary-400',
           )}
           onClick={onSave}
+          disabled={!onSave || isSavePending}
         >
           {isSaved ? '저장됨' : '저장'}
         </Button>

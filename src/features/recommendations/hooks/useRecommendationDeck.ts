@@ -1,13 +1,13 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { dismissCard } from '@/api/recommendations';
-import { useSaveRecommendedJob } from './useSaveRecommendedJob';
-import { useTodayBriefingCards } from './useTodayBriefing';
 import {
   getRecommendationLetterStatus,
   useRecommendationDeckStore,
-} from '../store/useRecommendationDeckStore';
-import { mapBriefingCard, mapBriefingCardStatus } from '../utils/mapBriefingCard';
+} from '@/store/useRecommendationDeckStore';
+import { useSaveRecommendedJob } from './useSaveRecommendedJob';
+import { useTodayBriefingCards } from './useTodayBriefing';
+import { mapBriefingCard, mapBriefingCardStatus } from '../mapBriefingCard';
 
 export default function useRecommendationDeck() {
   const navigate = useNavigate();

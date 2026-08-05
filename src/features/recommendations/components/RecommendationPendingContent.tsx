@@ -28,7 +28,7 @@ export default function RecommendationPendingContent({
         <div className="flex w-full max-w-103.75 items-center justify-center gap-2.5 rounded-xs">
           <MailIcon aria-hidden="true" className="size-6" />
           <p className="text-center text-heading-medium font-semibold text-text-primary">
-            첫 편지를 준비하고 있어요
+            편지를 준비하고 있어요
           </p>
         </div>
 

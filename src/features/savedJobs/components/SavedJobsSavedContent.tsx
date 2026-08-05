@@ -1,3 +1,4 @@
+import type { SavedJobsSort } from '@/api/types/savedJobs.types';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import Dropdown from '@/components/common/Dropdown';
@@ -9,9 +10,26 @@ interface SavedJobsSavedContentProps {
   jobs: SavedJobListing[];
   onBrowseRecommendations: () => void;
   onExplore: () => void;
+  onView: (jobId: string) => void;
+  onUnsave: (jobId: string) => void;
+  unsavingJobId?: string;
+  sort: SavedJobsSort;
+  onSortChange: (sort: SavedJobsSort) => void;
 }
 
-function SavedJobRow({ job }: { job: SavedJobListing }) {
+const SORT_OPTIONS: { label: string; value: SavedJobsSort }[] = [
+  { label: '저장일 순', value: 'SAVED_DESC' },
+  { label: '마감 임박 순', value: 'DEADLINE_ASC' },
+];
+
+interface SavedJobRowProps {
+  job: SavedJobListing;
+  onView: (jobId: string) => void;
+  onUnsave: (jobId: string) => void;
+  isUnsaving: boolean;
+}
+
+function SavedJobRow({ job, onView, onUnsave, isUnsaving }: SavedJobRowProps) {
   return (
     <div className="flex w-full items-center justify-between rounded-xs border border-gray-400 bg-white p-6">
       <div>
@@ -32,10 +50,15 @@ function SavedJobRow({ job }: { job: SavedJobListing }) {
             {badge.label}
           </Badge>
         ))}
-        <Button disabled={job.closed} className="h-10">
+        <Button disabled={job.closed} className="h-10" onClick={() => onView(job.id)}>
           보기
         </Button>
-        <Button variant="outline" disabled={job.closed} className="h-10">
+        <Button
+          variant="outline"
+          disabled={job.closed || isUnsaving}
+          className="h-10"
+          onClick={() => onUnsave(job.id)}
+        >
           해제
         </Button>
       </div>
@@ -47,6 +70,11 @@ export default function SavedJobsSavedContent({
   jobs,
   onBrowseRecommendations,
   onExplore,
+  onView,
+  onUnsave,
+  unsavingJobId,
+  sort,
+  onSortChange,
 }: SavedJobsSavedContentProps) {
   if (jobs.length === 0) {
     return (
@@ -68,14 +96,20 @@ export default function SavedJobsSavedContent({
           placeholder="저장일 순"
           size="sm"
           className="w-25"
-          options={[{ label: '저장일 순', value: 'latest' }]}
-          value="latest"
-          onChange={() => {}}
+          options={SORT_OPTIONS}
+          value={sort}
+          onChange={(value) => onSortChange(value as SavedJobsSort)}
         />
       </div>
 
       {jobs.map((job) => (
-        <SavedJobRow key={job.id} job={job} />
+        <SavedJobRow
+          key={job.id}
+          job={job}
+          onView={onView}
+          onUnsave={onUnsave}
+          isUnsaving={unsavingJobId === job.id}
+        />
       ))}
     </>
   );

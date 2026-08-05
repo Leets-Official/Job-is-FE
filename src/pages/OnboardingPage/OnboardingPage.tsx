@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useOutletContext } from 'react-router';
 import type { MainLayoutOutletContext } from '@/components/layout/MainLayout';
-import { useAuthStore } from '@/features/login/store/useAuthStore';
 import OnboardingConfirmStep from '@/features/onboarding/components/OnboardingConfirmStep';
 import OnboardingProfileStep from '@/features/onboarding/components/OnboardingProfileStep';
 import useOnboardingFlow from '@/features/onboarding/hooks/useOnboardingFlow';
 import useOnboardingMetadata from '@/features/onboarding/hooks/useOnboardingMetadata';
+import { useAuthStore } from '@/store/useAuthStore';
 import { cn } from '@/utils/cn';
 
 type OnboardingStep = 'profile' | 'confirm';
@@ -38,6 +38,7 @@ export default function OnboardingPage() {
     completeError,
     isCompleting,
     saveProfile,
+    saveDraftSnapshot,
     complete,
   } = useOnboardingFlow({
     jobCategories,
@@ -55,11 +56,19 @@ export default function OnboardingPage() {
   if (step === 'profile') {
     stepContent = (
       <OnboardingProfileStep
-        onDocumentsClick={() => navigate('/onboarding/documents')}
-        onAptitudeTestClick={() => navigate('/onboarding/aptitude-test')}
+        onDocumentsClick={(values) => {
+          saveDraftSnapshot(values);
+          navigate('/onboarding/documents');
+        }}
+        onAptitudeTestClick={(values) => {
+          saveDraftSnapshot(values);
+          navigate('/onboarding/aptitude-test');
+        }}
         submitError={saveError}
         isSubmitting={isSaving}
         onNext={saveProfile}
+        aptitudeTestCompleted={draft?.jobTestCompleted}
+        draft={draft}
       />
     );
   } else if (draft) {
