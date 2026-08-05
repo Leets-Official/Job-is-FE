@@ -55,7 +55,7 @@ function SavedJobRow({ job, onView, onUnsave, isUnsaving }: SavedJobRowProps) {
         </Button>
         <Button
           variant="outline"
-          disabled={job.closed || isUnsaving}
+          disabled={isUnsaving}
           className="h-10"
           onClick={() => onUnsave(job.id)}
         >
@@ -95,7 +95,7 @@ export default function SavedJobsSavedContent({
         <Dropdown
           placeholder="저장일 순"
           size="sm"
-          className="w-25"
+          className="w-32"
           options={SORT_OPTIONS}
           value={sort}
           onChange={(value) => onSortChange(value as SavedJobsSort)}

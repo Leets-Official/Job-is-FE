@@ -58,7 +58,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
   }, [historyQuery.data]);
 
   const handleBrowseRecommendations = () => navigate('/recommendations');
-  const handleExplore = () => navigate('/explore');
+  const handleExplore = () => navigate('/explore', { state: { transition: 'main-tab' } });
   const handleView = (jobId: string) => navigate(`/jobs/${jobId}`);
 
   async function handleUnsave(jobId: string) {
@@ -78,11 +78,19 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
     <div className="flex min-h-225 w-full flex-1 justify-center bg-gray-50 px-3 py-12.5">
       <div className="flex w-full max-w-300 flex-1 flex-col items-start gap-5">
         <p className="text-heading-medium font-bold text-text-primary">저장 목록</p>
-        {savedJobs.length > 0 && (
-          <p className="text-label-medium font-medium text-text-secondary">
-            저장 {totalSaved}건 · 지원 의향 {totalApplyIntent}건
-          </p>
-        )}
+        <div className="min-h-5" aria-live="polite">
+          {isSavedJobsLoading ? (
+            <div
+              className="h-5 w-40 animate-pulse rounded bg-gray-200"
+              aria-busy="true"
+              aria-label="저장 목록 집계 불러오는 중"
+            />
+          ) : savedJobs.length > 0 ? (
+            <p className="text-label-medium font-medium text-text-secondary">
+              저장 {totalSaved}건 · 지원 의향 {totalApplyIntent}건
+            </p>
+          ) : null}
+        </div>
 
         <div className="flex items-center gap-2.5">
           {LIST_TABS.map((tab) => (
@@ -134,6 +142,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
               onFilterChange={setActiveFilter}
               onBrowseRecommendations={handleBrowseRecommendations}
               onExplore={handleExplore}
+              onView={(jobId) => navigate(`/jobs/${jobId}`)}
               onLoadMore={historyQuery.hasNextPage ? () => historyQuery.fetchNextPage() : undefined}
               isLoading={historyQuery.isLoading}
               isError={historyQuery.isError}
