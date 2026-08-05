@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
-import { dismissCard, submitDismissReason } from '@/api/decks';
-import { recordJobApply, recordJobView, saveJob, toggleApplyIntent } from '@/api/jobs';
+import { recordJobView } from '@/api/jobs';
 import { Button, NoticePanel } from '@/components/common';
 import { Spinner } from '@/components/feedback';
 import JobDetailApplyInterstitialModal from '@/features/jobs/components/JobDetailApplyInterstitialModal';
@@ -9,23 +8,12 @@ import JobDetailMain from '@/features/jobs/components/JobDetailMain';
 import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
 import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkipFeedbackModal';
 import { useJobDetail } from '@/features/jobs/hooks/useJobDetail';
+import useJobDetailActions from '@/features/jobs/hooks/useJobDetailActions';
 import { mapJobDetail } from '@/features/jobs/utils/mapJobDetail';
-
-const DISMISS_REASON_MAX_LENGTH = 30;
 
 interface JobDetailLocationState {
   deckId?: number;
   cardId?: number;
-}
-
-function buildDismissReason(reasons: string[]): string | undefined {
-  let combined = '';
-  for (const reason of reasons) {
-    const next = combined ? `${combined},${reason}` : reason;
-    if (next.length > DISMISS_REASON_MAX_LENGTH) break;
-    combined = next;
-  }
-  return combined || undefined;
 }
 
 export default function JobDetailPage() {
@@ -35,74 +23,25 @@ export default function JobDetailPage() {
   const { deckId, cardId } = (location.state as JobDetailLocationState | null) ?? {};
   const parsedJobId = Number(id);
   const jobId = Number.isInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : null;
-  const canSubmitDismissReason = deckId !== undefined && cardId !== undefined;
-  const [isSkipModalOpen, setIsSkipModalOpen] = useState(false);
-  const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
-  const [intendedToApply, setIntendedToApply] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
 
   const jobDetailQuery = useJobDetail(jobId);
+  const {
+    isSkipModalOpen,
+    setIsSkipModalOpen,
+    isApplyModalOpen,
+    setIsApplyModalOpen,
+    intendedToApply,
+    isSaved,
+    handleConfirmApply,
+    handleIntendToApply,
+    handleSave,
+    handleSkipSubmit,
+  } = useJobDetailActions({ jobId, deckId, cardId });
 
   useEffect(() => {
     if (jobId === null || !jobDetailQuery.isSuccess) return;
     recordJobView(jobId).catch(console.error);
   }, [jobId, jobDetailQuery.isSuccess]);
-
-  function handleConfirmApply(intendToApply: boolean, sourceUrl: string) {
-    if (jobId === null) return;
-    setIsApplyModalOpen(false);
-
-    let isValidSourceUrl = false;
-    try {
-      isValidSourceUrl = new URL(sourceUrl).protocol === 'https:';
-    } catch {
-      isValidSourceUrl = false;
-    }
-
-    if (!isValidSourceUrl) {
-      console.error(`유효하지 않은 원문 링크입니다: ${sourceUrl}`);
-      return;
-    }
-
-    setIntendedToApply(intendToApply);
-    window.open(sourceUrl, '_blank', 'noopener,noreferrer');
-    recordJobApply(jobId, intendToApply).catch(console.error);
-  }
-
-  function handleIntendToApply() {
-    if (jobId === null) return;
-    const previous = intendedToApply;
-    setIntendedToApply((prev) => !prev);
-    toggleApplyIntent(jobId)
-      .then((result) => setIntendedToApply(result.applyIntent))
-      .catch((error) => {
-        setIntendedToApply(previous);
-        console.error(error);
-      });
-  }
-
-  function handleSave() {
-    if (jobId === null) return;
-    saveJob(jobId)
-      .then(() => setIsSaved(true))
-      .catch(console.error);
-  }
-
-  // 오늘의 브리핑 카드에서 들어온 경우에만 deckId/cardId가 있음(navigate state로 전달됨).
-  // 탐색 등 다른 경로로 들어온 경우엔 소속된 덱이 없어 서버에 반영할 수 없음
-  function handleSkipSubmit(reasons: string[], note: string) {
-    setIsSkipModalOpen(false);
-    if (!canSubmitDismissReason) return;
-
-    dismissCard(deckId, cardId)
-      .then(() =>
-        submitDismissReason(deckId, cardId, {
-          reason: buildDismissReason(reasons),
-          comment: note || undefined,
-        }),
-      )
-      .catch(console.error);
-  }
 
   if (jobId === null) {
     return (
