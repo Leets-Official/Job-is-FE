@@ -35,23 +35,17 @@ export default function NotificationPauseCard({ initialSnooze }: NotificationPau
         <p className="text-label-medium font-medium text-text-primary">
           오늘의 공고 추천을 잠시 멈춰요
         </p>
-        <div
-          className="flex flex-wrap gap-2.5 px-2.5"
-          role="radiogroup"
-          aria-label="알림 일시정지 기간"
-          aria-busy={isUpdating}
-        >
+        <div className="flex flex-wrap gap-2.5 px-2.5" aria-busy={isUpdating}>
           {PAUSE_OPTIONS.map((option) => (
             <button
               key={option.label}
               type="button"
-              role="radio"
-              aria-checked={pauseState?.period === option.value}
+              aria-pressed={pauseState?.period === option.value}
               onClick={() => {
                 if (isUpdating) return;
 
                 if (option.value === 'indefinite') {
-                  navigate('/unsubscribe');
+                  navigate('/unsubscribe', { state: { transition: 'settings-flow' } });
                   return;
                 }
 

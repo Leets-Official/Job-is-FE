@@ -37,13 +37,10 @@ export default function HeaderProfileMenu({
       {isOpen && (
         <div
           id="profile-menu"
-          role="menu"
-          aria-label="프로필 메뉴"
-          className="header-profile-menu-enter absolute top-full right-0 z-20 mt-2 flex w-28 flex-col overflow-hidden rounded-sm border border-gray-200 bg-white py-1 shadow-md"
+          className="header-profile-menu-enter absolute top-full right-0 z-20 mt-2 flex w-32 flex-col overflow-hidden rounded-sm border border-gray-200 bg-white py-1 shadow-md"
         >
           <button
             type="button"
-            role="menuitem"
             className="cursor-pointer px-4 py-3 text-left text-label-medium font-medium text-text-primary hover:bg-gray-50"
             onClick={() => closeMenuAndRun(onProfileClick)}
           >
@@ -51,7 +48,6 @@ export default function HeaderProfileMenu({
           </button>
           <button
             type="button"
-            role="menuitem"
             className="cursor-pointer px-4 py-3 text-left text-label-medium font-medium text-text-primary hover:bg-gray-50"
             onClick={() => closeMenuAndRun(onSettingsClick)}
           >
