@@ -59,7 +59,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
 
   const handleBrowseRecommendations = () => navigate('/recommendations');
   const handleExplore = () => navigate('/explore', { state: { transition: 'main-tab' } });
-  const handleView = (jobId: string) => navigate(`/jobs/${jobId}`);
+  const handleView = (jobId: string | number) => navigate(`/jobs/${jobId}`);
 
   async function handleUnsave(jobId: string) {
     setUnsavingJobId(jobId);
@@ -142,7 +142,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
               onFilterChange={setActiveFilter}
               onBrowseRecommendations={handleBrowseRecommendations}
               onExplore={handleExplore}
-              onView={(jobId) => navigate(`/jobs/${jobId}`)}
+              onView={handleView}
               onLoadMore={historyQuery.hasNextPage ? () => historyQuery.fetchNextPage() : undefined}
               isLoading={historyQuery.isLoading}
               isError={historyQuery.isError}
