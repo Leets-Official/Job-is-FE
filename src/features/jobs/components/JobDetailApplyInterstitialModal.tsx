@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import ArrowRightIcon from '@/assets/icons/icon-arrow-right.svg?react';
 import { Button, ModalCheckbox } from '@/components/common';
 
@@ -15,9 +16,9 @@ export default function JobDetailApplyInterstitialModal({
 }: JobDetailApplyInterstitialModalProps) {
   const [intendToApply, setIntendToApply] = useState(false);
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black-alpha-40 px-4"
+      className="fixed inset-0 z-[100] flex items-center justify-center bg-black-alpha-40 px-4"
       onClick={onClose}
     >
       <div onClick={(event) => event.stopPropagation()}>
@@ -42,6 +43,7 @@ export default function JobDetailApplyInterstitialModal({
           }
         />
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

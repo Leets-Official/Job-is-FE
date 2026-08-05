@@ -10,6 +10,7 @@ import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkip
 import { useJobDetail } from '@/features/jobs/hooks/useJobDetail';
 import useJobDetailActions from '@/features/jobs/hooks/useJobDetailActions';
 import { mapJobDetail } from '@/features/jobs/mapJobDetail';
+import { useTodayBriefingCards } from '@/features/recommendations/hooks/useTodayBriefing';
 
 interface JobDetailLocationState {
   deckId?: number;
@@ -25,6 +26,12 @@ export default function JobDetailPage() {
   const jobId = Number.isInteger(parsedJobId) && parsedJobId > 0 ? parsedJobId : null;
 
   const jobDetailQuery = useJobDetail(jobId);
+  const briefingCardsQuery = useTodayBriefingCards();
+  const briefingCard = briefingCardsQuery.data?.find(
+    (card) => card.jobId === jobId && card.status !== 'DISMISSED',
+  );
+  const dismissDeckId = deckId ?? briefingCard?.deckId;
+  const dismissCardId = cardId ?? briefingCard?.cardId;
   const {
     isSkipModalOpen,
     setIsSkipModalOpen,
@@ -37,7 +44,7 @@ export default function JobDetailPage() {
     handleIntendToApply,
     handleSave,
     handleSkipSubmit,
-  } = useJobDetailActions({ jobId, deckId, cardId });
+  } = useJobDetailActions({ jobId, deckId: dismissDeckId, cardId: dismissCardId });
 
   useEffect(() => {
     if (jobId === null || !jobDetailQuery.isSuccess) return;
