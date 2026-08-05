@@ -1,9 +1,7 @@
 # React Best Practices (job-is-fe 적용판)
 
-Vercel Engineering이 공개한 [React/Next.js 성능 가이드](https://github.com/vercel-labs)를
-이 프로젝트(React 19 + Vite CSR SPA, TanStack Query, Zustand, react-router)에 맞게
-추려낸 문서입니다. 원본은 Next.js/RSC 기준 70개 규칙이며, 여기서는 이 프로젝트에 실제로
-적용 가능한 항목만 남겼습니다. 새 컴포넌트/훅을 작성하거나 리뷰할 때 참고합니다.
+React 19 + Vite CSR SPA, TanStack Query, Zustand, react-router 환경에서 새 컴포넌트와 훅을
+작성하거나 리뷰할 때 참고하는 성능 가이드입니다.
 
 ## 1. 비동기 처리
 
@@ -93,8 +91,7 @@ Vercel Engineering이 공개한 [React/Next.js 성능 가이드](https://github.
 - **앱 초기화는 한 번만** — 모듈 스코프 플래그 등으로 앱 전체에서 한 번만 실행돼야 하는
   초기화 로직(예: 분석 도구 초기화)을 보장합니다.
 
-## 참고
+## 적용 우선순위
 
-- 원본: Vercel Engineering, `vercel-react-best-practices` 스킬 (MIT License)
 - 컴포넌트 구조/네이밍 등 이 프로젝트 고유 컨벤션은 [CONVENTIONS.md](CONVENTIONS.md)를
   따릅니다. 이 문서와 상충하면 프로젝트 컨벤션이 우선합니다.
