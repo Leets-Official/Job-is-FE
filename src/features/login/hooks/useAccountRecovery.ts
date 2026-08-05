@@ -2,10 +2,11 @@ import { useMutation } from '@tanstack/react-query';
 import { useNavigate } from 'react-router';
 import { restoreAccount } from '@/api/auth';
 import {
+  getPostLoginPath,
   setAccessToken,
   setOnboardingCompleted,
   setUserId,
-} from '@/features/login/store/useAuthStore';
+} from '@/store/useAuthStore';
 
 export default function useAccountRecovery() {
   const navigate = useNavigate();
@@ -15,7 +16,7 @@ export default function useAccountRecovery() {
       setAccessToken(result.accessToken);
       setUserId(result.userId);
       setOnboardingCompleted(result.onboardingCompleted);
-      navigate(result.onboardingCompleted ? '/recommendations' : '/onboarding', { replace: true });
+      navigate(getPostLoginPath(result.onboardingCompleted), { replace: true });
     },
   });
 

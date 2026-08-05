@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { Navigate, Outlet, useLocation, useMatches, useNavigate } from 'react-router';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
-import { useAuthStore } from '@/features/login/store/useAuthStore';
 import useRouteMetadata from '@/hooks/useRouteMetadata';
+import { useAuthStore } from '@/store/useAuthStore';
 import { cn } from '@/utils/cn';
 
 type MainLayoutTab = {
@@ -55,7 +55,7 @@ export default function MainLayout() {
     transition === 'main-tab';
 
   if (!accessToken) {
-    return <Navigate to="/" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   return (

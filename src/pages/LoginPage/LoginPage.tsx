@@ -1,7 +1,8 @@
-import { Link, useNavigate, useSearchParams } from 'react-router';
+import { Link, Navigate, useNavigate, useSearchParams } from 'react-router';
 import LoginDefaultContent from '@/features/login/components/LoginDefaultContent';
 import LoginEmailRequiredContent from '@/features/login/components/LoginEmailRequiredContent';
 import LoginFailureContent from '@/features/login/components/LoginFailureContent';
+import { getPostLoginPath, useAuthStore } from '@/store/useAuthStore';
 
 type LoginPageState = 'default' | 'failed' | 'email-required';
 
@@ -15,6 +16,12 @@ export default function LoginPage({ state = 'default' }: LoginPageProps) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const failureMessage = searchParams.get('message') ?? DEFAULT_FAILURE_MESSAGE;
+  const accessToken = useAuthStore((authState) => authState.accessToken);
+  const onboardingCompleted = useAuthStore((authState) => authState.onboardingCompleted);
+
+  if (accessToken) {
+    return <Navigate to={getPostLoginPath(onboardingCompleted)} replace />;
+  }
 
   const content =
     state === 'failed' ? (

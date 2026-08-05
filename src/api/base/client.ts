@@ -1,7 +1,7 @@
 import { client, tokenClient } from '@/api/base/axios';
 import { assertApiSuccess, toRequestError, unwrapApiResponse } from '@/api/base/error';
 import type { ApiEnvelope } from '@/api/types';
-import { clearAuth, getAccessToken, setAccessToken } from '@/features/login/store/useAuthStore';
+import { clearAuth, getAccessToken, setAccessToken } from '@/store/useAuthStore';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 
 interface CsrfTokenResponse {
