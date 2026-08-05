@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router';
-import type { QuizSource } from '@/api/quiz';
+import type { QuizSource } from '@/api/types/quiz.types';
 import { Alert, Spinner } from '@/components/feedback';
 import QuizQuestionnaire from '@/features/quiz/components/QuizQuestionnaire';
 import QuizResult from '@/features/quiz/components/QuizResult';

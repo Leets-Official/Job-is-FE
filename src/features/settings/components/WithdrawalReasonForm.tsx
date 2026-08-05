@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import type { WithdrawalRequest } from '@/api/auth';
+import type { WithdrawalRequest } from '@/api/types/auth.types';
 import Button from '@/components/common/Button';
 import RadioButton from '@/components/common/RadioButton';
 import WithdrawalConfirmModal from '@/features/settings/components/WithdrawalConfirmModal';

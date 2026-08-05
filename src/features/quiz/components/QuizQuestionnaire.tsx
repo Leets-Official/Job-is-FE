@@ -1,4 +1,4 @@
-import type { QuizQuestion } from '@/api/quiz';
+import type { QuizQuestion } from '@/api/types/quiz.types';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import { cn } from '@/utils/cn';
 
