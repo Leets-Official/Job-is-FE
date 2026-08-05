@@ -80,7 +80,7 @@ export default function JobDetailPage() {
           <div className="min-w-0 w-full flex-1">
             <JobDetailMain job={job} backTo="/recommendations" backLabel="오늘의 추천으로" />
           </div>
-          <div className="w-full lg:w-90 lg:shrink-0">
+          <div className="w-full lg:w-105.5 lg:shrink-0">
             <div className="lg:sticky lg:top-24">
               <JobDetailSidebar
                 job={job}

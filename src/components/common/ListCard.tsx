@@ -5,6 +5,7 @@ import { cn } from '@/utils/cn';
 interface ListCardProps extends ComponentPropsWithRef<'div'> {
   badge?: ReactNode;
   heading: string;
+  headingClassName?: string;
   caption: string;
   captionPosition?: 'top' | 'bottom';
   linkLabel?: string;
@@ -16,6 +17,7 @@ export default function ListCard({
   ref,
   badge,
   heading,
+  headingClassName,
   caption,
   captionPosition = 'bottom',
   linkLabel,
@@ -24,7 +26,14 @@ export default function ListCard({
 }: ListCardProps) {
   const headingElement = (
     <div className="flex w-full items-center gap-4">
-      <p className="flex-1 text-[18px] leading-normal font-bold text-text-primary">{heading}</p>
+      <p
+        className={cn(
+          'flex-1 text-[18px] leading-normal font-bold text-text-primary',
+          headingClassName,
+        )}
+      >
+        {heading}
+      </p>
     </div>
   );
   const captionElement = (

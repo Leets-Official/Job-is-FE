@@ -23,19 +23,19 @@ export default function Pagination({
   return (
     <nav
       aria-label="페이지 네비게이션"
-      className={cn('flex items-center justify-center gap-3 text-sm text-gray-700', className)}
+      className={cn('flex items-center justify-center gap-2', className)}
       {...props}
     >
       <button
         type="button"
         onClick={onPrevious}
         disabled={currentPage <= 1}
-        className="flex h-10 w-27.5 min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-sm text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-10 w-27.5 min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-body-medium font-normal text-text-primary disabled:cursor-not-allowed disabled:text-text-disabled disabled:opacity-100"
       >
-        <ArrowLeftIcon className="size-4" /> 이전
+        <ArrowLeftIcon className="size-5" /> 이전
       </button>
 
-      <span className="flex w-27.5 min-w-0 items-center justify-center gap-4 text-body-medium font-medium text-gray-900">
+      <span className="flex w-27.5 min-w-0 items-center justify-center text-body-medium font-medium text-text-primary">
         {label ?? `오늘 도착 · ${currentPage}/${totalPages}`}
       </span>
 
@@ -43,9 +43,9 @@ export default function Pagination({
         type="button"
         onClick={onNext}
         disabled={currentPage >= totalPages}
-        className="flex h-10 w-27.5 min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-sm text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-10 w-27.5 min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-body-medium font-normal text-text-primary disabled:cursor-not-allowed disabled:text-text-disabled disabled:opacity-100"
       >
-        다음 <ArrowRightIcon className="size-4" />
+        다음 <ArrowRightIcon className="size-5" />
       </button>
     </nav>
   );

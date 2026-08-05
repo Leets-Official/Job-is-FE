@@ -20,16 +20,16 @@ export default function JobDetailApplyPanel({
   isIntendedToApply,
 }: JobDetailApplyPanelProps) {
   return (
-    <div className="flex w-full flex-col gap-2">
-      <Button className="w-full" onClick={onApply} disabled={!onApply}>
+    <div className="flex w-full flex-col gap-5 rounded-md border border-gray-400 bg-white p-6">
+      <Button className="w-full rounded-sm" onClick={onApply} disabled={!onApply}>
         지원하기
-        <ArrowRightIcon className="size-5" />
+        <ArrowRightIcon className="size-6" />
       </Button>
-      <div className="flex w-full gap-2">
+      <div className="flex w-full gap-5.5">
         <Button
           variant="outline"
           className={cn(
-            'w-[110px] shrink-0',
+            'w-[110px] shrink-0 rounded-sm',
             isIntendedToApply && 'border-transparent bg-primary-400 hover:bg-primary-400',
           )}
           onClick={onIntendToApply}
@@ -39,7 +39,7 @@ export default function JobDetailApplyPanel({
         <Button
           variant="outline"
           className={cn(
-            'w-[110px] shrink-0',
+            'w-[110px] shrink-0 rounded-sm',
             isSaved && 'border-transparent bg-primary-400 hover:bg-primary-400',
           )}
           onClick={onSave}
@@ -47,7 +47,7 @@ export default function JobDetailApplyPanel({
           {isSaved ? '저장됨' : '저장'}
         </Button>
         <Button
-          className="w-[110px] shrink-0 bg-gray-400 hover:bg-gray-400 active:bg-gray-400"
+          className="w-[110px] shrink-0 rounded-sm bg-gray-400 text-text-tertiary hover:bg-gray-400 active:bg-gray-400"
           onClick={onNotInterested}
           disabled={!onNotInterested}
         >

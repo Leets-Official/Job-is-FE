@@ -1,6 +1,7 @@
 export interface JobDetailGlanceItem {
   label: string;
   value: string;
+  isMuted?: boolean;
 }
 
 export type JobDetailFitStatus = 'met' | 'estimated' | 'caution' | 'unknown';

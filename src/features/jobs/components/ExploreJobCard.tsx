@@ -37,7 +37,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
         <MoreVerticalIcon className="size-6" />
       </button>
       {isMenuOpen && (
-        <div className="absolute top-9 right-2.5 z-10 flex w-36 flex-col gap-3 rounded-sm border border-gray-200 bg-white p-4 shadow-md">
+        <div className="absolute top-9 right-2.5 z-10 flex w-36 origin-bottom-right flex-col gap-3 rounded-sm border border-gray-200 bg-white p-4 shadow-md motion-safe:animate-[explore-job-menu-enter_160ms_cubic-bezier(0.16,1,0.3,1)_both]">
           <button
             type="button"
             onClick={() => {
