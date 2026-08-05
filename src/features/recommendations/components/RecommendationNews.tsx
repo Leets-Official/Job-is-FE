@@ -6,9 +6,14 @@ import { cn } from '@/utils/cn';
 interface RecommendationNewsProps {
   items: RecommendationNewsItem[];
   className?: string;
+  returnTo?: string;
 }
 
-export default function RecommendationNews({ items, className }: RecommendationNewsProps) {
+export default function RecommendationNews({
+  items,
+  className,
+  returnTo = '/recommendations/news',
+}: RecommendationNewsProps) {
   return (
     <section
       className={cn(
@@ -26,6 +31,7 @@ export default function RecommendationNews({ items, className }: RecommendationN
             caption={item.description}
             linkLabel="자세히 보기"
             linkHref={item.href}
+            linkState={{ returnTo }}
           />
         ))}
       </div>

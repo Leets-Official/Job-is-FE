@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { useNavigate } from 'react-router';
 import { dismissCard } from '@/api/recommendations';
+import { showAlert } from '@/components/feedback';
 import {
   getRecommendationLetterStatus,
   useRecommendationDeckStore,
@@ -23,13 +24,41 @@ export default function useRecommendationDeck() {
     () => [...(cardsQuery.data ?? [])].sort((a, b) => a.position - b.position),
     [cardsQuery.data],
   );
-  const letters = useMemo(() => cards.map(mapBriefingCard), [cards]);
   const initialStatusByLetterId = useMemo(
     () =>
       Object.fromEntries(
         cards.map((card) => [String(card.cardId), mapBriefingCardStatus(card.status)]),
       ),
     [cards],
+  );
+  const resolvedCards = useMemo(
+    () =>
+      cards.map((card) => ({
+        card,
+        status: getRecommendationLetterStatus(
+          statusByLetterId,
+          String(card.cardId),
+          initialStatusByLetterId[String(card.cardId)],
+        ),
+      })),
+    [cards, initialStatusByLetterId, statusByLetterId],
+  );
+  const letters = useMemo(
+    () =>
+      resolvedCards
+        .filter(({ status }) => status !== 'dismissed')
+        .map(({ card }) => mapBriefingCard(card)),
+    [resolvedCards],
+  );
+  const isDeckCompleted =
+    resolvedCards.length > 0 && resolvedCards.every(({ status }) => status !== 'unprocessed');
+  const completionCounts = useMemo(
+    () => ({
+      saved: resolvedCards.filter(({ status }) => status === 'saved').length,
+      dismissed: resolvedCards.filter(({ status }) => status === 'dismissed').length,
+      viewed: resolvedCards.filter(({ card }) => viewedLetterIds[String(card.cardId)]).length,
+    }),
+    [resolvedCards, viewedLetterIds],
   );
   const jobIdByLetterId = useMemo(
     () => Object.fromEntries(cards.map((card) => [String(card.cardId), card.jobId])),
@@ -43,15 +72,24 @@ export default function useRecommendationDeck() {
   const resolveStatus = (letterId: string) =>
     getRecommendationLetterStatus(statusByLetterId, letterId, initialStatusByLetterId[letterId]);
 
-  const handleSaveLetter = (letterId: string) => {
+  const handleSaveLetter = async (letterId: string) => {
     const previousStatus = resolveStatus(letterId);
     setStatus(letterId, 'saved');
     const jobId = jobIdByLetterId[letterId];
-    if (jobId !== undefined) {
-      saveRecommendedJob(jobId).catch((error) => {
-        setStatus(letterId, previousStatus);
-        console.error(error);
-      });
+
+    if (jobId === undefined) {
+      return false;
+    }
+
+    try {
+      await saveRecommendedJob(jobId);
+      showAlert('success', '공고를 저장했어요.');
+      return true;
+    } catch (error) {
+      setStatus(letterId, previousStatus);
+      console.error(error);
+      showAlert('danger', '공고를 저장하지 못했어요. 다시 시도해주세요.');
+      return false;
     }
   };
 
@@ -63,21 +101,32 @@ export default function useRecommendationDeck() {
     });
   };
 
-  const handleDismissLetter = (letterId: string) => {
+  const handleDismissLetter = async (letterId: string) => {
     const previousStatus = resolveStatus(letterId);
     setStatus(letterId, 'dismissed');
     const deckId = deckIdByLetterId[letterId];
-    if (deckId !== undefined) {
-      dismissCard(deckId, Number(letterId)).catch((error) => {
-        setStatus(letterId, previousStatus);
-        console.error(error);
-      });
+
+    if (deckId === undefined) {
+      return false;
+    }
+
+    try {
+      await dismissCard(deckId, Number(letterId));
+      showAlert('success', '관심 없음으로 표시했어요.');
+      return true;
+    } catch (error) {
+      setStatus(letterId, previousStatus);
+      console.error(error);
+      showAlert('danger', '관심 없음 처리하지 못했어요. 다시 시도해주세요.');
+      return false;
     }
   };
 
   return {
     cardsQuery,
     letters,
+    isDeckCompleted,
+    completionCounts,
     viewedLetterIds,
     markViewed,
     resolveStatus,

@@ -30,17 +30,18 @@ export default function RecommendationDeckScreen() {
   );
 
   const [deckIndex, setDeckIndex] = useState(0);
-  const deckStep = DECK[deckIndex] ?? DECK[DECK.length - 1];
+  const currentDeckIndex = Math.min(deckIndex, DECK.length - 1);
+  const deckStep = DECK[currentDeckIndex];
 
   useEffect(() => {
     if (deckStep.type === 'card') markViewed(deckStep.letter.id);
   }, [deckStep, markViewed]);
 
-  const isLastStep = deckIndex === DECK.length - 1;
+  const isLastStep = currentDeckIndex === DECK.length - 1;
   const goNext = () => {
     if (isLastStep) {
       navigate('/recommendations/complete', { state: { transition: 'recommendation-flow' } });
-    } else setDeckIndex((previous) => previous + 1);
+    } else setDeckIndex(currentDeckIndex + 1);
   };
 
   return (
@@ -52,32 +53,31 @@ export default function RecommendationDeckScreen() {
     >
       <RecommendationScreenLayout>
         <RecommendationLetterCarousel
-          current={deckIndex + 1}
+          current={currentDeckIndex + 1}
           total={DECK.length}
-          contentKey={deckIndex}
+          contentKey={deckStep.type === 'card' ? deckStep.letter.id : 'news'}
           enableStackTransition
-          onPrev={() => setDeckIndex((previous) => Math.max(previous - 1, 0))}
+          onPrev={() => setDeckIndex(Math.max(currentDeckIndex - 1, 0))}
           onNext={goNext}
-          prevDisabled={deckIndex === 0}
+          prevDisabled={currentDeckIndex === 0}
           footNote={deckStep.type === 'news' ? '' : undefined}
         >
           {deckStep.type === 'news' ? (
             isNewsLoading ? (
               <Spinner />
             ) : (
-              <RecommendationNews items={newsItems} />
+              <RecommendationNews items={newsItems} returnTo="/recommendations/deck" />
             )
           ) : (
             <RecommendationLetterCard
               {...deckStep.letter}
               onExpand={() => handleExpandLetter(deckStep.letter.id)}
-              onSave={() => {
-                handleSaveLetter(deckStep.letter.id);
-                goNext();
+              onSave={async () => {
+                const isSaved = await handleSaveLetter(deckStep.letter.id);
+                if (isSaved) goNext();
               }}
               onDismiss={() => {
                 handleDismissLetter(deckStep.letter.id);
-                goNext();
               }}
             />
           )}
