@@ -26,7 +26,8 @@ export default function useJobDetailActions({ jobId, deckId, cardId }: UseJobDet
   const [isApplyModalOpen, setIsApplyModalOpen] = useState(false);
   const [intendedToApply, setIntendedToApply] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
-  const { save } = useSaveJob();
+  const [isSavePending, setIsSavePending] = useState(false);
+  const { save, unsave } = useSaveJob();
 
   const canSubmitDismissReason = deckId !== undefined && cardId !== undefined;
 
@@ -63,11 +64,24 @@ export default function useJobDetailActions({ jobId, deckId, cardId }: UseJobDet
       });
   }
 
-  function handleSave() {
-    if (jobId === null) return;
-    save(jobId)
-      .then(() => setIsSaved(true))
-      .catch(console.error);
+  async function handleSave() {
+    if (jobId === null || isSavePending) return;
+
+    setIsSavePending(true);
+    try {
+      if (isSaved) {
+        await unsave(jobId);
+        setIsSaved(false);
+        return;
+      }
+
+      await save(jobId);
+      setIsSaved(true);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSavePending(false);
+    }
   }
 
   // 오늘의 브리핑 카드에서 들어온 경우에만 deckId/cardId가 있음(navigate state로 전달됨).
@@ -93,6 +107,7 @@ export default function useJobDetailActions({ jobId, deckId, cardId }: UseJobDet
     setIsApplyModalOpen,
     intendedToApply,
     isSaved,
+    isSavePending,
     handleConfirmApply,
     handleIntendToApply,
     handleSave,

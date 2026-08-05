@@ -1,16 +1,17 @@
 import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
-import type { HistoryFilter } from '@/api/types/savedJobs.types';
+import type { HistoryFilter, SavedJobsSort } from '@/api/types/savedJobs.types';
 import { Button, NoticePanel } from '@/components/common';
 import Tab from '@/components/common/Tab';
-import { Spinner } from '@/components/feedback';
+import { showAlert, Spinner } from '@/components/feedback';
+import { useSaveJob } from '@/features/jobs/hooks/useSaveJob';
 import SavedJobsHistoryContent from '@/features/savedJobs/components/SavedJobsHistoryContent';
 import SavedJobsSavedContent from '@/features/savedJobs/components/SavedJobsSavedContent';
 import { useJobHistory } from '@/features/savedJobs/hooks/useJobHistory';
 import { useSavedJobs } from '@/features/savedJobs/hooks/useSavedJobs';
+import { mapHistoryItem } from '@/features/savedJobs/mapHistoryItem';
+import { mapSavedJob } from '@/features/savedJobs/mapSavedJob';
 import type { SavedJobHistoryStatus } from '@/features/savedJobs/types/savedJob';
-import { mapHistoryItem } from '@/features/savedJobs/utils/mapHistoryItem';
-import { mapSavedJob } from '@/features/savedJobs/utils/mapSavedJob';
 
 const LIST_TABS = [
   { label: '저장', value: 'saved' },
@@ -33,16 +34,21 @@ interface SavedJobsListProps {
 export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListProps) {
   const [activeTab, setActiveTab] = useState<SavedJobsTab>('saved');
   const [activeFilter, setActiveFilter] = useState<SavedJobHistoryStatus | 'all'>('all');
+  const [unsavingJobId, setUnsavingJobId] = useState<string>();
+  const [savedJobsSort, setSavedJobsSort] = useState<SavedJobsSort>('SAVED_DESC');
   const navigate = useNavigate();
 
-  const savedJobsQuery = useSavedJobs({ page: 1, sort: 'SAVED_DESC' });
+  const savedJobsQuery = useSavedJobs({ page: 1, sort: savedJobsSort });
   const historyQuery = useJobHistory(HISTORY_FILTER_TO_API[activeFilter]);
+  const { unsave } = useSaveJob();
 
   const savedJobs = isEmptyPreview
     ? []
     : (savedJobsQuery.data?.saves.content ?? []).map(mapSavedJob);
   const totalSaved = isEmptyPreview ? 0 : (savedJobsQuery.data?.totalSaved ?? 0);
   const totalApplyIntent = isEmptyPreview ? 0 : (savedJobsQuery.data?.totalApplyIntent ?? 0);
+  const isSavedJobsLoading =
+    savedJobsQuery.isLoading || (savedJobsQuery.isFetching && savedJobs.length === 0);
 
   const historyItems = useMemo(() => {
     const items = historyQuery.data?.pages.flatMap((page) => page.content) ?? [];
@@ -53,6 +59,20 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
 
   const handleBrowseRecommendations = () => navigate('/recommendations');
   const handleExplore = () => navigate('/explore');
+  const handleView = (jobId: string) => navigate(`/jobs/${jobId}`);
+
+  async function handleUnsave(jobId: string) {
+    setUnsavingJobId(jobId);
+
+    try {
+      await unsave(Number(jobId));
+      showAlert('success', '공고 저장을 해제했어요.');
+    } catch {
+      showAlert('danger', '공고 저장을 해제하지 못했어요. 다시 시도해주세요.');
+    } finally {
+      setUnsavingJobId(undefined);
+    }
+  }
 
   return (
     <div className="flex min-h-225 w-full flex-1 justify-center bg-gray-50 px-3 py-12.5">
@@ -81,7 +101,7 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
           className="saved-jobs-tab-content-enter flex w-full flex-1 flex-col gap-5"
         >
           {activeTab === 'saved' ? (
-            !isEmptyPreview && savedJobsQuery.isLoading ? (
+            !isEmptyPreview && isSavedJobsLoading ? (
               <div className="flex w-full flex-1 items-center justify-center">
                 <Spinner />
               </div>
@@ -100,6 +120,11 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
                 jobs={savedJobs}
                 onBrowseRecommendations={handleBrowseRecommendations}
                 onExplore={handleExplore}
+                onView={handleView}
+                onUnsave={handleUnsave}
+                unsavingJobId={unsavingJobId}
+                sort={savedJobsSort}
+                onSortChange={setSavedJobsSort}
               />
             )
           ) : (
