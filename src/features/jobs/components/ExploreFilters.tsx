@@ -1,9 +1,10 @@
-import { MultiSelect, Select, Tag } from '@/components/common';
+import { Dropdown, MultiSelect, Tag } from '@/components/common';
 import type { MultiSelectOption } from '@/components/common/MultiSelect';
 import Search from '@/components/common/Search';
 
 interface ExploreFiltersProps {
-  onSearchSubmit: (keyword: string) => void;
+  keyword: string;
+  onKeywordChange: (keyword: string) => void;
   categoryOptions: MultiSelectOption[];
   selectedJobRoles: string[];
   onToggleJobRole: (value: string) => void;
@@ -13,7 +14,7 @@ interface ExploreFiltersProps {
   careerLevelOptions: MultiSelectOption[];
   selectedCareerLevel: string;
   onCareerLevelChange: (value: string) => void;
-  employmentTypeOptions: string[];
+  employmentTypeOptions: MultiSelectOption[];
   selectedEmploymentType: string;
   onEmploymentTypeChange: (value: string) => void;
   isRemoteSelected: boolean;
@@ -23,7 +24,8 @@ interface ExploreFiltersProps {
 }
 
 export default function ExploreFilters({
-  onSearchSubmit,
+  keyword,
+  onKeywordChange,
   categoryOptions,
   selectedJobRoles,
   onToggleJobRole,
@@ -45,8 +47,9 @@ export default function ExploreFilters({
     <div className="flex w-full flex-col gap-3">
       <Search
         placeholder="직무 · 회사 · 키워드"
-        className="w-[827px]"
-        onSearchSubmit={onSearchSubmit}
+        className="w-206.75"
+        value={keyword}
+        onChange={(event) => onKeywordChange(event.target.value)}
       />
       <div className="flex w-full flex-wrap items-center gap-2">
         <MultiSelect
@@ -54,44 +57,29 @@ export default function ExploreFilters({
           options={categoryOptions}
           selectedValues={selectedJobRoles}
           onToggle={onToggleJobRole}
-          className="w-[200px] shrink-0"
+          className="w-50 shrink-0"
         />
-        <Select
+        <Dropdown
           placeholder="지역"
-          className="w-[200px] shrink-0"
+          className="w-50 shrink-0"
+          options={regionOptions}
           value={selectedRegion}
-          onChange={(event) => onRegionChange(event.target.value)}
-        >
-          {regionOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
-        <Select
+          onChange={onRegionChange}
+        />
+        <Dropdown
           placeholder="경력"
-          className="w-[200px] shrink-0"
+          className="w-50 shrink-0"
+          options={careerLevelOptions}
           value={selectedCareerLevel}
-          onChange={(event) => onCareerLevelChange(event.target.value)}
-        >
-          {careerLevelOptions.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </Select>
-        <Select
+          onChange={onCareerLevelChange}
+        />
+        <Dropdown
           placeholder="고용 형태"
-          className="w-[200px] shrink-0"
+          className="w-50 shrink-0"
+          options={employmentTypeOptions}
           value={selectedEmploymentType}
-          onChange={(event) => onEmploymentTypeChange(event.target.value)}
-        >
-          {employmentTypeOptions.map((type) => (
-            <option key={type} value={type}>
-              {type}
-            </option>
-          ))}
-        </Select>
+          onChange={onEmploymentTypeChange}
+        />
         <Tag variant="select" label="원격" selected={isRemoteSelected} onClick={onToggleRemote} />
         <Tag
           variant="select"
