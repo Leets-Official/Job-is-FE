@@ -5,5 +5,9 @@ const EMPLOYMENT_TYPE_LABELS: Record<string, string> = {
 };
 
 export function formatEmploymentType(employmentType: string): string {
-  return EMPLOYMENT_TYPE_LABELS[employmentType.toLowerCase()] ?? employmentType;
+  const normalizedEmploymentType = employmentType.toLowerCase();
+
+  return Object.hasOwn(EMPLOYMENT_TYPE_LABELS, normalizedEmploymentType)
+    ? EMPLOYMENT_TYPE_LABELS[normalizedEmploymentType]
+    : employmentType;
 }

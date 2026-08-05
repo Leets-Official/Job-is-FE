@@ -10,7 +10,10 @@ describe('formatEmploymentType', () => {
     expect(formatEmploymentType(employmentType)).toBe(expected);
   });
 
-  it('알 수 없는 고용 형태는 원본 값을 유지한다', () => {
-    expect(formatEmploymentType('프리랜서')).toBe('프리랜서');
-  });
+  it.each(['프리랜서', 'proto', 'constructor', 'toString'])(
+    '알 수 없는 고용 형태 %s는 원본 값을 유지한다',
+    (employmentType) => {
+      expect(formatEmploymentType(employmentType)).toBe(employmentType);
+    },
+  );
 });
