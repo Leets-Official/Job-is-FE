@@ -25,6 +25,7 @@
     ]
   },
   "dependencies": {
+    "@paper-design/shaders-react": "^0.0.78",
     "@tanstack/react-query": "^5.101.2",
     "axios": "^1.18.1",
     "class-variance-authority": "^0.7.1",
