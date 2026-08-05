@@ -1,6 +1,5 @@
-import { useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router';
-import type { QuizSource } from '@/api/types/quiz.types';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate, useSearchParams } from 'react-router';
 import { Alert, Spinner } from '@/components/feedback';
 import QuizQuestionnaire from '@/features/quiz/components/QuizQuestionnaire';
 import QuizResult from '@/features/quiz/components/QuizResult';
@@ -9,18 +8,24 @@ import useQuizApi from '@/features/quiz/hooks/useQuizApi';
 
 type QuizScreen = 'start' | 'questions' | 'result';
 
-function getQuizSource(value: string | null): QuizSource {
-  return value === 'ONBOARDING' ? 'ONBOARDING' : 'PROFILE';
-}
-
 export default function QuizPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const source = getQuizSource(searchParams.get('source'));
+  const isOnboardingRoute = location.pathname === '/onboarding/aptitude-test';
+  const isLegacyOnboardingRoute =
+    location.pathname === '/profile/aptitude-test' && searchParams.get('source') === 'ONBOARDING';
+  const source = isOnboardingRoute || isLegacyOnboardingRoute ? 'ONBOARDING' : 'PROFILE';
   const [screen, setScreen] = useState<QuizScreen>('start');
   const [currentIndex, setCurrentIndex] = useState<number | null>(null);
   const [answerError, setAnswerError] = useState<string>();
   const [applyError, setApplyError] = useState<string>();
+
+  useEffect(() => {
+    if (isLegacyOnboardingRoute) {
+      navigate('/onboarding/aptitude-test', { replace: true });
+    }
+  }, [isLegacyOnboardingRoute, navigate]);
 
   const {
     quizQuestionsQuery,

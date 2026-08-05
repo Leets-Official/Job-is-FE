@@ -34,12 +34,7 @@ export default function LandingHero({
     <section ref={ref} className={cn('flex flex-col items-center', className)} {...props}>
       <div className="flex flex-col items-center gap-5">
         <h1 aria-label={headline.replace('\n', ' ')} className={headlineClassName}>
-          <span
-            aria-hidden="true"
-            className={isIntroComplete ? undefined : 'landing-typing-cursor'}
-          >
-            {typedHeadline}
-          </span>
+          <span aria-hidden="true">{typedHeadline}</span>
         </h1>
         <p
           className={cn(

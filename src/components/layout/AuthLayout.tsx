@@ -1,6 +1,8 @@
 import { Outlet, useLocation } from 'react-router';
+import useRouteMetadata from '@/hooks/useRouteMetadata';
 
 export default function AuthLayout() {
+  useRouteMetadata();
   const location = useLocation();
 
   return (

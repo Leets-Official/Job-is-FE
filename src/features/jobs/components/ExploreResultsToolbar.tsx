@@ -66,7 +66,7 @@ export default function ExploreResultsToolbar({
       <Dropdown
         placeholder="정렬"
         size="sm"
-        className="w-25 shrink-0"
+        className="w-30 shrink-0"
         options={SORT_OPTIONS}
         value={sort}
         onChange={(value) => onSortChange(value as JobSortOption)}

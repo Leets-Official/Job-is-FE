@@ -35,7 +35,7 @@ export default function AccountSettingsContent() {
   if (isAccountPending) {
     return (
       <div
-        className="flex min-h-145 w-full min-w-0 max-w-179 flex-1 items-center justify-center rounded-md border border-gray-200 bg-white p-6"
+        className="flex min-h-145 w-full min-w-0 max-w-185 flex-1 items-center justify-center rounded-md border border-gray-200 bg-white p-6"
         role="status"
       >
         <Spinner />
@@ -44,7 +44,7 @@ export default function AccountSettingsContent() {
   }
 
   return (
-    <div className="flex min-w-0 max-w-179 flex-1 flex-col gap-5">
+    <div className="flex min-w-0 max-w-185 flex-1 flex-col gap-5">
       <AccountSettingsCard title="연결된 계정">
         {isAccountError || !account ? (
           <p className="text-label-medium font-medium text-danger-500">

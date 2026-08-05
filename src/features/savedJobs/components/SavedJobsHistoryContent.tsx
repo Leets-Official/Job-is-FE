@@ -107,8 +107,12 @@ export default function SavedJobsHistoryContent({
           <Spinner />
         </div>
       ) : isError ? (
-        <div className="flex w-full flex-1 items-center justify-center">
-          <NoticePanel resultIconVariant="danger" title="내역을 불러오지 못했어요">
+        <div className="flex min-h-75 w-full flex-1">
+          <NoticePanel
+            resultIconVariant="danger"
+            title="내역을 불러오지 못했어요"
+            className="h-full max-w-none justify-center"
+          >
             <Button onClick={onRetry}>다시 시도</Button>
           </NoticePanel>
         </div>
