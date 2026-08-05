@@ -16,6 +16,7 @@ export default function JobDetailAtAGlance({ items }: JobDetailAtAGlanceProps) {
           <ListCard
             key={item.label}
             heading={item.value}
+            headingClassName={item.isMuted ? 'text-text-tertiary' : undefined}
             caption={item.label}
             captionPosition="top"
           />

@@ -10,6 +10,7 @@ import type {
   JobDetailFitStatus,
 } from '@/features/jobs/types/jobDetail';
 import { formatDDayLabel } from '@/utils/formatDDayLabel';
+import { formatEmploymentType } from '@/utils/formatEmploymentType';
 
 const VERDICT_TO_STATUS: Record<FitCriteriaVerdict, JobDetailFitStatus> = {
   MATCH: 'met',
@@ -34,15 +35,15 @@ function mapFitCriteria(criteria: CriteriaMatrix): JobDetailFitCriterionItem[] {
   }));
 }
 
-function splitToLines(text: string): string[] {
-  return text
+function splitToLines(text: string | null): string[] {
+  return (text ?? '')
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean);
 }
 
 function buildContentSections(job: ApiJobDetail): JobDetailContentSection[] {
-  const sections: { heading: string; text: string }[] = [
+  const sections: { heading: string; text: string | null }[] = [
     { heading: '소개', text: job.intro },
     { heading: '주요 업무', text: job.mainTasks },
     { heading: '자격 요건', text: job.requirements },
@@ -72,16 +73,16 @@ export function mapJobDetail(job: ApiJobDetail): JobDetail {
     rating: job.matching?.rating,
     title: job.position,
     subtitle: `${job.companyName} · ${job.industry} · ${job.locationFull}`,
-    employmentType: job.employmentType,
+    employmentType: formatEmploymentType(job.employmentType),
     location,
     dDayLabel: formatDDayLabel(job.dueTime),
     glanceItems: [
       { label: '직무', value: job.position },
       { label: '경력', value: job.careerLevel },
       { label: '지역', value: location },
-      { label: '고용 형태', value: job.employmentType },
+      { label: '고용 형태', value: formatEmploymentType(job.employmentType) },
       { label: '마감', value: formatDDayLabel(job.dueTime) },
-      { label: '연봉', value: '급여 비공개' },
+      { label: '연봉', value: '급여 비공개', isMuted: true },
     ],
     fitCriteria: job.matching ? mapFitCriteria(job.matching.fitCriteria) : [],
     matchScore: job.matching?.matchScore,
