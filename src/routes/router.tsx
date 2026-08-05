@@ -1,28 +1,30 @@
 import { Navigate, createBrowserRouter } from 'react-router';
 import avatarDefaultProfile from '@/assets/images/avatar-default-profile.png';
-import AuthLayout from '@/components/layout/AuthLayout';
-import LandingLayout from '@/components/layout/LandingLayout';
-import MainLayout from '@/components/layout/MainLayout';
-import AccountRecoveryPage from '@/pages/AccountRecoveryPage/AccountRecoveryPage';
-import AccountWithdrawalPage from '@/pages/AccountWithdrawalPage/AccountWithdrawalPage';
-import CallbackPage from '@/pages/CallbackPage/CallbackPage';
-import ExplorePage from '@/pages/ExplorePage/ExplorePage';
-import JobDetailExpiredPage from '@/pages/JobDetailExpiredPage/JobDetailExpiredPage';
-import JobDetailPage from '@/pages/JobDetailPage/JobDetailPage';
-import LandingPage from '@/pages/LandingPage/LandingPage';
-import LoginPage from '@/pages/LoginPage/LoginPage';
-import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
-import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
-import PolicyPage from '@/pages/PolicyPage/PolicyPage';
-import ProfileDocumentsPage from '@/pages/ProfileDocumentsPage/ProfileDocumentsPage';
-import ProfilePage from '@/pages/ProfilePage/ProfilePage';
-import QuizPage from '@/pages/QuizPage/QuizPage';
-import RecommendationNewsDetailPage from '@/pages/RecommendationNewsDetailPage/RecommendationNewsDetailPage';
-import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
-import SavedJobsPage from '@/pages/SavedJobsPage/SavedJobsPage';
-import SettingsPage from '@/pages/SettingsPage/SettingsPage';
-import SystemErrorPage from '@/pages/SystemErrorPage/SystemErrorPage';
-import UnsubscribePage from '@/pages/UnsubscribePage/UnsubscribePage';
+import {
+  AccountRecoveryPage,
+  AccountWithdrawalPage,
+  AuthLayout,
+  CallbackPage,
+  ExplorePage,
+  JobDetailExpiredPage,
+  JobDetailPage,
+  LandingLayout,
+  LandingPage,
+  LoginPage,
+  MainLayout,
+  NotFoundPage,
+  OnboardingPage,
+  PolicyPage,
+  ProfileDocumentsPage,
+  ProfilePage,
+  QuizPage,
+  RecommendationNewsDetailPage,
+  RecommendationsPage,
+  SavedJobsPage,
+  SettingsPage,
+  SystemErrorPage,
+  UnsubscribePage,
+} from '@/routes/lazyComponents';
 
 const MAIN_NAVIGATION_TABS = [
   { label: '오늘의 추천', path: '/recommendations' },
@@ -36,13 +38,27 @@ const MAIN_TAB_HEADER = {
   profileImageUrl: avatarDefaultProfile,
 };
 
+const LANDING_METADATA = {
+  title: 'Job.is | 매일 아침, 맞춤 취업 뉴스레터',
+  description: '오늘 들어온 공고 중 나에게 맞는 채용 정보를 매일 아침 편지로 받아보세요.',
+  robots: 'index,follow',
+};
+
+const PRIVATE_METADATA = {
+  title: 'Job.is',
+  description: '개인화된 취업 추천을 확인하세요.',
+  robots: 'noindex,nofollow',
+};
+
 export const router = createBrowserRouter([
   {
     element: <LandingLayout />,
+    handle: { seo: LANDING_METADATA },
     children: [{ path: '/', element: <LandingPage /> }],
   },
   {
     element: <AuthLayout />,
+    handle: { seo: PRIVATE_METADATA },
     children: [
       { path: '/login', element: <LoginPage /> },
       { path: '/login/fail', element: <LoginPage state="failed" /> },
@@ -50,17 +66,31 @@ export const router = createBrowserRouter([
       { path: '/policy', element: <PolicyPage /> },
       { path: '/oauth/callback', element: <CallbackPage /> },
       { path: '/account/recovery', element: <AccountRecoveryPage /> },
-      { path: '/unsubscribe', element: <UnsubscribePage /> },
       { path: '/system-error', element: <SystemErrorPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
   },
   {
     element: <MainLayout />,
+    handle: { seo: PRIVATE_METADATA },
     children: [
       {
         path: '/onboarding',
         element: <OnboardingPage />,
+        handle: {
+          header: { variant: 'carousel', totalSteps: 2, activeIndex: 0 },
+        },
+      },
+      {
+        path: '/onboarding/documents',
+        element: <ProfileDocumentsPage />,
+        handle: {
+          header: { variant: 'carousel', totalSteps: 2, activeIndex: 0 },
+        },
+      },
+      {
+        path: '/onboarding/aptitude-test',
+        element: <QuizPage />,
         handle: {
           header: { variant: 'carousel', totalSteps: 2, activeIndex: 0 },
         },
@@ -72,6 +102,11 @@ export const router = createBrowserRouter([
           header: {
             ...MAIN_TAB_HEADER,
             activeIndex: 0,
+          },
+          seo: {
+            title: '오늘의 추천 | Job.is',
+            description: '오늘의 맞춤 채용 공고와 추천 이유를 확인하세요.',
+            robots: 'noindex,nofollow',
           },
         },
       },
@@ -123,12 +158,26 @@ export const router = createBrowserRouter([
       {
         path: '/explore',
         element: <ExplorePage />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 1 } },
+        handle: {
+          header: { ...MAIN_TAB_HEADER, activeIndex: 1 },
+          seo: {
+            title: '공고 탐색 | Job.is',
+            description: '직무, 지역, 경력 조건으로 채용 공고를 직접 찾아보세요.',
+            robots: 'noindex,nofollow',
+          },
+        },
       },
       {
         path: '/saved',
         element: <SavedJobsPage />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 2 } },
+        handle: {
+          header: { ...MAIN_TAB_HEADER, activeIndex: 2 },
+          seo: {
+            title: '저장 목록 | Job.is',
+            description: '저장한 채용 공고와 활동 내역을 확인하세요.',
+            robots: 'noindex,nofollow',
+          },
+        },
       },
       {
         path: '/profile',
@@ -168,6 +217,11 @@ export const router = createBrowserRouter([
       {
         path: '/settings/privacy',
         element: <SettingsPage screen="privacy" />,
+        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
+      },
+      {
+        path: '/unsubscribe',
+        element: <UnsubscribePage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
       },
       {
