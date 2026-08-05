@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router';
 import { dismissCard } from '@/api/recommendations';
 import { showAlert } from '@/components/feedback';
@@ -16,6 +16,7 @@ export default function useRecommendationDeck() {
   const markViewed = useRecommendationDeckStore((state) => state.markViewed);
   const statusByLetterId = useRecommendationDeckStore((state) => state.statusByLetterId);
   const viewedLetterIds = useRecommendationDeckStore((state) => state.viewedLetterIds);
+  const pendingLetterIdsRef = useRef(new Set<string>());
 
   const cardsQuery = useTodayBriefingCards();
   const { mutateAsync: saveRecommendedJob } = useSaveRecommendedJob();
@@ -73,13 +74,14 @@ export default function useRecommendationDeck() {
     getRecommendationLetterStatus(statusByLetterId, letterId, initialStatusByLetterId[letterId]);
 
   const handleSaveLetter = async (letterId: string) => {
+    if (pendingLetterIdsRef.current.has(letterId)) return false;
+
+    const jobId = jobIdByLetterId[letterId];
+    if (jobId === undefined) return false;
+
+    pendingLetterIdsRef.current.add(letterId);
     const previousStatus = resolveStatus(letterId);
     setStatus(letterId, 'saved');
-    const jobId = jobIdByLetterId[letterId];
-
-    if (jobId === undefined) {
-      return false;
-    }
 
     try {
       await saveRecommendedJob(jobId);
@@ -90,6 +92,8 @@ export default function useRecommendationDeck() {
       console.error(error);
       showAlert('danger', '공고를 저장하지 못했어요. 다시 시도해주세요.');
       return false;
+    } finally {
+      pendingLetterIdsRef.current.delete(letterId);
     }
   };
 
@@ -102,13 +106,14 @@ export default function useRecommendationDeck() {
   };
 
   const handleDismissLetter = async (letterId: string) => {
+    if (pendingLetterIdsRef.current.has(letterId)) return false;
+
+    const deckId = deckIdByLetterId[letterId];
+    if (deckId === undefined) return false;
+
+    pendingLetterIdsRef.current.add(letterId);
     const previousStatus = resolveStatus(letterId);
     setStatus(letterId, 'dismissed');
-    const deckId = deckIdByLetterId[letterId];
-
-    if (deckId === undefined) {
-      return false;
-    }
 
     try {
       await dismissCard(deckId, Number(letterId));
@@ -119,6 +124,8 @@ export default function useRecommendationDeck() {
       console.error(error);
       showAlert('danger', '관심 없음 처리하지 못했어요. 다시 시도해주세요.');
       return false;
+    } finally {
+      pendingLetterIdsRef.current.delete(letterId);
     }
   };
 

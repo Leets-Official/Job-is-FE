@@ -48,7 +48,8 @@ export default function SavedJobsList({ isEmptyPreview = false }: SavedJobsListP
   const totalSaved = isEmptyPreview ? 0 : (savedJobsQuery.data?.totalSaved ?? 0);
   const totalApplyIntent = isEmptyPreview ? 0 : (savedJobsQuery.data?.totalApplyIntent ?? 0);
   const isSavedJobsLoading =
-    savedJobsQuery.isLoading || (savedJobsQuery.isFetching && savedJobs.length === 0);
+    !isEmptyPreview &&
+    (savedJobsQuery.isLoading || (savedJobsQuery.isFetching && savedJobs.length === 0));
 
   const historyItems = useMemo(() => {
     const items = historyQuery.data?.pages.flatMap((page) => page.content) ?? [];

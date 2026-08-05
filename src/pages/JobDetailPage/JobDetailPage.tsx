@@ -30,8 +30,12 @@ export default function JobDetailPage() {
   const briefingCard = briefingCardsQuery.data?.find(
     (card) => card.jobId === jobId && card.status !== 'DISMISSED',
   );
-  const dismissDeckId = deckId ?? briefingCard?.deckId;
-  const dismissCardId = cardId ?? briefingCard?.cardId;
+  const dismissCardIds =
+    deckId !== undefined && cardId !== undefined
+      ? { deckId, cardId }
+      : briefingCard
+        ? { deckId: briefingCard.deckId, cardId: briefingCard.cardId }
+        : undefined;
   const {
     isSkipModalOpen,
     setIsSkipModalOpen,
@@ -44,7 +48,11 @@ export default function JobDetailPage() {
     handleIntendToApply,
     handleSave,
     handleSkipSubmit,
-  } = useJobDetailActions({ jobId, deckId: dismissDeckId, cardId: dismissCardId });
+  } = useJobDetailActions({
+    jobId,
+    deckId: dismissCardIds?.deckId,
+    cardId: dismissCardIds?.cardId,
+  });
 
   useEffect(() => {
     if (jobId === null || !jobDetailQuery.isSuccess) return;

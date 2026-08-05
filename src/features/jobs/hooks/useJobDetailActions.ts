@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { recordJobApply, toggleApplyIntent } from '@/api/jobs';
 import { dismissCard, submitDismissReason } from '@/api/recommendations';
 import { showAlert } from '@/components/feedback';
@@ -28,6 +28,8 @@ export default function useJobDetailActions({ jobId, deckId, cardId }: UseJobDet
   const [intendedToApply, setIntendedToApply] = useState(false);
   const [isSaved, setIsSaved] = useState(false);
   const [isSavePending, setIsSavePending] = useState(false);
+  const dismissedCardKeyRef = useRef<string | undefined>(undefined);
+  const isSkipPendingRef = useRef(false);
   const { save, unsave } = useSaveJob();
 
   const canSubmitDismissReason = deckId !== undefined && cardId !== undefined;
@@ -92,23 +94,39 @@ export default function useJobDetailActions({ jobId, deckId, cardId }: UseJobDet
     }
   }
 
-  function handleSkipSubmit(reasons: string[], note: string) {
+  async function handleSkipSubmit(reasons: string[], note: string) {
     if (!canSubmitDismissReason) {
       showAlert('danger', '오늘의 추천에 포함된 공고만 관심 없음으로 표시할 수 있어요.');
       return;
     }
 
-    setIsSkipModalOpen(false);
+    if (isSkipPendingRef.current) return;
 
-    dismissCard(deckId, cardId)
-      .then(() =>
-        submitDismissReason(deckId, cardId, {
-          reason: buildDismissReason(reasons),
-          comment: note || undefined,
-        }),
-      )
-      .then(() => showAlert('success', '관심 없음으로 표시했어요.'))
-      .catch(() => showAlert('danger', '관심 없음 처리하지 못했어요. 다시 시도해주세요.'));
+    const dismissCardKey = `${deckId}-${cardId}`;
+    isSkipPendingRef.current = true;
+
+    try {
+      if (dismissedCardKeyRef.current !== dismissCardKey) {
+        await dismissCard(deckId, cardId);
+        dismissedCardKeyRef.current = dismissCardKey;
+      }
+
+      await submitDismissReason(deckId, cardId, {
+        reason: buildDismissReason(reasons),
+        comment: note || undefined,
+      });
+      setIsSkipModalOpen(false);
+      showAlert('success', '관심 없음으로 표시했어요.');
+    } catch {
+      showAlert(
+        dismissedCardKeyRef.current === dismissCardKey ? 'warning' : 'danger',
+        dismissedCardKeyRef.current === dismissCardKey
+          ? '관심 없음으로 표시했어요. 사유 저장에 실패했어요. 다시 시도해주세요.'
+          : '관심 없음 처리하지 못했어요. 다시 시도해주세요.',
+      );
+    } finally {
+      isSkipPendingRef.current = false;
+    }
   }
 
   return {

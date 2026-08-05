@@ -1,25 +1,45 @@
 import { useEffect } from 'react';
 
+interface BodyScrollStyles {
+  overflow: string;
+  paddingRight: string;
+  scrollbarWidth: string;
+}
+
+let lockCount = 0;
+let previousStyles: BodyScrollStyles | undefined;
+
 export default function useBodyScrollLock(isLocked: boolean) {
   useEffect(() => {
     if (!isLocked) return;
 
-    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
-    const previousOverflow = document.body.style.overflow;
-    const previousPaddingRight = document.body.style.paddingRight;
-    const previousScrollbarWidth =
-      document.documentElement.style.getPropertyValue('--scrollbar-width');
+    if (lockCount === 0) {
+      const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+      previousStyles = {
+        overflow: document.body.style.overflow,
+        paddingRight: document.body.style.paddingRight,
+        scrollbarWidth: document.documentElement.style.getPropertyValue('--scrollbar-width'),
+      };
 
-    document.body.style.overflow = 'hidden';
-    if (scrollbarWidth > 0) {
-      document.body.style.paddingRight = `${scrollbarWidth}px`;
-      document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
+      document.body.style.overflow = 'hidden';
+      if (scrollbarWidth > 0) {
+        document.body.style.paddingRight = `${scrollbarWidth}px`;
+        document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
+      }
     }
+    lockCount += 1;
 
     return () => {
-      document.body.style.overflow = previousOverflow;
-      document.body.style.paddingRight = previousPaddingRight;
-      document.documentElement.style.setProperty('--scrollbar-width', previousScrollbarWidth);
+      lockCount -= 1;
+      if (lockCount !== 0 || !previousStyles) return;
+
+      document.body.style.overflow = previousStyles.overflow;
+      document.body.style.paddingRight = previousStyles.paddingRight;
+      document.documentElement.style.setProperty(
+        '--scrollbar-width',
+        previousStyles.scrollbarWidth,
+      );
+      previousStyles = undefined;
     };
   }, [isLocked]);
 }

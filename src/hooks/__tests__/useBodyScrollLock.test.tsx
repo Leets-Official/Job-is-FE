@@ -23,4 +23,15 @@ describe('useBodyScrollLock', () => {
     unmount();
     expect(document.body.style.overflow).toBe('');
   });
+
+  it('중첩된 잠금은 마지막 잠금이 해제될 때만 본문 스크롤을 복원한다', () => {
+    const firstLock = renderHook(() => useBodyScrollLock(true));
+    const secondLock = renderHook(() => useBodyScrollLock(true));
+
+    firstLock.unmount();
+    expect(document.body.style.overflow).toBe('hidden');
+
+    secondLock.unmount();
+    expect(document.body.style.overflow).toBe('');
+  });
 });
