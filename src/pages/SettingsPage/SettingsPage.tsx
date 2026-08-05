@@ -21,7 +21,9 @@ export default function SettingsPage({
     <div className="flex flex-1 justify-center bg-gray-50 px-5 py-30">
       <div className="flex w-full max-w-298 items-start gap-38 max-lg:gap-10 max-md:flex-col">
         <SettingsSidebar />
-        {settingsContent}
+        <div key={screen} className="page-content-enter flex min-w-0 flex-1">
+          {settingsContent}
+        </div>
       </div>
     </div>
   );
