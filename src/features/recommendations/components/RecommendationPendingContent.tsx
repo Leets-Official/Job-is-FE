@@ -3,11 +3,16 @@ import MailIcon from '@/assets/icons/icon-mail.svg?react';
 import { Button } from '@/components/common';
 import { cn } from '@/utils/cn';
 
-type RecommendationPendingContentProps = ComponentPropsWithRef<'section'>;
+interface RecommendationPendingContentProps extends ComponentPropsWithRef<'section'> {
+  onExploreClick?: () => void;
+  onCompleteProfileClick?: () => void;
+}
 
 export default function RecommendationPendingContent({
   className,
   ref,
+  onExploreClick,
+  onCompleteProfileClick,
   ...props
 }: RecommendationPendingContentProps) {
   return (
@@ -40,10 +45,10 @@ export default function RecommendationPendingContent({
         </div>
 
         <div className="flex items-center justify-center gap-2.5">
-          <Button variant="outline" className="w-37.5">
+          <Button variant="outline" className="w-37.5" onClick={onExploreClick}>
             공고 둘러보기
           </Button>
-          <Button variant="outline" className="w-37.5">
+          <Button variant="outline" className="w-37.5" onClick={onCompleteProfileClick}>
             프로필 보완
           </Button>
         </div>
