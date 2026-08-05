@@ -44,3 +44,6 @@ export const setUserId = (userId: number | null) => useAuthStore.getState().setU
 export const setOnboardingCompleted = (onboardingCompleted: boolean | null) =>
   useAuthStore.getState().setOnboardingCompleted(onboardingCompleted);
 export const clearAuth = () => useAuthStore.getState().clearAuth();
+
+export const getPostLoginPath = (onboardingCompleted: boolean | null) =>
+  onboardingCompleted ? '/recommendations' : '/onboarding';
