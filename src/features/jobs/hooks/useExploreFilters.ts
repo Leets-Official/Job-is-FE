@@ -4,6 +4,7 @@ import type { JobSortOption } from '@/api/types/jobs.types';
 import type { ExploreActiveFilter } from '@/features/jobs/components/ExploreResultsToolbar';
 import { mapJobSummary } from '@/features/jobs/utils/mapJobSummary';
 import useDebounce from '@/hooks/useDebounce';
+import { formatEmploymentType } from '@/utils/formatEmploymentType';
 import { useExploreJobs } from './useExploreJobs';
 import {
   useCareerLevels,
@@ -19,7 +20,7 @@ export default function useExploreFilters() {
   const [page, setPage] = useState(0);
   const [keywordInput, setKeywordInput] = useState('');
   const debouncedKeyword = useDebounce(keywordInput, KEYWORD_DEBOUNCE_MS);
-  const [appliedKeyword, setAppliedKeyword] = useState(debouncedKeyword);
+  const [submittedKeyword, setSubmittedKeyword] = useState<string | null>(null);
   const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
   const [selectedRegion, setSelectedRegion] = useState('');
   const [selectedCareerLevel, setSelectedCareerLevel] = useState('');
@@ -45,14 +46,11 @@ export default function useExploreFilters() {
     value: level.key,
   }));
   const employmentTypeOptions = (employmentTypesQuery.data ?? []).map((type) => ({
-    label: type,
+    label: formatEmploymentType(type),
     value: type,
   }));
 
-  if (debouncedKeyword !== appliedKeyword) {
-    setAppliedKeyword(debouncedKeyword);
-    setPage(0);
-  }
+  const appliedKeyword = submittedKeyword ?? debouncedKeyword;
 
   const jobsQuery = useExploreJobs({
     keyword: appliedKeyword || undefined,
@@ -104,6 +102,18 @@ export default function useExploreFilters() {
     setSort(value);
   };
 
+  const changeKeyword = (keyword: string) => {
+    setPage(0);
+    setKeywordInput(keyword);
+    setSubmittedKeyword(null);
+  };
+
+  const submitKeyword = (keyword: string) => {
+    setPage(0);
+    setKeywordInput(keyword);
+    setSubmittedKeyword(keyword);
+  };
+
   const activeFilters: ExploreActiveFilter[] = [
     ...selectedJobRoles.map((role) => ({
       key: role,
@@ -134,7 +144,7 @@ export default function useExploreFilters() {
       ? [
           {
             key: selectedEmploymentType,
-            label: selectedEmploymentType,
+            label: formatEmploymentType(selectedEmploymentType),
             onRemove: () => handleEmploymentTypeChange(''),
           },
         ]
@@ -153,7 +163,6 @@ export default function useExploreFilters() {
   const hasActiveFilters = activeFilters.length > 0;
   const visibleJobs = (jobsQuery.data?.content ?? []).map(mapJobSummary);
   const isSearching = jobsQuery.isLoading;
-  const isRefetchingInBackground = jobsQuery.isPlaceholderData && jobsQuery.isFetching;
   const hasResults = visibleJobs.length > 0;
   const totalPages = jobsQuery.data?.totalPages ?? 1;
   const resultCount = jobsQuery.data?.totalElements ?? 0;
@@ -173,7 +182,8 @@ export default function useExploreFilters() {
 
   return {
     keywordInput,
-    onKeywordChange: setKeywordInput,
+    onKeywordChange: changeKeyword,
+    onKeywordSubmit: submitKeyword,
     categoryOptions,
     regionOptions,
     careerLevelOptions,
@@ -198,7 +208,6 @@ export default function useExploreFilters() {
     jobsQuery,
     visibleJobs,
     isSearching,
-    isRefetchingInBackground,
     hasResults,
     totalPages,
     resultCount,

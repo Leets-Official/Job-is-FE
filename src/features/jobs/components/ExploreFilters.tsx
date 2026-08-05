@@ -5,6 +5,7 @@ import Search from '@/components/common/Search';
 interface ExploreFiltersProps {
   keyword: string;
   onKeywordChange: (keyword: string) => void;
+  onKeywordSubmit: (keyword: string) => void;
   categoryOptions: MultiSelectOption[];
   selectedJobRoles: string[];
   onToggleJobRole: (value: string) => void;
@@ -26,6 +27,7 @@ interface ExploreFiltersProps {
 export default function ExploreFilters({
   keyword,
   onKeywordChange,
+  onKeywordSubmit,
   categoryOptions,
   selectedJobRoles,
   onToggleJobRole,
@@ -50,6 +52,7 @@ export default function ExploreFilters({
         className="w-206.75"
         value={keyword}
         onChange={(event) => onKeywordChange(event.target.value)}
+        onSearchSubmit={onKeywordSubmit}
       />
       <div className="flex w-full flex-wrap items-center gap-2">
         <MultiSelect

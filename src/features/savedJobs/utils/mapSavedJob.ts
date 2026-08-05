@@ -1,6 +1,7 @@
 import type { SavedJob } from '@/api/types/savedJobs.types';
 import type { SavedJobBadge, SavedJobListing } from '@/features/savedJobs/types/savedJob';
 import { formatDDayLabel } from '@/utils/formatDDayLabel';
+import { formatEmploymentType } from '@/utils/formatEmploymentType';
 
 const RECENT_SAVE_DAYS = 7;
 const DEADLINE_SOON_DAYS = 3;
@@ -40,7 +41,7 @@ export function mapSavedJob(job: SavedJob): SavedJobListing {
   return {
     id: String(job.jobId),
     title: `${job.companyName} · ${job.title}`,
-    meta: `${job.locationFull} · ${job.careerLevel} · ${job.employmentType}`,
+    meta: `${job.locationFull} · ${job.careerLevel} · ${formatEmploymentType(job.employmentType)}`,
     badges,
     closed: job.expired,
   };

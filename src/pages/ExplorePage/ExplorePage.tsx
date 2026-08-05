@@ -4,7 +4,6 @@ import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults'
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
 import ExploreJobGrid from '@/features/jobs/components/ExploreJobGrid';
 import ExploreJobGridSkeleton from '@/features/jobs/components/ExploreJobGridSkeleton';
-import ExploreLoadingIndicator from '@/features/jobs/components/ExploreLoadingIndicator';
 import ExploreResultsToolbar from '@/features/jobs/components/ExploreResultsToolbar';
 import useExploreFilters from '@/features/jobs/hooks/useExploreFilters';
 
@@ -12,6 +11,7 @@ export default function ExplorePage() {
   const {
     keywordInput,
     onKeywordChange,
+    onKeywordSubmit,
     categoryOptions,
     regionOptions,
     careerLevelOptions,
@@ -36,7 +36,6 @@ export default function ExplorePage() {
     jobsQuery,
     visibleJobs,
     isSearching,
-    isRefetchingInBackground,
     hasResults,
     totalPages,
     resultCount,
@@ -57,6 +56,7 @@ export default function ExplorePage() {
         <ExploreFilters
           keyword={keywordInput}
           onKeywordChange={onKeywordChange}
+          onKeywordSubmit={onKeywordSubmit}
           categoryOptions={categoryOptions}
           selectedJobRoles={selectedJobRoles}
           onToggleJobRole={toggleJobRole}
@@ -83,10 +83,7 @@ export default function ExplorePage() {
           onSortChange={handleSortChange}
         />
         {isSearching ? (
-          <>
-            <ExploreJobGridSkeleton />
-            <ExploreLoadingIndicator />
-          </>
+          <ExploreJobGridSkeleton />
         ) : jobsQuery.isError ? (
           <div className="flex min-h-75 w-full flex-1">
             <NoticePanel
@@ -100,7 +97,6 @@ export default function ExplorePage() {
         ) : hasResults ? (
           <>
             <ExploreJobGrid jobs={visibleJobs} />
-            {isRefetchingInBackground && <ExploreLoadingIndicator />}
             <Pagination
               currentPage={page + 1}
               totalPages={totalPages}
