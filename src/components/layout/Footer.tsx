@@ -1,4 +1,5 @@
 import { Link } from 'react-router';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@/constants/legalLinks';
 import { cn } from '@/utils/cn';
 
 type FooterProps = {
@@ -19,18 +20,32 @@ export default function Footer({ className }: FooterProps) {
         </p>
 
         <nav className="flex flex-1 items-center justify-center gap-10 text-body-small font-medium whitespace-nowrap text-text-primary">
-          <Link to="/about" className="hover:text-primary-500">
+          <Link to="/" className="hover:text-primary-500">
             서비스소개
           </Link>
-          <Link to="/terms" className="hover:text-primary-500">
+          <a
+            href={TERMS_OF_SERVICE_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary-500"
+          >
             이용약관
-          </Link>
-          <Link to="/privacy" className="hover:text-primary-500">
+          </a>
+          <a
+            href={PRIVACY_POLICY_URL}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="hover:text-primary-500"
+          >
             개인정보처리방침
-          </Link>
-          <Link to="/contact" className="hover:text-primary-500">
+          </a>
+          <button
+            type="button"
+            onClick={() => alert('문의하기는 준비 중이에요.')}
+            className="cursor-pointer hover:text-primary-500"
+          >
             문의하기
-          </Link>
+          </button>
         </nav>
 
         <p className="shrink-0 text-body-medium font-medium whitespace-nowrap text-text-secondary">

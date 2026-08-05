@@ -1,11 +1,11 @@
 import { type ReactNode } from 'react';
 import { Link, useNavigate } from 'react-router';
-import LogoIcon from '@/assets/icons/logo.svg?react';
+import logoImage from '@/assets/icons/logo.svg';
 import Button from '@/components/common/Button';
 import CarouselIndicator from '@/components/common/CarouselIndicator';
 import Tab from '@/components/common/Tab';
-import useDismissableOpen from '@/hooks/useDismissableOpen';
 import { cn } from '@/utils/cn';
+import HeaderProfileMenu from './HeaderProfileMenu';
 
 interface HeaderTabItem {
   label: string;
@@ -58,7 +58,7 @@ function HeaderTabShell({ className, children }: { className?: string; children:
         className,
       )}
     >
-      <div className="flex h-15 w-full max-w-7xl items-center">{children}</div>
+      <div className="flex h-15 w-full max-w-300 items-center">{children}</div>
     </header>
   );
 }
@@ -66,7 +66,7 @@ function HeaderTabShell({ className, children }: { className?: string; children:
 function HeaderLogo({ suffix, to = '/' }: { suffix?: ReactNode; to?: string }) {
   return (
     <Link to={to} className="flex h-15 shrink-0 items-center gap-1 max-sm:h-10">
-      <LogoIcon className="h-15 w-auto max-sm:h-10" role="img" aria-label="Job.is" />
+      <img src={logoImage} alt="Job.is" className="h-15 w-auto max-sm:h-10" />
       {suffix && (
         <span className="text-display-small leading-none font-bold whitespace-nowrap text-text-secondary">
           {suffix}
@@ -105,11 +105,6 @@ function HeaderTabNav({
 export default function Header(props: HeaderProps) {
   const { className } = props;
   const navigate = useNavigate();
-  const {
-    isOpen: isProfileMenuOpen,
-    setIsOpen: setIsProfileMenuOpen,
-    containerRef: profileMenuRef,
-  } = useDismissableOpen();
   const homeDestination = '/recommendations';
 
   if (props.variant === 'carousel') {
@@ -134,57 +129,11 @@ export default function Header(props: HeaderProps) {
           onTabChange={props.onTabChange}
           className="h-10 flex-1 px-12.5 max-sm:gap-3 max-sm:px-3"
         />
-        <div ref={profileMenuRef} className="relative mr-2 shrink-0">
-          <button
-            type="button"
-            className="size-9 cursor-pointer rounded-full"
-            onClick={() => setIsProfileMenuOpen((previous) => !previous)}
-            aria-label="프로필 메뉴 열기"
-            aria-expanded={isProfileMenuOpen}
-            aria-controls="profile-menu"
-          >
-            {props.profileImageUrl ? (
-              <img
-                src={props.profileImageUrl}
-                alt=""
-                className="size-full rounded-full object-cover"
-              />
-            ) : (
-              <span className="block size-full rounded-full bg-gray-100" />
-            )}
-          </button>
-          {isProfileMenuOpen && (
-            <div
-              id="profile-menu"
-              role="menu"
-              aria-label="프로필 메뉴"
-              className="header-profile-menu-enter absolute top-full right-0 z-20 mt-2 flex w-28 flex-col overflow-hidden rounded-sm border border-gray-200 bg-white py-1 shadow-md"
-            >
-              <button
-                type="button"
-                role="menuitem"
-                className="cursor-pointer px-4 py-3 text-left text-label-medium font-medium text-text-primary hover:bg-gray-50"
-                onClick={() => {
-                  setIsProfileMenuOpen(false);
-                  navigate('/profile');
-                }}
-              >
-                프로필
-              </button>
-              <button
-                type="button"
-                role="menuitem"
-                className="cursor-pointer px-4 py-3 text-left text-label-medium font-medium text-text-primary hover:bg-gray-50"
-                onClick={() => {
-                  setIsProfileMenuOpen(false);
-                  navigate('/settings/notifications');
-                }}
-              >
-                설정
-              </button>
-            </div>
-          )}
-        </div>
+        <HeaderProfileMenu
+          profileImageUrl={props.profileImageUrl}
+          onProfileClick={() => navigate('/profile')}
+          onSettingsClick={() => navigate('/settings/notifications')}
+        />
       </HeaderTabShell>
     );
   }
