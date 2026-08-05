@@ -32,7 +32,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
         type="button"
         onClick={() => setIsMenuOpen((prev) => !prev)}
         aria-label="더보기"
-        className="absolute top-[209px] right-2.5 flex size-6 items-center justify-center"
+        className="absolute top-52.25 right-2.5 flex size-6 items-center justify-center"
       >
         <MoreVerticalIcon className="size-6" />
       </button>
