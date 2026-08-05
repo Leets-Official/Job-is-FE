@@ -1,12 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
+import type { ProfileResponse } from '@/api/types/profile.types';
 import useProfileFiles from './useProfileFiles';
 import useProfileFormMetadata from './useProfileFormMetadata';
 import useProfileUpdate, { PROFILE_UPDATE_VALIDATION_ERROR_MESSAGE } from './useProfileUpdate';
 import type { ProfileSettingsFormValues } from '../types/profileSettings';
 
+export type ProfileHydrationSource = Pick<
+  ProfileResponse,
+  'jobCategories' | 'region' | 'careerLevel' | 'preferenceNotes' | 'techStacks'
+>;
+
 interface UseProfileSettingsFormOptions {
   loadProfile: boolean;
   onSubmit?: (values: ProfileSettingsFormValues) => void | Promise<void>;
+  initialProfile?: ProfileHydrationSource | null;
 }
 
 function toggleSingleValue(values: string[], value: string) {
@@ -24,6 +31,7 @@ function addUniqueValue(values: string[], value: string) {
 export default function useProfileSettingsForm({
   loadProfile,
   onSubmit,
+  initialProfile,
 }: UseProfileSettingsFormOptions) {
   const [regions, setRegions] = useState<string[]>([]);
   const [career, setCareer] = useState('');
@@ -50,22 +58,24 @@ export default function useProfileSettingsForm({
 
   const markUnsaved = () => setIsSaved(false);
 
-  useEffect(() => {
-    if (!loadProfile || !profile || hasHydratedProfile.current) return;
+  const hydrationSource = profile ?? initialProfile ?? undefined;
 
-    setRegions(profile.region ? [profile.region.name] : []);
-    setCareer(profile.careerLevel ?? '');
-    const jobCategories = profile.jobCategories ?? [];
+  useEffect(() => {
+    if (!hydrationSource || hasHydratedProfile.current) return;
+
+    setRegions(hydrationSource.region ? [hydrationSource.region.name] : []);
+    setCareer(hydrationSource.careerLevel ?? '');
+    const jobCategories = hydrationSource.jobCategories ?? [];
     const primaryCategory = jobCategories.find((category) => category.primary);
     setInterests([
       ...(primaryCategory ? [primaryCategory.name] : []),
       ...jobCategories.filter((category) => !category.primary).map((category) => category.name),
     ]);
     setPrimaryInterest(primaryCategory?.name);
-    setTechStacks(profile.techStacks ?? []);
-    setPreferenceNote(profile.preferenceNotes?.[0] ?? '');
+    setTechStacks(hydrationSource.techStacks ?? []);
+    setPreferenceNote(hydrationSource.preferenceNotes?.[0] ?? '');
     hasHydratedProfile.current = true;
-  }, [loadProfile, profile]);
+  }, [hydrationSource]);
 
   const submit = async () => {
     const values = {
