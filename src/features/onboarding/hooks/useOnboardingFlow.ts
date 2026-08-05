@@ -1,3 +1,4 @@
+import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
@@ -8,8 +9,8 @@ import {
   saveProfileDraft,
 } from '@/api/profile';
 import type { JobCategory, Region } from '@/api/types/jobs.types';
-import type { ProfileDraftResponse } from '@/api/types/profile.types';
-import { setOnboardingCompleted } from '@/features/login/store/useAuthStore';
+import { QUERY_KEYS } from '@/constants/queryKey';
+import { setOnboardingCompleted } from '@/store/useAuthStore';
 
 interface OnboardingProfileValues {
   regions: string[];
@@ -49,7 +50,10 @@ export default function useOnboardingFlow({
   onProfileSaved,
 }: UseOnboardingFlowOptions) {
   const navigate = useNavigate();
-  const [draft, setDraft] = useState<ProfileDraftResponse | null>(null);
+  const draftQuery = useQuery({
+    queryKey: QUERY_KEYS.PROFILE.DRAFT(),
+    queryFn: getProfileDraft,
+  });
   const [resumeName, setResumeName] = useState<string>();
   const [saveError, setSaveError] = useState<string>();
   const [isSaving, setIsSaving] = useState(false);
@@ -98,11 +102,10 @@ export default function useOnboardingFlow({
         techStacks: values.techStacks,
       });
 
-      const [savedDraft, profileFiles] = await Promise.all([
-        getProfileDraft(),
+      const [, profileFiles] = await Promise.all([
+        draftQuery.refetch(),
         getProfileFiles().catch(() => []),
       ]);
-      setDraft(savedDraft);
       setResumeName(profileFiles.find((file) => file.category === 'RESUME')?.fileName);
       onProfileSaved();
     } catch {
@@ -110,6 +113,26 @@ export default function useOnboardingFlow({
     } finally {
       setIsSaving(false);
     }
+  };
+
+  const saveDraftSnapshot = (values: OnboardingProfileValues) => {
+    const selectedCategories = values.interests
+      .map((interest) => findMetadataByName(jobCategories, interest))
+      .filter((category): category is JobCategory => category !== undefined);
+    const selectedRegion = findMetadataByName(regions, values.regions[0] ?? '');
+
+    saveProfileDraft({
+      onboardingStep: 'PROFILE',
+      jobCategoryIds: selectedCategories.map((category) => category.id),
+      primaryJobCategoryId: selectedCategories[0]?.id,
+      regionId: selectedRegion?.id,
+      careerLevel: isCareerLevel(values.career) ? values.career : undefined,
+      preferenceNotes: values.preferenceNotes,
+      excludeKeywords: [],
+      techStacks: values.techStacks,
+    })
+      .then(() => draftQuery.refetch())
+      .catch(() => {});
   };
 
   const complete = async () => {
@@ -128,13 +151,14 @@ export default function useOnboardingFlow({
   };
 
   return {
-    draft,
+    draft: draftQuery.data ?? null,
     resumeName,
     saveError,
     isSaving,
     completeError,
     isCompleting,
     saveProfile,
+    saveDraftSnapshot,
     complete,
   };
 }

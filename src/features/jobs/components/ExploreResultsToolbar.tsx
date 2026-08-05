@@ -1,17 +1,12 @@
 import type { JobSortOption } from '@/api/types/jobs.types';
 import { Dropdown, Tag } from '@/components/common';
+import type { ExploreActiveFilter } from '@/features/jobs/types/exploreJob';
 
 const SORT_OPTIONS: { label: string; value: JobSortOption }[] = [
   { label: '추천순', value: 'FIT' },
   { label: '최신순', value: 'RECENT' },
   { label: '마감임박순', value: 'DEADLINE' },
 ];
-
-export interface ExploreActiveFilter {
-  key: string;
-  label: string;
-  onRemove: () => void;
-}
 
 interface ExploreResultsToolbarProps {
   resultCount: number;

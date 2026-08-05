@@ -79,11 +79,11 @@ export interface JobDetail {
   remoteAvailable: boolean;
   sourceUrl: string;
   dueTime: string;
-  intro: string;
-  mainTasks: string;
-  requirements: string;
-  preferredPoints: string;
-  benefits: string;
+  intro: string | null;
+  mainTasks: string | null;
+  requirements: string | null;
+  preferredPoints: string | null;
+  benefits: string | null;
   employeeCount: number;
   companyType: string;
   industry: string;

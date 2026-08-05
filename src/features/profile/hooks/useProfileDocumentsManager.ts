@@ -2,13 +2,13 @@ import { useMemo, useRef, useState } from 'react';
 import useProfileDocumentActions from '@/features/profile/hooks/useProfileDocumentActions';
 import useProfileDocumentUpload from '@/features/profile/hooks/useProfileDocumentUpload';
 import useProfileFiles from '@/features/profile/hooks/useProfileFiles';
+import { validateProfileDocument } from '@/features/profile/profileDocument';
 import {
   type DocumentType,
   type DocumentUpload,
   type DocumentUploadError,
   type ProfileDocument,
 } from '@/features/profile/types/profileDocument';
-import { validateProfileDocument } from '@/features/profile/utils/profileDocument';
 import { formatLocalDateKey } from '@/utils/formatLocalDateKey';
 
 export default function useProfileDocumentsManager() {

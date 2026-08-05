@@ -3,7 +3,7 @@ import { Button, NoticePanel } from '@/components/common';
 import { Spinner } from '@/components/feedback';
 import RecommendationNewsDetailMain from '@/features/recommendations/components/RecommendationNewsDetailMain';
 import { useContentDetail } from '@/features/recommendations/hooks/useContents';
-import { mapContentDetail } from '@/features/recommendations/utils/mapContent';
+import { mapContentDetail } from '@/features/recommendations/mapContent';
 
 export default function RecommendationNewsDetailPage() {
   const { id } = useParams<{ id: string }>();

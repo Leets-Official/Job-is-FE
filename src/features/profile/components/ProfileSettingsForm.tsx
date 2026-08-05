@@ -4,14 +4,16 @@ import ProfileBasicInfoSection from '@/features/profile/components/ProfileBasicI
 import ProfileLifestyleSection from '@/features/profile/components/ProfileLifestyleSection';
 import ProfileLinksSection from '@/features/profile/components/ProfileLinksSection';
 import ProfilePreferencesSection from '@/features/profile/components/ProfilePreferencesSection';
-import useProfileSettingsForm from '@/features/profile/hooks/useProfileSettingsForm';
+import useProfileSettingsForm, {
+  type ProfileHydrationSource,
+} from '@/features/profile/hooks/useProfileSettingsForm';
 import type { ProfileSettingsFormValues } from '@/features/profile/types/profileSettings';
 
 export type { ProfileSettingsFormValues } from '@/features/profile/types/profileSettings';
 
 interface ProfileSettingsFormProps {
-  onDocumentsClick?: () => void;
-  onAptitudeTestClick?: () => void;
+  onDocumentsClick?: (values: ProfileSettingsFormValues) => void;
+  onAptitudeTestClick?: (values: ProfileSettingsFormValues) => void;
   onSubmit?: (values: ProfileSettingsFormValues) => void | Promise<void>;
   submitLabel?: string;
   title?: string;
@@ -19,6 +21,8 @@ interface ProfileSettingsFormProps {
   loadProfile?: boolean;
   submitError?: string;
   isSubmitting?: boolean;
+  aptitudeTestCompleted?: boolean;
+  initialProfile?: ProfileHydrationSource | null;
 }
 
 export default function ProfileSettingsForm({
@@ -31,6 +35,8 @@ export default function ProfileSettingsForm({
   loadProfile = true,
   submitError,
   isSubmitting = false,
+  aptitudeTestCompleted,
+  initialProfile,
 }: ProfileSettingsFormProps) {
   const {
     regions,
@@ -56,7 +62,14 @@ export default function ProfileSettingsForm({
     addTechStack,
     changePreferenceNote,
     submit,
-  } = useProfileSettingsForm({ loadProfile, onSubmit });
+  } = useProfileSettingsForm({ loadProfile, onSubmit, initialProfile });
+  const currentValues: ProfileSettingsFormValues = {
+    regions,
+    career,
+    interests,
+    techStacks,
+    preferenceNotes: preferenceNote.trim() ? [preferenceNote.trim()] : [],
+  };
 
   if (isProfilePending) {
     return (
@@ -104,9 +117,11 @@ export default function ProfileSettingsForm({
       />
 
       <ProfileLinksSection
-        onDocumentsClick={onDocumentsClick}
-        onAptitudeTestClick={onAptitudeTestClick}
-        aptitudeTestCompleted={profile?.jobTestCompleted}
+        onDocumentsClick={onDocumentsClick ? () => onDocumentsClick(currentValues) : undefined}
+        onAptitudeTestClick={
+          onAptitudeTestClick ? () => onAptitudeTestClick(currentValues) : undefined
+        }
+        aptitudeTestCompleted={profile?.jobTestCompleted ?? aptitudeTestCompleted}
         documentsStatus={documentsStatus}
       />
 

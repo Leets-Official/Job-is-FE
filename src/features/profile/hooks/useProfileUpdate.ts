@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { isCareerLevel, updateProfile } from '@/api/profile';
 import type { JobCategory, Region } from '@/api/types/jobs.types';
+import { showAlert } from '@/components/feedback';
 import { QUERY_KEYS } from '@/constants/queryKey';
 
 interface ProfileSettingsValues {
@@ -30,6 +31,10 @@ export default function useProfileUpdate({ jobCategories, regions }: UseProfileU
     mutationFn: updateProfile,
     onSuccess: (profile) => {
       queryClient.setQueryData(QUERY_KEYS.PROFILE.BASE(), profile);
+      showAlert('success', '프로필을 저장했어요.');
+    },
+    onError: () => {
+      showAlert('danger', '프로필을 저장하지 못했어요. 잠시 후 다시 시도해주세요.');
     },
   });
 

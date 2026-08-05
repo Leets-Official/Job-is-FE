@@ -9,7 +9,7 @@ import JobDetailSidebar from '@/features/jobs/components/JobDetailSidebar';
 import JobDetailSkipFeedbackModal from '@/features/jobs/components/JobDetailSkipFeedbackModal';
 import { useJobDetail } from '@/features/jobs/hooks/useJobDetail';
 import useJobDetailActions from '@/features/jobs/hooks/useJobDetailActions';
-import { mapJobDetail } from '@/features/jobs/utils/mapJobDetail';
+import { mapJobDetail } from '@/features/jobs/mapJobDetail';
 
 interface JobDetailLocationState {
   deckId?: number;
@@ -32,6 +32,7 @@ export default function JobDetailPage() {
     setIsApplyModalOpen,
     intendedToApply,
     isSaved,
+    isSavePending,
     handleConfirmApply,
     handleIntendToApply,
     handleSave,
@@ -80,7 +81,7 @@ export default function JobDetailPage() {
           <div className="min-w-0 w-full flex-1">
             <JobDetailMain job={job} backTo="/recommendations" backLabel="오늘의 추천으로" />
           </div>
-          <div className="w-full lg:w-90 lg:shrink-0">
+          <div className="w-full lg:w-105.5 lg:shrink-0">
             <div className="lg:sticky lg:top-24">
               <JobDetailSidebar
                 job={job}
@@ -88,6 +89,7 @@ export default function JobDetailPage() {
                 onIntendToApply={handleIntendToApply}
                 onSave={handleSave}
                 isSaved={isSaved}
+                isSavePending={isSavePending}
                 onNotInterested={() => setIsSkipModalOpen(true)}
                 isIntendedToApply={intendedToApply}
               />
