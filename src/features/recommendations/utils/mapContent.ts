@@ -1,4 +1,4 @@
-import type { ContentDetail, ContentSummary, ContentType } from '@/api/contents';
+import type { ContentDetail, ContentSummary, ContentType } from '@/api/types/recommendations.types';
 import type { RecommendationNewsDetail } from '@/features/recommendations/types/recommendationNewsDetail';
 import type { RecommendationNewsItem } from '@/features/recommendations/types/recommendationNewsItem';
 import { formatDotDate } from '@/utils/formatDotDate';

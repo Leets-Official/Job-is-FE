@@ -1,4 +1,4 @@
-import type { BriefingCard, BriefingCardStatus } from '@/api/briefings';
+import type { BriefingCard, BriefingCardStatus } from '@/api/types/recommendations.types';
 import type { RecommendationLetterStatus } from '@/features/recommendations/store/useRecommendationDeckStore';
 import type { RecommendationLetter } from '@/features/recommendations/types/recommendationLetter';
 import { formatDDayLabel } from '@/utils/formatDDayLabel';

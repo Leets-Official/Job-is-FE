@@ -1,4 +1,8 @@
-import type { CriteriaMatrix, FitCriteriaVerdict, JobDetail as ApiJobDetail } from '@/api/jobs';
+import type {
+  CriteriaMatrix,
+  FitCriteriaVerdict,
+  JobDetail as ApiJobDetail,
+} from '@/api/types/jobs.types';
 import type {
   JobDetail,
   JobDetailContentSection,
