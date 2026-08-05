@@ -45,7 +45,7 @@ export default function Search({
             placeholder={placeholder}
             aria-describedby={helperText ? `${inputId}-helper-text` : undefined}
             disabled={disabled}
-            className="h-full w-full flex-1 bg-transparent text-body-large text-gray-900 outline-none placeholder:text-gray-600 disabled:cursor-not-allowed disabled:text-gray-400"
+            className="h-full w-full flex-1 bg-transparent text-body-large font-medium text-gray-900 outline-none placeholder:text-gray-600 disabled:cursor-not-allowed disabled:text-gray-400"
             {...props}
           />
           <button

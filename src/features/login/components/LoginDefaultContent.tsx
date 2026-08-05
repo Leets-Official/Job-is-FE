@@ -1,4 +1,11 @@
+import { getOAuthAuthorizeUrl } from '@/api/auth';
+import type { OAuthProvider } from '@/api/types/auth.types';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@/constants/legalLinks';
 import SocialLoginButton from './SocialLoginButton';
+
+function handleSocialLogin(provider: OAuthProvider) {
+  window.location.href = getOAuthAuthorizeUrl(provider);
+}
 
 export default function LoginDefaultContent() {
   return (
@@ -10,8 +17,8 @@ export default function LoginDefaultContent() {
       </p>
 
       <div className="flex w-full max-w-104 flex-col gap-3">
-        <SocialLoginButton provider="google" />
-        <SocialLoginButton provider="kakao" />
+        <SocialLoginButton provider="google" onClick={() => handleSocialLogin('google')} />
+        <SocialLoginButton provider="kakao" onClick={() => handleSocialLogin('kakao')} />
       </div>
 
       <div className="w-full max-w-104 rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6">
@@ -25,14 +32,18 @@ export default function LoginDefaultContent() {
       <p className="text-center text-body-medium font-medium text-text-tertiary">
         계속하면{' '}
         <a
-          href="/terms"
+          href={TERMS_OF_SERVICE_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-text-secondary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
         >
           이용약관
         </a>{' '}
         •{' '}
         <a
-          href="/privacy"
+          href={PRIVACY_POLICY_URL}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-text-secondary underline decoration-solid decoration-from-font [text-underline-position:from-font]"
         >
           개인정보처리방침

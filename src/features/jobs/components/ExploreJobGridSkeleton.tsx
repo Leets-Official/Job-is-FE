@@ -1,11 +1,3 @@
-import JobCard from '@/features/jobs/components/JobCard';
-
-const PLACEHOLDER_IMAGE =
-  'data:image/svg+xml;utf8,' +
-  encodeURIComponent(
-    '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"><rect width="1" height="1" fill="#e9ecef"/></svg>',
-  );
-
 const SKELETON_ITEMS = Array.from({ length: 6 }, (_, index) => index);
 
 export default function ExploreJobGridSkeleton() {
@@ -16,17 +8,17 @@ export default function ExploreJobGridSkeleton() {
       aria-live="polite"
     >
       {SKELETON_ITEMS.map((index) => (
-        <JobCard
-          key={index}
-          className="w-full animate-pulse"
-          thumbnailUrl={PLACEHOLDER_IMAGE}
-          dDayLabel="D-day"
-          matchScoreLabel="Match Score"
-          avatarUrl={PLACEHOLDER_IMAGE}
-          title="Job Title"
-          companyName="[Company Name]"
-          employmentInfo="Employment Info"
-        />
+        <article key={index} className="flex w-87.5 flex-col items-start gap-3">
+          <div className="h-49.25 w-full animate-pulse rounded-md bg-gray-200" />
+          <div className="flex w-full items-start gap-3 px-2.5">
+            <div className="size-9 shrink-0 animate-pulse rounded-full bg-gray-200" />
+            <div className="flex min-w-0 flex-1 flex-col gap-2 py-0.5">
+              <div className="h-4 w-3/4 animate-pulse rounded bg-gray-200" />
+              <div className="h-3.5 w-1/2 animate-pulse rounded bg-gray-200" />
+              <div className="h-3.5 w-2/5 animate-pulse rounded bg-gray-200" />
+            </div>
+          </div>
+        </article>
       ))}
     </div>
   );

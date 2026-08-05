@@ -1,135 +1,113 @@
-import { useEffect, useState } from 'react';
+import { Button, NoticePanel } from '@/components/common';
 import Pagination from '@/components/common/Pagination';
 import ExploreEmptyResults from '@/features/jobs/components/ExploreEmptyResults';
 import ExploreFilters from '@/features/jobs/components/ExploreFilters';
 import ExploreJobGrid from '@/features/jobs/components/ExploreJobGrid';
 import ExploreJobGridSkeleton from '@/features/jobs/components/ExploreJobGridSkeleton';
 import ExploreLoadingIndicator from '@/features/jobs/components/ExploreLoadingIndicator';
-import ExploreResultsToolbar, {
-  type ExploreActiveFilter,
-} from '@/features/jobs/components/ExploreResultsToolbar';
-import { JOB_ROLE_KEYWORDS, JOB_ROLE_OPTIONS } from '@/features/jobs/constants/exploreFilters';
-import { mockExploreJobs } from '@/features/jobs/mocks/exploreJobsMock';
-
-const TOTAL_RESULT_COUNT = 128;
-const TOTAL_PAGES = 3;
-const SEARCH_LOADING_DELAY_MS = 700;
+import ExploreResultsToolbar from '@/features/jobs/components/ExploreResultsToolbar';
+import useExploreFilters from '@/features/jobs/hooks/useExploreFilters';
 
 export default function ExplorePage() {
-  const [currentPage, setCurrentPage] = useState(1);
-  const [selectedJobRoles, setSelectedJobRoles] = useState<string[]>([]);
-  const [isRemoteSelected, setIsRemoteSelected] = useState(false);
-  const [isAlwaysOpenSelected, setIsAlwaysOpenSelected] = useState(true);
-  const filterKey = JSON.stringify([selectedJobRoles, isRemoteSelected, isAlwaysOpenSelected]);
-  const [previousFilterKey, setPreviousFilterKey] = useState(filterKey);
-  const [isSearching, setIsSearching] = useState(true);
-
-  if (filterKey !== previousFilterKey) {
-    setPreviousFilterKey(filterKey);
-    setIsSearching(true);
-  }
-
-  useEffect(() => {
-    if (!isSearching) return;
-    const timer = setTimeout(() => setIsSearching(false), SEARCH_LOADING_DELAY_MS);
-    return () => clearTimeout(timer);
-  }, [isSearching]);
-
-  const toggleJobRole = (value: string) => {
-    setSelectedJobRoles((prev) =>
-      prev.includes(value) ? prev.filter((role) => role !== value) : [...prev, value],
-    );
-  };
-
-  const activeFilters: ExploreActiveFilter[] = [
-    ...JOB_ROLE_OPTIONS.filter((option) => selectedJobRoles.includes(option.value)).map(
-      (option) => ({
-        key: option.value,
-        label: option.label,
-        onRemove: () => toggleJobRole(option.value),
-      }),
-    ),
-    ...(isRemoteSelected
-      ? [
-          {
-            key: 'remote',
-            label: '원격',
-            onRemove: () => setIsRemoteSelected(false),
-          },
-        ]
-      : []),
-    ...(isAlwaysOpenSelected
-      ? [
-          {
-            key: 'always-open',
-            label: '상시포함',
-            onRemove: () => setIsAlwaysOpenSelected(false),
-          },
-        ]
-      : []),
-  ];
-
-  const hasActiveFilters = selectedJobRoles.length > 0 || isRemoteSelected || !isAlwaysOpenSelected;
-
-  const visibleJobs = mockExploreJobs.filter((job) => {
-    const matchesRole =
-      selectedJobRoles.length === 0 ||
-      selectedJobRoles.some((role) => job.title.includes(JOB_ROLE_KEYWORDS[role]));
-    const matchesRemote = !isRemoteSelected || job.isRemote;
-    const matchesAlwaysOpen = isAlwaysOpenSelected || job.dDayLabel !== '상시';
-    return matchesRole && matchesRemote && matchesAlwaysOpen;
-  });
-
-  const hasResults = visibleJobs.length > 0;
-  const resultCount = hasActiveFilters ? visibleJobs.length : TOTAL_RESULT_COUNT;
-
-  const resetFilters = () => {
-    setSelectedJobRoles([]);
-    setIsRemoteSelected(false);
-    setIsAlwaysOpenSelected(false);
-  };
+  const {
+    keywordInput,
+    onKeywordChange,
+    categoryOptions,
+    regionOptions,
+    careerLevelOptions,
+    employmentTypeOptions,
+    selectedJobRoles,
+    selectedRegion,
+    selectedCareerLevel,
+    selectedEmploymentType,
+    isRemoteSelected,
+    isAlwaysOpenIncluded,
+    sort,
+    toggleJobRole,
+    handleRegionChange,
+    handleCareerLevelChange,
+    handleEmploymentTypeChange,
+    toggleRemote,
+    toggleAlwaysOpen,
+    handleSortChange,
+    activeFilters,
+    hasActiveFilters,
+    resetFilters,
+    jobsQuery,
+    visibleJobs,
+    isSearching,
+    isRefetchingInBackground,
+    hasResults,
+    totalPages,
+    resultCount,
+    page,
+    goToPreviousPage,
+    goToNextPage,
+  } = useExploreFilters();
 
   return (
     <div className="flex min-h-0 w-full flex-1 justify-center bg-gray-50 px-3 py-8">
       <div className="flex w-full max-w-300 flex-col gap-6">
         <div className="flex flex-col gap-1">
-          <h1 className="text-heading-large font-bold text-text-primary">탐색</h1>
-          <p className="text-body-medium font-medium text-text-secondary">
+          <h1 className="text-heading-medium font-bold text-text-primary">탐색</h1>
+          <p className="text-label-medium font-medium text-text-secondary">
             추천이 메인, 탐색은 직접 찾고 싶을 때의 보조 동선
           </p>
         </div>
         <ExploreFilters
+          keyword={keywordInput}
+          onKeywordChange={onKeywordChange}
+          categoryOptions={categoryOptions}
           selectedJobRoles={selectedJobRoles}
           onToggleJobRole={toggleJobRole}
+          regionOptions={regionOptions}
+          selectedRegion={selectedRegion}
+          onRegionChange={handleRegionChange}
+          careerLevelOptions={careerLevelOptions}
+          selectedCareerLevel={selectedCareerLevel}
+          onCareerLevelChange={handleCareerLevelChange}
+          employmentTypeOptions={employmentTypeOptions}
+          selectedEmploymentType={selectedEmploymentType}
+          onEmploymentTypeChange={handleEmploymentTypeChange}
           isRemoteSelected={isRemoteSelected}
-          onToggleRemote={() => setIsRemoteSelected((prev) => !prev)}
-          isAlwaysOpenSelected={isAlwaysOpenSelected}
-          onToggleAlwaysOpen={() => setIsAlwaysOpenSelected((prev) => !prev)}
+          onToggleRemote={toggleRemote}
+          isAlwaysOpenIncluded={isAlwaysOpenIncluded}
+          onToggleAlwaysOpen={toggleAlwaysOpen}
         />
         <ExploreResultsToolbar
           resultCount={resultCount}
           activeFilters={activeFilters}
           onReset={resetFilters}
           isLoading={isSearching}
+          sort={sort}
+          onSortChange={handleSortChange}
         />
         {isSearching ? (
           <>
             <ExploreJobGridSkeleton />
             <ExploreLoadingIndicator />
           </>
+        ) : jobsQuery.isError ? (
+          <NoticePanel resultIconVariant="danger" title="공고를 불러오지 못했어요">
+            <Button onClick={() => jobsQuery.refetch()}>다시 시도</Button>
+          </NoticePanel>
         ) : hasResults ? (
           <>
             <ExploreJobGrid jobs={visibleJobs} />
+            {isRefetchingInBackground && <ExploreLoadingIndicator />}
             <Pagination
-              currentPage={currentPage}
-              totalPages={TOTAL_PAGES}
-              label={`${currentPage}/${TOTAL_PAGES}`}
-              onPrevious={() => setCurrentPage((page) => Math.max(1, page - 1))}
-              onNext={() => setCurrentPage((page) => Math.min(TOTAL_PAGES, page + 1))}
+              currentPage={page + 1}
+              totalPages={totalPages}
+              label={`${page + 1}/${totalPages}`}
+              onPrevious={goToPreviousPage}
+              onNext={goToNextPage}
             />
           </>
         ) : (
-          <ExploreEmptyResults activeFilters={activeFilters} onResetFilters={resetFilters} />
+          <ExploreEmptyResults
+            activeFilters={hasActiveFilters ? activeFilters : []}
+            onResetFilters={resetFilters}
+          />
         )}
       </div>
     </div>

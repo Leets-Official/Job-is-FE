@@ -1,7 +1,8 @@
 import { useState } from 'react';
-import { Outlet, useLocation, useMatches, useNavigate } from 'react-router';
+import { Navigate, Outlet, useLocation, useMatches, useNavigate } from 'react-router';
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
+import { useAuthStore } from '@/features/login/store/useAuthStore';
 import { cn } from '@/utils/cn';
 
 type MainLayoutTab = {
@@ -31,6 +32,7 @@ export default function MainLayout() {
   const navigate = useNavigate();
   const location = useLocation();
   const matches = useMatches();
+  const accessToken = useAuthStore((state) => state.accessToken);
   const headerHandle = (matches.at(-1)?.handle as MainLayoutRouteHandle | undefined)?.header;
   const initialCarouselActiveIndex =
     headerHandle?.variant === 'carousel' ? headerHandle.activeIndex : 0;
@@ -40,7 +42,14 @@ export default function MainLayout() {
     new URLSearchParams(location.search).get('preview') === 'intro';
   const shouldAnimateContent =
     location.pathname === '/onboarding' ||
+    location.pathname === '/profile' ||
+    location.pathname === '/profile/documents' ||
+    location.pathname === '/profile/aptitude-test' ||
     (location.state as { transition?: string } | null)?.transition === 'recommendation-flow';
+
+  if (!accessToken) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -61,7 +70,6 @@ export default function MainLayout() {
             if (path) navigate(path);
           }}
           profileImageUrl={headerHandle.profileImageUrl}
-          onProfileClick={() => navigate('/profile')}
           className={isRecommendationIntroPreview ? 'recommendation-intro-header-enter' : undefined}
         />
       ) : (

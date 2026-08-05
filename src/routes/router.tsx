@@ -13,11 +13,10 @@ import LandingPage from '@/pages/LandingPage/LandingPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
-import PlaygroundPage from '@/pages/PlaygroundPage/PlaygroundPage';
 import PolicyPage from '@/pages/PolicyPage/PolicyPage';
-import ProfileAptitudeTestPage from '@/pages/ProfileAptitudeTestPage/ProfileAptitudeTestPage';
 import ProfileDocumentsPage from '@/pages/ProfileDocumentsPage/ProfileDocumentsPage';
 import ProfilePage from '@/pages/ProfilePage/ProfilePage';
+import QuizPage from '@/pages/QuizPage/QuizPage';
 import RecommendationNewsDetailPage from '@/pages/RecommendationNewsDetailPage/RecommendationNewsDetailPage';
 import RecommendationsPage from '@/pages/RecommendationsPage/RecommendationsPage';
 import SavedJobsPage from '@/pages/SavedJobsPage/SavedJobsPage';
@@ -50,8 +49,8 @@ export const router = createBrowserRouter([
       { path: '/login/email-required', element: <LoginPage state="email-required" /> },
       { path: '/policy', element: <PolicyPage /> },
       { path: '/oauth/callback', element: <CallbackPage /> },
-      { path: '/playground', element: <PlaygroundPage /> },
-      // NOTE: 임시 미리보기 라우트, 실제 트리거(에러 바운더리 등) 연결 후 삭제 예정
+      { path: '/account/recovery', element: <AccountRecoveryPage /> },
+      { path: '/unsubscribe', element: <UnsubscribePage /> },
       { path: '/system-error', element: <SystemErrorPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
@@ -63,7 +62,7 @@ export const router = createBrowserRouter([
         path: '/onboarding',
         element: <OnboardingPage />,
         handle: {
-          header: { variant: 'carousel', totalSteps: 3, activeIndex: 0 },
+          header: { variant: 'carousel', totalSteps: 2, activeIndex: 0 },
         },
       },
       {
@@ -143,7 +142,7 @@ export const router = createBrowserRouter([
       },
       {
         path: '/profile/aptitude-test',
-        element: <ProfileAptitudeTestPage />,
+        element: <QuizPage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
       },
       {
@@ -167,10 +166,6 @@ export const router = createBrowserRouter([
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
       },
       {
-        path: '/account/recovery',
-        element: <AccountRecoveryPage />,
-      },
-      {
         path: '/settings/privacy',
         element: <SettingsPage screen="privacy" />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
@@ -184,11 +179,6 @@ export const router = createBrowserRouter([
         path: '/jobs/:id/expired',
         element: <JobDetailExpiredPage />,
         handle: { header: { ...MAIN_TAB_HEADER, activeIndex: 0 } },
-      },
-      {
-        path: '/unsubscribe',
-        element: <UnsubscribePage />,
-        handle: { header: { ...MAIN_TAB_HEADER, activeIndex: -1 } },
       },
       { path: '*', element: <NotFoundPage /> },
     ],

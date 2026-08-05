@@ -4,6 +4,8 @@ export { default as CarouselArrow } from './CarouselArrow';
 export { default as CarouselIndicator } from './CarouselIndicator';
 export { default as Checkbox } from './Checkbox';
 export { default as DetailListCard } from './DetailListCard';
+export { default as Dropdown } from './Dropdown';
+export type { DropdownOption } from './Dropdown';
 export { default as FileUpload } from './FileUpload';
 export type { FileUploadItem } from './FileUpload';
 export { default as FormField } from './FormField';

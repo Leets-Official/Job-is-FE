@@ -30,12 +30,12 @@ export default function Pagination({
         type="button"
         onClick={onPrevious}
         disabled={currentPage <= 1}
-        className="flex h-10 w-[110px] min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-sm text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-10 w-27.5 min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-sm text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <ArrowLeftIcon className="size-4" /> 이전
       </button>
 
-      <span className="flex w-[110px] min-w-0 items-center justify-center gap-4 text-body-medium font-medium text-gray-900">
+      <span className="flex w-27.5 min-w-0 items-center justify-center gap-4 text-body-medium font-medium text-gray-900">
         {label ?? `오늘 도착 · ${currentPage}/${totalPages}`}
       </span>
 
@@ -43,7 +43,7 @@ export default function Pagination({
         type="button"
         onClick={onNext}
         disabled={currentPage >= totalPages}
-        className="flex h-10 w-[110px] min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-sm text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
+        className="flex h-10 w-27.5 min-w-0 items-center justify-center gap-1 py-0 pr-2 pl-1 text-sm text-gray-700 disabled:cursor-not-allowed disabled:opacity-50"
       >
         다음 <ArrowRightIcon className="size-4" />
       </button>

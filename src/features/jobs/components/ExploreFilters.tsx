@@ -1,53 +1,90 @@
-import { MultiSelect, Select, Tag } from '@/components/common';
+import { Dropdown, MultiSelect, Tag } from '@/components/common';
+import type { MultiSelectOption } from '@/components/common/MultiSelect';
 import Search from '@/components/common/Search';
-import { JOB_ROLE_OPTIONS } from '@/features/jobs/constants/exploreFilters';
 
 interface ExploreFiltersProps {
+  keyword: string;
+  onKeywordChange: (keyword: string) => void;
+  categoryOptions: MultiSelectOption[];
   selectedJobRoles: string[];
   onToggleJobRole: (value: string) => void;
+  regionOptions: MultiSelectOption[];
+  selectedRegion: string;
+  onRegionChange: (value: string) => void;
+  careerLevelOptions: MultiSelectOption[];
+  selectedCareerLevel: string;
+  onCareerLevelChange: (value: string) => void;
+  employmentTypeOptions: MultiSelectOption[];
+  selectedEmploymentType: string;
+  onEmploymentTypeChange: (value: string) => void;
   isRemoteSelected: boolean;
   onToggleRemote: () => void;
-  isAlwaysOpenSelected: boolean;
+  isAlwaysOpenIncluded: boolean;
   onToggleAlwaysOpen: () => void;
 }
 
 export default function ExploreFilters({
+  keyword,
+  onKeywordChange,
+  categoryOptions,
   selectedJobRoles,
   onToggleJobRole,
+  regionOptions,
+  selectedRegion,
+  onRegionChange,
+  careerLevelOptions,
+  selectedCareerLevel,
+  onCareerLevelChange,
+  employmentTypeOptions,
+  selectedEmploymentType,
+  onEmploymentTypeChange,
   isRemoteSelected,
   onToggleRemote,
-  isAlwaysOpenSelected,
+  isAlwaysOpenIncluded,
   onToggleAlwaysOpen,
 }: ExploreFiltersProps) {
   return (
     <div className="flex w-full flex-col gap-3">
-      <Search placeholder="직무 · 회사 · 키워드" className="w-[827px]" />
+      <Search
+        placeholder="직무 · 회사 · 키워드"
+        className="w-206.75"
+        value={keyword}
+        onChange={(event) => onKeywordChange(event.target.value)}
+      />
       <div className="flex w-full flex-wrap items-center gap-2">
         <MultiSelect
           placeholder="세부 직군"
-          options={JOB_ROLE_OPTIONS}
+          options={categoryOptions}
           selectedValues={selectedJobRoles}
           onToggle={onToggleJobRole}
-          className="w-[200px] shrink-0"
+          className="w-50 shrink-0"
         />
-        <Select placeholder="지역" className="w-[200px] shrink-0">
-          <option value="seoul">서울</option>
-          <option value="busan">부산</option>
-          <option value="jeju">제주</option>
-        </Select>
-        <Select placeholder="경력" className="w-[200px] shrink-0">
-          <option value="junior">신입~1년</option>
-          <option value="mid">3~5년</option>
-        </Select>
-        <Select placeholder="고용 형태" className="w-[200px] shrink-0">
-          <option value="fulltime">정규직</option>
-          <option value="contract">계약직</option>
-        </Select>
+        <Dropdown
+          placeholder="지역"
+          className="w-50 shrink-0"
+          options={regionOptions}
+          value={selectedRegion}
+          onChange={onRegionChange}
+        />
+        <Dropdown
+          placeholder="경력"
+          className="w-50 shrink-0"
+          options={careerLevelOptions}
+          value={selectedCareerLevel}
+          onChange={onCareerLevelChange}
+        />
+        <Dropdown
+          placeholder="고용 형태"
+          className="w-50 shrink-0"
+          options={employmentTypeOptions}
+          value={selectedEmploymentType}
+          onChange={onEmploymentTypeChange}
+        />
         <Tag variant="select" label="원격" selected={isRemoteSelected} onClick={onToggleRemote} />
         <Tag
           variant="select"
           label="상시포함"
-          selected={isAlwaysOpenSelected}
+          selected={isAlwaysOpenIncluded}
           onClick={onToggleAlwaysOpen}
         />
       </div>

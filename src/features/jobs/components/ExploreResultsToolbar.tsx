@@ -1,4 +1,11 @@
-import { Select, Tag } from '@/components/common';
+import type { JobSortOption } from '@/api/types/jobs.types';
+import { Dropdown, Tag } from '@/components/common';
+
+const SORT_OPTIONS: { label: string; value: JobSortOption }[] = [
+  { label: '추천순', value: 'FIT' },
+  { label: '최신순', value: 'RECENT' },
+  { label: '마감임박순', value: 'DEADLINE' },
+];
 
 export interface ExploreActiveFilter {
   key: string;
@@ -11,6 +18,8 @@ interface ExploreResultsToolbarProps {
   activeFilters: ExploreActiveFilter[];
   onReset?: () => void;
   isLoading?: boolean;
+  sort: JobSortOption;
+  onSortChange: (sort: JobSortOption) => void;
 }
 
 export default function ExploreResultsToolbar({
@@ -18,15 +27,21 @@ export default function ExploreResultsToolbar({
   activeFilters,
   onReset,
   isLoading = false,
+  sort,
+  onSortChange,
 }: ExploreResultsToolbarProps) {
   return (
     <div className="flex w-full items-center justify-between gap-2">
       <div className="flex flex-wrap items-center gap-2">
         {isLoading ? (
-          <p className="text-body-medium font-bold text-text-primary">검색 결과 확인 중 •••</p>
+          <div
+            className="h-5 w-28 animate-pulse rounded bg-gray-200"
+            aria-busy="true"
+            aria-label="검색 결과 확인 중"
+          />
         ) : (
           <>
-            <p className="text-body-medium font-bold text-text-primary">
+            <p className="text-label-large font-semibold text-text-primary">
               검색 결과 {resultCount}건
             </p>
             {activeFilters.map((filter) => (
@@ -34,29 +49,28 @@ export default function ExploreResultsToolbar({
                 key={filter.key}
                 variant="removable"
                 label={filter.label}
-                className="h-8 gap-1 border-transparent bg-primary-400 text-body-small text-text-primary"
+                className="border-transparent bg-primary-400 text-text-primary"
                 onClick={filter.onRemove}
               />
             ))}
             <button
               type="button"
               onClick={onReset}
-              className="text-body-small font-medium text-text-tertiary underline underline-offset-2"
+              className="cursor-pointer text-label-large font-medium text-text-tertiary underline underline-offset-2"
             >
               초기화
             </button>
           </>
         )}
       </div>
-      <Select
-        defaultValue="recommended"
-        aria-label="정렬"
-        className="h-10 w-25 shrink-0 px-4 text-body-small"
-      >
-        <option value="recommended">추천순</option>
-        <option value="latest">최신순</option>
-        <option value="deadline">마감임박순</option>
-      </Select>
+      <Dropdown
+        placeholder="정렬"
+        size="sm"
+        className="w-25 shrink-0"
+        options={SORT_OPTIONS}
+        value={sort}
+        onChange={(value) => onSortChange(value as JobSortOption)}
+      />
     </div>
   );
 }

@@ -7,7 +7,12 @@ import { cn } from '@/utils/cn';
 
 const STATUS_STYLE: Record<
   JobDetailFitStatus,
-  { icon: string; label: string; badgeColor: 'ok' | 'est' | 'warn'; boxClassName: string }
+  {
+    icon: string;
+    label: string;
+    badgeColor: 'ok' | 'est' | 'warn' | 'disabled';
+    boxClassName: string;
+  }
 > = {
   met: {
     icon: '✓',
@@ -25,6 +30,12 @@ const STATUS_STYLE: Record<
     icon: '!',
     label: '주의',
     badgeColor: 'warn',
+    boxClassName: 'bg-white border border-gray-400',
+  },
+  unknown: {
+    icon: '?',
+    label: '정보 없음',
+    badgeColor: 'disabled',
     boxClassName: 'bg-white border border-gray-400',
   },
 };
@@ -50,7 +61,8 @@ export default function JobDetailFitCriteria({ items }: JobDetailFitCriteriaProp
                 {status.icon} {status.label}
               </Badge>
               <p className="text-body-small font-medium text-text-primary">
-                <span className="font-bold">{item.title}</span> — {item.description}
+                <span className="font-bold">{item.title}</span>
+                {item.description && ` — ${item.description}`}
               </p>
             </div>
           );

@@ -1,29 +1,19 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router';
 import MoreVerticalIcon from '@/assets/icons/icon-more-vertical.svg?react';
 import JobCard from '@/features/jobs/components/JobCard';
+import { useSaveJob } from '@/features/jobs/hooks/useSaveJob';
 import type { ExploreJobSummary } from '@/features/jobs/types/exploreJob';
+import useDismissableOpen from '@/hooks/useDismissableOpen';
 
 interface ExploreJobCardProps {
   job: ExploreJobSummary;
 }
 
 export default function ExploreJobCard({ job }: ExploreJobCardProps) {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { isOpen: isMenuOpen, setIsOpen: setIsMenuOpen, containerRef } = useDismissableOpen(false);
   const [isSaved, setIsSaved] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isMenuOpen) return;
-
-    function handlePointerDown(event: PointerEvent) {
-      if (containerRef.current?.contains(event.target as Node)) return;
-      setIsMenuOpen(false);
-    }
-
-    document.addEventListener('pointerdown', handlePointerDown);
-    return () => document.removeEventListener('pointerdown', handlePointerDown);
-  }, [isMenuOpen]);
+  const { save, unsave } = useSaveJob();
 
   return (
     <div ref={containerRef} className="relative w-full">
@@ -33,7 +23,6 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
           thumbnailUrl={job.thumbnailUrl}
           dDayLabel={job.dDayLabel}
           matchScoreLabel={job.matchScoreLabel}
-          avatarUrl={job.avatarUrl}
           title={job.title}
           companyName={job.companyName}
           employmentInfo={job.employmentInfo}
@@ -43,7 +32,7 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
         type="button"
         onClick={() => setIsMenuOpen((prev) => !prev)}
         aria-label="더보기"
-        className="absolute top-[209px] right-2.5 flex size-6 items-center justify-center"
+        className="absolute top-52.25 right-2.5 flex size-6 items-center justify-center"
       >
         <MoreVerticalIcon className="size-6" />
       </button>
@@ -54,6 +43,10 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             onClick={() => {
               setIsSaved(true);
               setIsMenuOpen(false);
+              save(job.id).catch((error) => {
+                setIsSaved(false);
+                console.error(error);
+              });
             }}
             className="text-left text-body-medium font-medium text-text-primary"
           >
@@ -66,6 +59,10 @@ export default function ExploreJobCard({ job }: ExploreJobCardProps) {
             onClick={() => {
               setIsSaved(false);
               setIsMenuOpen(false);
+              unsave(job.id).catch((error) => {
+                setIsSaved(true);
+                console.error(error);
+              });
             }}
             className="text-left text-body-medium font-medium text-text-primary disabled:text-gray-400"
           >

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
 import Checkbox from '@/components/common/Checkbox';
+import useConsentSubmission from '@/features/login/hooks/useConsentSubmission';
 
 interface AgreementItem {
   id: string;
@@ -25,9 +26,26 @@ export default function PolicyPage() {
     age: false,
     marketing: false,
   });
+  const [submitError, setSubmitError] = useState<string>();
+  const { submitConsent, isSubmitting } = useConsentSubmission();
   const hasRequiredAgreements = AGREEMENT_ITEMS.filter((item) => item.required).every(
     (item) => checked[item.id],
   );
+
+  async function handleNext() {
+    setSubmitError(undefined);
+    try {
+      await submitConsent({
+        termsAgreed: checked.terms,
+        privacyAgreed: checked.privacy,
+        ageOver14Agreed: checked.age,
+        marketingAgreed: checked.marketing,
+      });
+      navigate('/onboarding');
+    } catch {
+      setSubmitError('약관 동의를 저장하지 못했어요. 다시 시도해주세요.');
+    }
+  }
 
   return (
     <div className="flex w-full flex-1 items-center justify-center bg-gray-50 px-3 py-8">
@@ -57,11 +75,16 @@ export default function PolicyPage() {
 
         <Button
           className="w-full max-w-137.5"
-          disabled={!hasRequiredAgreements}
-          onClick={() => navigate('/onboarding')}
+          disabled={!hasRequiredAgreements || isSubmitting}
+          onClick={handleNext}
         >
           다음
         </Button>
+        {submitError && (
+          <p className="text-label-small font-medium text-danger-500" role="alert">
+            {submitError}
+          </p>
+        )}
       </div>
     </div>
   );

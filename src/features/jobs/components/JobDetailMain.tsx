@@ -2,7 +2,6 @@ import { Link } from 'react-router';
 import ChevronLeftIcon from '@/assets/icons/icon-chevron-left.svg?react';
 import JobDetailAtAGlance from '@/features/jobs/components/JobDetailAtAGlance';
 import JobDetailContent from '@/features/jobs/components/JobDetailContent';
-import JobDetailEditorNote from '@/features/jobs/components/JobDetailEditorNote';
 import JobDetailFitCriteria from '@/features/jobs/components/JobDetailFitCriteria';
 import JobDetailMatchReasons from '@/features/jobs/components/JobDetailMatchReasons';
 import JobDetailSummary from '@/features/jobs/components/JobDetailSummary';
@@ -26,9 +25,10 @@ export default function JobDetailMain({ job, backTo, backLabel }: JobDetailMainP
       </Link>
       <JobDetailSummary job={job} />
       <JobDetailAtAGlance items={job.glanceItems} />
-      <JobDetailFitCriteria items={job.fitCriteria} />
-      <JobDetailEditorNote note={job.editorNote} />
-      <JobDetailMatchReasons matchScore={job.matchScore} reasons={job.matchReasons} />
+      {job.fitCriteria.length > 0 && <JobDetailFitCriteria items={job.fitCriteria} />}
+      {job.matchScore !== undefined && (
+        <JobDetailMatchReasons matchScore={job.matchScore} reasons={job.matchReasons} />
+      )}
       <JobDetailContent sections={job.contentSections} techStack={job.techStack} />
     </div>
   );

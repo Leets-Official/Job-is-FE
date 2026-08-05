@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import type { NotificationSnooze } from '@/api/types/notification.types';
+import useNotificationPause, {
+  type PausePeriod,
+} from '@/features/settings/hooks/useNotificationPause';
 import { cn } from '@/utils/cn';
-
-type PausePeriod = 7 | 30 | 'indefinite';
 
 const PAUSE_OPTIONS: { label: string; value: PausePeriod }[] = [
   { label: '7일', value: 7 },
@@ -9,25 +10,20 @@ const PAUSE_OPTIONS: { label: string; value: PausePeriod }[] = [
   { label: '직접 해제', value: 'indefinite' },
 ];
 
-function getResumeDate(period: Exclude<PausePeriod, 'indefinite'>) {
-  const resumeDate = new Date();
-  resumeDate.setDate(resumeDate.getDate() + period);
-
-  return new Intl.DateTimeFormat('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-  }).format(resumeDate);
+interface NotificationPauseCardProps {
+  initialSnooze: NotificationSnooze;
 }
 
-export default function NotificationPauseCard() {
-  const [pausePeriod, setPausePeriod] = useState<PausePeriod | null>(30);
-
-  const pauseMessage =
-    pausePeriod === 'indefinite'
-      ? '직접 다시 켤 때까지 쉬는 중이에요.'
-      : pausePeriod
-        ? `${getResumeDate(pausePeriod)}까지 쉬는 중이에요.`
-        : '현재 알림을 정상적으로 받고 있어요.';
+export default function NotificationPauseCard({ initialSnooze }: NotificationPauseCardProps) {
+  const {
+    pauseState,
+    pauseMessage,
+    isUpdating,
+    isSnoozeError,
+    isCancelError,
+    handlePausePeriodChange,
+    handleSnoozeCancel,
+  } = useNotificationPause(initialSnooze);
 
   return (
     <section className="flex flex-col gap-5 rounded-md border border-gray-200 bg-white p-6">
@@ -47,11 +43,12 @@ export default function NotificationPauseCard() {
               key={option.label}
               type="button"
               role="radio"
-              aria-checked={pausePeriod === option.value}
-              onClick={() => setPausePeriod(option.value)}
+              aria-checked={pauseState?.period === option.value}
+              disabled={isUpdating}
+              onClick={() => handlePausePeriodChange(option.value)}
               className={cn(
-                'h-10 cursor-pointer rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50',
-                pausePeriod === option.value &&
+                'h-10 cursor-pointer rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-500 disabled:hover:bg-white',
+                pauseState?.period === option.value &&
                   'border-primary-600 bg-primary-600 hover:bg-primary-600',
               )}
             >
@@ -61,13 +58,26 @@ export default function NotificationPauseCard() {
         </div>
       </div>
 
+      {isSnoozeError && (
+        <p className="text-label-small font-medium text-danger-500" role="alert">
+          알림 일시 정지를 설정하지 못했어요. 다시 시도해주세요.
+        </p>
+      )}
+
+      {isCancelError && (
+        <p className="text-label-small font-medium text-danger-500" role="alert">
+          알림 일시 정지를 해제하지 못했어요. 다시 시도해주세요.
+        </p>
+      )}
+
       <div className="flex min-h-18 items-center justify-between gap-5 rounded-xs border border-dashed border-gray-400 bg-gray-200 p-6">
         <span className="text-label-medium font-medium text-text-tertiary">{pauseMessage}</span>
-        {pausePeriod && (
+        {pauseState && (
           <button
             type="button"
-            onClick={() => setPausePeriod(null)}
-            className="shrink-0 cursor-pointer text-label-medium font-medium text-text-primary underline decoration-from-font [text-underline-position:from-font]"
+            disabled={isUpdating}
+            onClick={handleSnoozeCancel}
+            className="shrink-0 cursor-pointer text-label-medium font-medium text-text-primary underline decoration-from-font [text-underline-position:from-font] disabled:cursor-not-allowed disabled:text-gray-500"
           >
             지금 다시 받기
           </button>

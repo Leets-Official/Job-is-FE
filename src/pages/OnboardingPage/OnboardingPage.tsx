@@ -1,38 +1,27 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router';
+import { Navigate, useNavigate, useOutletContext } from 'react-router';
 import type { MainLayoutOutletContext } from '@/components/layout/MainLayout';
+import { useAuthStore } from '@/features/login/store/useAuthStore';
 import OnboardingConfirmStep from '@/features/onboarding/components/OnboardingConfirmStep';
 import OnboardingProfileStep from '@/features/onboarding/components/OnboardingProfileStep';
-import OnboardingQuizStep from '@/features/onboarding/components/OnboardingQuizStep';
+import useOnboardingFlow from '@/features/onboarding/hooks/useOnboardingFlow';
+import useOnboardingMetadata from '@/features/onboarding/hooks/useOnboardingMetadata';
 import { cn } from '@/utils/cn';
 
-type OnboardingStep = 'profile' | 'quiz' | 'confirm';
+type OnboardingStep = 'profile' | 'confirm';
 type StepTransitionDirection = 'forward' | 'backward';
-
-interface OnboardingDraft {
-  region: string;
-  careerLevel: string;
-  quizAnswers: string[];
-}
-
-const initialDraft: OnboardingDraft = {
-  region: '서울 강남',
-  careerLevel: '신입',
-  quizAnswers: [],
-};
-
 export default function OnboardingPage() {
   const navigate = useNavigate();
   const [step, setStep] = useState<OnboardingStep>('profile');
-  const [draft, setDraft] = useState<OnboardingDraft>(initialDraft);
-  const [quizIndex, setQuizIndex] = useState(0);
   const [transitionDirection, setTransitionDirection] =
     useState<StepTransitionDirection>('forward');
   const [shouldAnimateStep, setShouldAnimateStep] = useState(false);
   const { setCarouselActiveIndex } = useOutletContext<MainLayoutOutletContext>();
+  const onboardingCompleted = useAuthStore((state) => state.onboardingCompleted);
+  const { jobCategories, regions, isPending: isMetadataPending } = useOnboardingMetadata();
 
   useEffect(() => {
-    const carouselActiveIndex = { profile: 0, quiz: 1, confirm: 2 }[step];
+    const carouselActiveIndex = { profile: 0, confirm: 1 }[step];
     setCarouselActiveIndex(carouselActiveIndex);
   }, [setCarouselActiveIndex, step]);
 
@@ -41,61 +30,51 @@ export default function OnboardingPage() {
     setShouldAnimateStep(true);
     setStep(nextStep);
   };
+  const {
+    draft,
+    resumeName,
+    saveError,
+    isSaving,
+    completeError,
+    isCompleting,
+    saveProfile,
+    complete,
+  } = useOnboardingFlow({
+    jobCategories,
+    regions,
+    isMetadataPending,
+    onProfileSaved: () => changeStep('confirm', 'forward'),
+  });
+
+  if (onboardingCompleted) {
+    return <Navigate to="/recommendations" replace />;
+  }
 
   let stepContent;
 
   if (step === 'profile') {
     stepContent = (
       <OnboardingProfileStep
-        region={draft.region}
-        careerLevel={draft.careerLevel}
-        onRegionChange={(region) => setDraft((previous) => ({ ...previous, region }))}
-        onCareerLevelChange={(careerLevel) =>
-          setDraft((previous) => ({ ...previous, careerLevel }))
-        }
-        onNext={() => changeStep('quiz', 'forward')}
+        onDocumentsClick={() => navigate('/profile/documents?from=onboarding')}
+        onAptitudeTestClick={() => navigate('/profile/aptitude-test?source=ONBOARDING')}
+        submitError={saveError}
+        isSubmitting={isSaving}
+        onNext={saveProfile}
       />
     );
-  } else if (step === 'quiz') {
+  } else if (draft) {
     stepContent = (
-      <OnboardingQuizStep
-        currentIndex={quizIndex}
-        selectedOption={draft.quizAnswers[quizIndex]}
-        onBack={() => {
-          if (quizIndex === 0) {
-            changeStep('profile', 'backward');
-            return;
-          }
-
-          setQuizIndex((previous) => previous - 1);
-        }}
-        onSelect={(answer, isLastQuestion) => {
-          setDraft((previous) => {
-            const quizAnswers = [...previous.quizAnswers];
-            quizAnswers[quizIndex] = answer;
-            return { ...previous, quizAnswers };
-          });
-
-          if (isLastQuestion) {
-            changeStep('confirm', 'forward');
-            return;
-          }
-
-          setQuizIndex((previous) => previous + 1);
-        }}
-        onSkip={() => changeStep('confirm', 'forward')}
+      <OnboardingConfirmStep
+        draft={draft}
+        resumeName={resumeName}
+        onBack={() => changeStep('profile', 'backward')}
+        onStart={complete}
+        isStarting={isCompleting}
+        startError={completeError}
       />
     );
   } else {
-    stepContent = (
-      <OnboardingConfirmStep
-        region={draft.region}
-        careerLevel={draft.careerLevel}
-        onBack={() => changeStep('quiz', 'backward')}
-        onEdit={() => changeStep('profile', 'backward')}
-        onStart={() => navigate('/recommendations')}
-      />
-    );
+    stepContent = null;
   }
 
   return (
