@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { isJobCareerRange } from '@/api/jobs';
 import type { JobSortOption } from '@/api/types/jobs.types';
 import type { ExploreActiveFilter } from '@/features/jobs/components/ExploreResultsToolbar';
-import { mapJobSummary } from '@/features/jobs/utils/mapJobSummary';
+import { mapJobSummary } from '@/features/jobs/mapJobSummary';
 import useDebounce from '@/hooks/useDebounce';
 import { formatEmploymentType } from '@/utils/formatEmploymentType';
 import { useExploreJobs } from './useExploreJobs';
