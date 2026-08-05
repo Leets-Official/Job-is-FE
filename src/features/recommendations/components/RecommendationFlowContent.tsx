@@ -40,7 +40,7 @@ export default function RecommendationFlowContent({ screen }: { screen: Recommen
   if (resolvedScreen === 'pending') {
     return (
       <RecommendationPendingContent
-        onExploreClick={() => navigate('/explore')}
+        onExploreClick={() => navigate('/explore', { state: { transition: 'main-tab' } })}
         onCompleteProfileClick={() => navigate('/profile')}
       />
     );

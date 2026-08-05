@@ -42,6 +42,7 @@ export default function MainLayout() {
   const isRecommendationIntroPreview =
     location.pathname === '/recommendations' &&
     new URLSearchParams(location.search).get('preview') === 'intro';
+  const transition = (location.state as { transition?: string } | null)?.transition;
   const shouldAnimateContent =
     location.pathname === '/onboarding' ||
     location.pathname === '/onboarding/documents' ||
@@ -49,7 +50,9 @@ export default function MainLayout() {
     location.pathname === '/profile' ||
     location.pathname === '/profile/documents' ||
     location.pathname === '/profile/aptitude-test' ||
-    (location.state as { transition?: string } | null)?.transition === 'recommendation-flow';
+    transition === 'recommendation-flow' ||
+    transition === 'settings-flow' ||
+    transition === 'main-tab';
 
   if (!accessToken) {
     return <Navigate to="/" replace />;
@@ -71,7 +74,12 @@ export default function MainLayout() {
           activeIndex={headerHandle.activeIndex}
           onTabChange={(index) => {
             const path = headerHandle.tabs[index]?.path;
-            if (path) navigate(path);
+            if (!path) return;
+
+            navigate(
+              path,
+              path === '/recommendations' ? undefined : { state: { transition: 'main-tab' } },
+            );
           }}
           profileImageUrl={headerHandle.profileImageUrl}
           className={isRecommendationIntroPreview ? 'recommendation-intro-header-enter' : undefined}
