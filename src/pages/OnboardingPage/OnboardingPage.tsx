@@ -55,8 +55,8 @@ export default function OnboardingPage() {
   if (step === 'profile') {
     stepContent = (
       <OnboardingProfileStep
-        onDocumentsClick={() => navigate('/profile/documents?from=onboarding')}
-        onAptitudeTestClick={() => navigate('/profile/aptitude-test?source=ONBOARDING')}
+        onDocumentsClick={() => navigate('/onboarding/documents')}
+        onAptitudeTestClick={() => navigate('/onboarding/aptitude-test')}
         submitError={saveError}
         isSubmitting={isSaving}
         onNext={saveProfile}
