@@ -13,7 +13,6 @@ import LandingPage from '@/pages/LandingPage/LandingPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import NotFoundPage from '@/pages/NotFoundPage/NotFoundPage';
 import OnboardingPage from '@/pages/OnboardingPage/OnboardingPage';
-import PlaygroundPage from '@/pages/PlaygroundPage/PlaygroundPage';
 import PolicyPage from '@/pages/PolicyPage/PolicyPage';
 import ProfileDocumentsPage from '@/pages/ProfileDocumentsPage/ProfileDocumentsPage';
 import ProfilePage from '@/pages/ProfilePage/ProfilePage';
@@ -52,8 +51,6 @@ export const router = createBrowserRouter([
       { path: '/oauth/callback', element: <CallbackPage /> },
       { path: '/account/recovery', element: <AccountRecoveryPage /> },
       { path: '/unsubscribe', element: <UnsubscribePage /> },
-      { path: '/playground', element: <PlaygroundPage /> },
-      // NOTE: 임시 미리보기 라우트, 실제 트리거(에러 바운더리 등) 연결 후 삭제 예정
       { path: '/system-error', element: <SystemErrorPage /> },
       { path: '*', element: <NotFoundPage /> },
     ],
