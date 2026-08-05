@@ -3,7 +3,7 @@ import axios from 'axios';
 import { confirmProfileFile, issueProfileFilePresignedUrl } from '@/api/profile';
 import type { ProfileFileCategory } from '@/api/types/profile.types';
 import type { DocumentType, ProfileDocument } from '@/features/profile/types/profileDocument';
-import { formatDocumentUploadedAt } from '@/features/profile/utils/profileDocument';
+import { formatLocalDateKey } from '@/utils/formatLocalDateKey';
 
 interface UploadProfileDocumentInput {
   type: DocumentType;
@@ -59,7 +59,7 @@ export default function useProfileDocumentUpload() {
       return {
         id: String(fileId),
         name: file.name,
-        uploadedAt: formatDocumentUploadedAt(new Date()),
+        uploadedAt: formatLocalDateKey(new Date()),
       } satisfies ProfileDocument;
     },
   });

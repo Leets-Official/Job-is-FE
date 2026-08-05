@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router';
 import CheckCircleIcon from '@/assets/icons/icon-check-circle.svg?react';
 import Button from '@/components/common/Button';
 import RadioButton from '@/components/common/RadioButton';
@@ -14,7 +15,7 @@ export default function UnsubscribePage() {
   const [selectedReason, setSelectedReason] = useState<string>();
 
   return (
-    <div className="flex w-full flex-1 justify-center bg-gray-50 px-3 py-12.5">
+    <div className="flex flex-1 justify-center bg-gray-50 px-3 py-30">
       <div className="flex w-full max-w-190 flex-col items-center gap-5 rounded-md border border-gray-200 bg-white p-6">
         <div className="flex items-center gap-2.5">
           <CheckCircleIcon className="size-6 text-primary-400" />
@@ -38,21 +39,21 @@ export default function UnsubscribePage() {
           <ul className="ml-5 list-disc space-y-1 text-label-medium font-medium text-text-secondary">
             <li>
               일시정지(스누즈)로 바꾸기 →{' '}
-              <button
-                type="button"
+              <Link
+                to="/settings/notifications"
                 className="underline decoration-solid decoration-from-font [text-underline-position:from-font]"
               >
                 수신 설정
-              </button>
+              </Link>
             </li>
             <li>
               받는 시간·요일 바꾸기 →{' '}
-              <button
-                type="button"
+              <Link
+                to="/settings/notifications"
                 className="underline decoration-solid decoration-from-font [text-underline-position:from-font]"
               >
                 수신 설정
-              </button>
+              </Link>
             </li>
           </ul>
         </div>

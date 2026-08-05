@@ -27,7 +27,7 @@ export default function DailyBriefingSettingsCard({
       <h2 className="text-heading-medium text-text-primary">데일리 브리핑</h2>
 
       <div className="flex items-center justify-between gap-5">
-        <h3 className="text-label-medium font-medium text-text-primary">브리핑 이메일 받기</h3>
+        <h3 className="text-label-medium font-medium text-text-primary">이메일 브리핑 받기</h3>
         <ToggleSwitch
           id={toggleId}
           checked={isEnabled}
@@ -59,7 +59,7 @@ export default function DailyBriefingSettingsCard({
                     type="radio"
                     name={deliveryTimeGroupName}
                     value={time}
-                    checked={deliveryTime === time}
+                    checked={isEnabled && deliveryTime === time}
                     disabled={!isEnabled || disabled}
                     onChange={() => onDeliveryTimeChange(time)}
                     className="peer sr-only"
@@ -68,7 +68,7 @@ export default function DailyBriefingSettingsCard({
                     className={cn(
                       'inline-flex h-10 items-center justify-center rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-primary-500',
                       isEnabled ? 'hover:bg-gray-50' : 'text-gray-500',
-                      deliveryTime === time && 'border-primary-600 bg-primary-600',
+                      isEnabled && deliveryTime === time && 'border-primary-600 bg-primary-600',
                     )}
                   >
                     {time}
@@ -79,7 +79,9 @@ export default function DailyBriefingSettingsCard({
           </fieldset>
         </div>
         <p className="mt-5 text-label-small font-medium text-text-tertiary">
-          바꾸면 내일 아침부터 새 시간에 보내드려요.
+          {isEnabled
+            ? '바꾸면 내일 아침부터 새 시간에 보내드려요.'
+            : '브리핑을 켜면 받을 시간을 선택할 수 있어요.'}
         </p>
       </div>
     </section>

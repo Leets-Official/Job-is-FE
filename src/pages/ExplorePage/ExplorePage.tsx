@@ -47,7 +47,7 @@ export default function ExplorePage() {
 
   return (
     <div className="flex min-h-0 w-full flex-1 justify-center bg-gray-50 px-3 py-8">
-      <div className="flex w-full max-w-300 flex-col gap-6">
+      <div className="flex w-full max-w-300 flex-1 flex-col gap-6">
         <div className="flex flex-col gap-1">
           <h1 className="text-heading-medium font-bold text-text-primary">탐색</h1>
           <p className="text-label-medium font-medium text-text-secondary">
@@ -88,9 +88,15 @@ export default function ExplorePage() {
             <ExploreLoadingIndicator />
           </>
         ) : jobsQuery.isError ? (
-          <NoticePanel resultIconVariant="danger" title="공고를 불러오지 못했어요">
-            <Button onClick={() => jobsQuery.refetch()}>다시 시도</Button>
-          </NoticePanel>
+          <div className="flex min-h-75 w-full flex-1">
+            <NoticePanel
+              resultIconVariant="danger"
+              title="공고를 불러오지 못했어요"
+              className="h-full max-w-none justify-center"
+            >
+              <Button onClick={() => jobsQuery.refetch()}>다시 시도</Button>
+            </NoticePanel>
+          </div>
         ) : hasResults ? (
           <>
             <ExploreJobGrid jobs={visibleJobs} />

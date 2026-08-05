@@ -5,14 +5,6 @@ const ACCEPTED_FILE_EXTENSIONS = ['pdf', 'docx', 'hwp', 'hwpx'];
 
 export const ACCEPTED_PROFILE_DOCUMENT_TYPES = '.pdf,.docx,.hwp,.hwpx';
 
-export function formatDocumentUploadedAt(date: Date) {
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, '0');
-  const day = String(date.getDate()).padStart(2, '0');
-
-  return `${year}-${month}-${day}`;
-}
-
 export function validateProfileDocument(file: File): DocumentUploadError | null {
   const extension = file.name.split('.').pop()?.toLowerCase();
   const fileSize = `${(file.size / 1024 / 1024).toFixed(1)}MB`;

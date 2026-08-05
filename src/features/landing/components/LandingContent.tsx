@@ -1,6 +1,7 @@
 import type { LandingOutletContext } from '@/components/layout/LandingLayout';
 import LandingFeatureGrid from '@/features/landing/components/LandingFeatureGrid';
 import LandingHero from '@/features/landing/components/LandingHero';
+import LandingHeroScrim from '@/features/landing/components/LandingHeroScrim';
 
 interface LandingContentProps extends LandingOutletContext {
   onStart: () => void;
@@ -17,14 +18,16 @@ export default function LandingContent({
 }: LandingContentProps) {
   return (
     <>
-      <LandingHero
-        headline={headline}
-        typedHeadline={typedHeadline}
-        isIntroComplete={isIntroComplete}
-        shouldPlayRevisitAnimation={shouldPlayRevisitAnimation}
-        onStart={onStart}
-        onLogin={onLogin}
-      />
+      <LandingHeroScrim>
+        <LandingHero
+          headline={headline}
+          typedHeadline={typedHeadline}
+          isIntroComplete={isIntroComplete}
+          shouldPlayRevisitAnimation={shouldPlayRevisitAnimation}
+          onStart={onStart}
+          onLogin={onLogin}
+        />
+      </LandingHeroScrim>
       <LandingFeatureGrid isIntroComplete={isIntroComplete} />
     </>
   );

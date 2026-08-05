@@ -7,7 +7,7 @@ export default function LandingPage() {
   const landingContext = useOutletContext<LandingOutletContext>();
 
   return (
-    <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center bg-gray-50 px-3 py-4">
+    <div className="flex min-h-0 w-full flex-1 flex-col items-center justify-center px-3 py-4">
       <LandingContent
         {...landingContext}
         onStart={() => navigate('/login')}
