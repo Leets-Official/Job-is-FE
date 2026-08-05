@@ -1,6 +1,6 @@
-import ChevronDownIcon from '@/assets/icons/icon-chevron-down.svg?react';
 import Badge from '@/components/common/Badge';
 import Button from '@/components/common/Button';
+import Dropdown from '@/components/common/Dropdown';
 import SavedJobsEmptyState from '@/features/savedJobs/components/SavedJobsEmptyState';
 import { type SavedJobListing } from '@/features/savedJobs/types/savedJob';
 import { cn } from '@/utils/cn';
@@ -17,7 +17,7 @@ function SavedJobRow({ job }: { job: SavedJobListing }) {
       <div>
         <p
           className={cn(
-            'text-body-small font-medium',
+            'text-body-small font-bold',
             job.closed ? 'text-text-secondary' : 'text-text-primary',
           )}
         >
@@ -32,17 +32,10 @@ function SavedJobRow({ job }: { job: SavedJobListing }) {
             {badge.label}
           </Badge>
         ))}
-        <Button
-          disabled={job.closed}
-          className={cn('h-10', job.closed && 'disabled:bg-gray-200 disabled:text-gray-500')}
-        >
+        <Button disabled={job.closed} className="h-10">
           보기
         </Button>
-        <Button
-          variant="outline"
-          disabled={job.closed}
-          className={cn('h-10', job.closed && 'disabled:text-gray-500')}
-        >
+        <Button variant="outline" disabled={job.closed} className="h-10">
           해제
         </Button>
       </div>
@@ -57,27 +50,28 @@ export default function SavedJobsSavedContent({
 }: SavedJobsSavedContentProps) {
   if (jobs.length === 0) {
     return (
-      <SavedJobsEmptyState
-        title="아직 저장한 공고가 없어요"
-        description="마음에 드는 공고를 저장해 두면 여기에 모여요."
-        onBrowseRecommendations={onBrowseRecommendations}
-        onExplore={onExplore}
-      />
+      <div className="flex w-full flex-1 items-center justify-center">
+        <SavedJobsEmptyState
+          title="아직 저장한 공고가 없어요"
+          description="마음에 드는 공고를 저장해 두면 여기에 모여요."
+          onBrowseRecommendations={onBrowseRecommendations}
+          onExplore={onExplore}
+        />
+      </div>
     );
   }
 
   return (
     <>
       <div className="flex w-full justify-end">
-        <div className="relative">
-          <select
-            defaultValue="latest"
-            className="h-10 w-25 appearance-none rounded-sm border border-gray-700 bg-white py-2 pr-8 pl-4 text-body-small font-medium text-text-primary focus:border-primary-500 focus:outline-none"
-          >
-            <option value="latest">저장일 순</option>
-          </select>
-          <ChevronDownIcon className="pointer-events-none absolute top-1/2 right-2 size-6 -translate-y-1/2 text-black" />
-        </div>
+        <Dropdown
+          placeholder="저장일 순"
+          size="sm"
+          className="w-25"
+          options={[{ label: '저장일 순', value: 'latest' }]}
+          value="latest"
+          onChange={() => {}}
+        />
       </div>
 
       {jobs.map((job) => (
