@@ -20,15 +20,12 @@ export default function useProfileDocumentsManager() {
   const [deleteTarget, setDeleteTarget] = useState<DocumentType | null>(null);
   const [deleteError, setDeleteError] = useState<string>();
   const [downloadError, setDownloadError] = useState<string>();
+  const [downloadingType, setDownloadingType] = useState<DocumentType | null>(null);
   const uploadControllersRef = useRef<Partial<Record<DocumentType, AbortController>>>({});
   const { uploadProfileDocument } = useProfileDocumentUpload();
-  const { profileFiles, invalidateProfileFiles } = useProfileFiles();
-  const {
-    deleteProfileFile,
-    isDeletingProfileFile,
-    downloadProfileFile,
-    isDownloadingProfileFile,
-  } = useProfileDocumentActions();
+  const { profileFiles, refetchProfileFiles } = useProfileFiles();
+  const { deleteProfileFile, isDeletingProfileFile, downloadProfileFile } =
+    useProfileDocumentActions();
 
   const loadedDocuments = useMemo<Record<DocumentType, ProfileDocument | null>>(() => {
     const nextDocuments: Record<DocumentType, ProfileDocument | null> = {
@@ -52,6 +49,19 @@ export default function useProfileDocumentsManager() {
     () => ({ ...loadedDocuments, ...documents }),
     [documents, loadedDocuments],
   );
+
+  const clearLocalDocument = (type: DocumentType) => {
+    setDocuments((previous) => {
+      const { [type]: _document, ...remainingDocuments } = previous;
+      return remainingDocuments;
+    });
+  };
+
+  const syncDocuments = (type: DocumentType) => {
+    void refetchProfileFiles().then((result) => {
+      if (!result.isError) clearLocalDocument(type);
+    });
+  };
 
   const cancelUpload = (type: DocumentType) => {
     uploadControllersRef.current[type]?.abort();
@@ -88,7 +98,7 @@ export default function useProfileDocumentsManager() {
     })
       .then((document) => {
         setDocuments((previous) => ({ ...previous, [type]: document }));
-        void invalidateProfileFiles();
+        syncDocuments(type);
       })
       .catch(() => {
         if (controller.signal.aborted) return;
@@ -133,7 +143,7 @@ export default function useProfileDocumentsManager() {
         setDocuments((previous) => ({ ...previous, [deleteTarget]: null }));
         setErrors((previous) => ({ ...previous, [deleteTarget]: undefined }));
         setDeleteTarget(null);
-        void invalidateProfileFiles();
+        syncDocuments(deleteTarget);
       })
       .catch(() => {
         setDeleteError('파일을 삭제하지 못했어요. 잠시 후 다시 시도해주세요.');
@@ -144,11 +154,16 @@ export default function useProfileDocumentsManager() {
     setErrors((previous) => ({ ...previous, [type]: undefined }));
   };
 
-  const downloadDocument = (document: ProfileDocument) => {
+  const downloadDocument = (type: DocumentType, document: ProfileDocument) => {
     setDownloadError(undefined);
-    void downloadProfileFile(Number(document.id)).catch(() => {
-      setDownloadError('파일을 다운로드하지 못했어요. 잠시 후 다시 시도해주세요.');
-    });
+    setDownloadingType(type);
+    void downloadProfileFile(Number(document.id))
+      .catch(() => {
+        setDownloadError('파일을 다운로드하지 못했어요. 잠시 후 다시 시도해주세요.');
+      })
+      .finally(() => {
+        setDownloadingType((previous) => (previous === type ? null : previous));
+      });
   };
 
   return {
@@ -159,7 +174,7 @@ export default function useProfileDocumentsManager() {
     deleteError,
     downloadError,
     isDeletingProfileFile,
-    isDownloadingProfileFile,
+    downloadingType,
     selectDocument,
     cancelUpload,
     openDeleteDialog,

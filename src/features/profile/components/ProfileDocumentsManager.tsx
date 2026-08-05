@@ -26,7 +26,7 @@ export default function ProfileDocumentsManager({
     deleteError,
     downloadError,
     isDeletingProfileFile,
-    isDownloadingProfileFile,
+    downloadingType,
     selectDocument,
     cancelUpload,
     openDeleteDialog,
@@ -72,9 +72,9 @@ export default function ProfileDocumentsManager({
                 uploadError={errors[type]}
                 onSelect={(file) => selectDocument(type, file)}
                 onDownload={() => {
-                  if (document) downloadDocument(document);
+                  if (document) downloadDocument(type, document);
                 }}
-                isDownloading={isDownloadingProfileFile}
+                isDownloading={downloadingType === type}
                 onDelete={() => openDeleteDialog(type)}
                 onCancelUpload={() => cancelUpload(type)}
                 onClearError={() => clearError(type)}
