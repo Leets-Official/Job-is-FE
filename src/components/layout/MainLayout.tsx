@@ -3,6 +3,7 @@ import { Navigate, Outlet, useLocation, useMatches, useNavigate } from 'react-ro
 import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import { useAuthStore } from '@/features/login/store/useAuthStore';
+import useRouteMetadata from '@/hooks/useRouteMetadata';
 import { cn } from '@/utils/cn';
 
 type MainLayoutTab = {
@@ -29,6 +30,7 @@ export interface MainLayoutOutletContext {
 }
 
 export default function MainLayout() {
+  useRouteMetadata();
   const navigate = useNavigate();
   const location = useLocation();
   const matches = useMatches();
@@ -42,6 +44,8 @@ export default function MainLayout() {
     new URLSearchParams(location.search).get('preview') === 'intro';
   const shouldAnimateContent =
     location.pathname === '/onboarding' ||
+    location.pathname === '/onboarding/documents' ||
+    location.pathname === '/onboarding/aptitude-test' ||
     location.pathname === '/profile' ||
     location.pathname === '/profile/documents' ||
     location.pathname === '/profile/aptitude-test' ||

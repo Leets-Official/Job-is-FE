@@ -3,6 +3,7 @@ import Footer from '@/components/layout/Footer';
 import Header from '@/components/layout/Header';
 import LandingShaderBackdrop from '@/features/landing/components/LandingShaderBackdrop';
 import useLandingIntroAnimation from '@/features/landing/hooks/useLandingIntroAnimation';
+import useRouteMetadata from '@/hooks/useRouteMetadata';
 import { cn } from '@/utils/cn';
 
 const HERO_COPY = '매일 아침, 오늘 들어온 공고를 검토해\n당신에게 맞는 몇 건만 편지로 보내드려요.';
@@ -16,6 +17,7 @@ export interface LandingOutletContext {
 }
 
 export default function LandingLayout() {
+  useRouteMetadata();
   const { typedHeadline, isIntroComplete, shouldPlayRevisitAnimation } = useLandingIntroAnimation(
     HERO_COPY,
     TYPING_INTERVAL,
