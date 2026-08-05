@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react';
 import { Link } from 'react-router';
 import Badge from '@/components/common/Badge';
+import { Spinner } from '@/components/feedback';
 import useAccount from '@/features/settings/hooks/useAccount';
 import useAccountLogout from '@/features/settings/hooks/useAccountLogout';
 
@@ -31,14 +32,21 @@ export default function AccountSettingsContent() {
   const { data: account, isPending: isAccountPending, isError: isAccountError } = useAccount();
   const { logout, isLoggingOut, isLogoutError } = useAccountLogout();
 
+  if (isAccountPending) {
+    return (
+      <div
+        className="flex min-h-145 w-full min-w-0 max-w-179 flex-1 items-center justify-center rounded-md border border-gray-200 bg-white p-6"
+        role="status"
+      >
+        <Spinner />
+      </div>
+    );
+  }
+
   return (
     <div className="flex min-w-0 max-w-179 flex-1 flex-col gap-5">
       <AccountSettingsCard title="연결된 계정">
-        {isAccountPending ? (
-          <p className="text-label-medium font-medium text-text-tertiary">
-            계정 정보를 불러오는 중이에요.
-          </p>
-        ) : isAccountError || !account ? (
+        {isAccountError || !account ? (
           <p className="text-label-medium font-medium text-danger-500">
             계정 정보를 불러오지 못했어요.
           </p>
@@ -53,11 +61,7 @@ export default function AccountSettingsContent() {
       <AccountSettingsCard title="수신 이메일">
         <div className="flex items-center justify-between gap-5">
           <div className="flex min-w-0 items-center gap-2.5">
-            {isAccountPending ? (
-              <p className="text-body-medium font-medium text-text-tertiary">
-                이메일을 불러오는 중이에요.
-              </p>
-            ) : isAccountError || !account ? (
+            {isAccountError || !account ? (
               <p className="text-body-medium font-medium text-danger-500">
                 이메일을 불러오지 못했어요.
               </p>
