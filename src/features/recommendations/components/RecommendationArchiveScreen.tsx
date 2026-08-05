@@ -1,8 +1,7 @@
 import { useState } from 'react';
-import { Button, NoticePanel } from '@/components/common';
-import { Spinner } from '@/components/feedback';
 import RecommendationLetterCard from './RecommendationLetterCard';
 import RecommendationLetterCarousel from './RecommendationLetterCarousel';
+import RecommendationQueryState from './RecommendationQueryState';
 import RecommendationScreenLayout from './RecommendationScreenLayout';
 import RecommendationStatusTabs from './RecommendationStatusTabs';
 import useRecommendationDeck from '../hooks/useRecommendationDeck';
@@ -35,69 +34,58 @@ export default function RecommendationArchiveScreen() {
   const activeStatus = STATUS_TABS[statusIndex].status;
   const filteredLetters = letters.filter((letter) => resolveStatus(letter.id) === activeStatus);
 
-  if (cardsQuery.isLoading) {
-    return (
-      <RecommendationScreenLayout>
-        <Spinner />
-      </RecommendationScreenLayout>
-    );
-  }
-
-  if (cardsQuery.isError) {
-    return (
-      <RecommendationScreenLayout>
-        <NoticePanel resultIconVariant="danger" title="목록을 불러오지 못했어요">
-          <Button onClick={() => cardsQuery.refetch()}>다시 시도</Button>
-        </NoticePanel>
-      </RecommendationScreenLayout>
-    );
-  }
-
   const displayIndex = Math.min(cardIndex, Math.max(filteredLetters.length - 1, 0));
   const letter = filteredLetters[displayIndex];
   const contentKey = letter?.id ?? `empty-${activeStatus}`;
 
   return (
-    <RecommendationScreenLayout>
-      <RecommendationLetterCarousel
-        key={activeStatus}
-        className="gap-5"
-        current={filteredLetters.length === 0 ? 0 : displayIndex + 1}
-        total={filteredLetters.length}
-        contentKey={contentKey}
-        enableStackTransition
-        onPrev={() => setCardIndex(Math.max(displayIndex - 1, 0))}
-        onNext={() => setCardIndex(Math.min(displayIndex + 1, filteredLetters.length - 1))}
-        prevDisabled={displayIndex === 0}
-        nextDisabled={displayIndex >= filteredLetters.length - 1}
-        filterSlot={
-          <RecommendationStatusTabs
-            tabs={STATUS_TABS.map((tab) => tab.label)}
-            activeIndex={statusIndex}
-            onChange={(index) => {
-              setStatusIndex(index);
-              setCardIndex(0);
-            }}
-          />
-        }
-      >
-        <div key={activeStatus} className="page-content-enter">
-          {letter ? (
-            <RecommendationLetterCard
-              {...letter}
-              onExpand={() => handleExpandLetter(letter.id)}
-              onSave={() => handleSaveLetter(letter.id)}
-              onDismiss={() => handleDismissLetter(letter.id)}
+    <RecommendationQueryState
+      isLoading={cardsQuery.isLoading}
+      isError={cardsQuery.isError}
+      errorTitle="목록을 불러오지 못했어요"
+      onRetry={() => cardsQuery.refetch()}
+    >
+      <RecommendationScreenLayout>
+        <RecommendationLetterCarousel
+          key={activeStatus}
+          className="gap-5"
+          current={filteredLetters.length === 0 ? 0 : displayIndex + 1}
+          total={filteredLetters.length}
+          contentKey={contentKey}
+          enableStackTransition
+          onPrev={() => setCardIndex(Math.max(displayIndex - 1, 0))}
+          onNext={() => setCardIndex(Math.min(displayIndex + 1, filteredLetters.length - 1))}
+          prevDisabled={displayIndex === 0}
+          nextDisabled={displayIndex >= filteredLetters.length - 1}
+          filterSlot={
+            <RecommendationStatusTabs
+              tabs={STATUS_TABS.map((tab) => tab.label)}
+              activeIndex={statusIndex}
+              onChange={(index) => {
+                setStatusIndex(index);
+                setCardIndex(0);
+              }}
             />
-          ) : (
-            <div className="flex min-h-142 w-190 items-center justify-center rounded-md border border-gray-200 bg-white p-6 text-center">
-              <p className="text-heading-small font-medium text-text-secondary">
-                {EMPTY_MESSAGE[activeStatus]}
-              </p>
-            </div>
-          )}
-        </div>
-      </RecommendationLetterCarousel>
-    </RecommendationScreenLayout>
+          }
+        >
+          <div key={activeStatus} className="page-content-enter">
+            {letter ? (
+              <RecommendationLetterCard
+                {...letter}
+                onExpand={() => handleExpandLetter(letter.id)}
+                onSave={() => handleSaveLetter(letter.id)}
+                onDismiss={() => handleDismissLetter(letter.id)}
+              />
+            ) : (
+              <div className="flex min-h-142 w-190 items-center justify-center rounded-md border border-gray-200 bg-white p-6 text-center">
+                <p className="text-heading-small font-medium text-text-secondary">
+                  {EMPTY_MESSAGE[activeStatus]}
+                </p>
+              </div>
+            )}
+          </div>
+        </RecommendationLetterCarousel>
+      </RecommendationScreenLayout>
+    </RecommendationQueryState>
   );
 }
