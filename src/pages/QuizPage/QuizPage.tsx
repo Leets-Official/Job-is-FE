@@ -123,8 +123,7 @@ export default function QuizPage() {
   const activeQuestionIndex =
     currentIndex ??
     (firstUnansweredIndex === undefined || firstUnansweredIndex < 0 ? 0 : firstUnansweredIndex);
-  const isShowingResult =
-    screen === 'result' || (screen === 'questions' && quiz?.completed === true);
+  const isShowingResult = screen === 'result';
 
   return (
     <div className="flex flex-1 items-center justify-center bg-gray-50 px-5 py-12">
@@ -151,7 +150,7 @@ export default function QuizPage() {
           />
         )
       ) : screen === 'questions' ? (
-        quizQuestionsQuery.isPending ? (
+        quizQuestionsQuery.isPending || quizQuestionsQuery.isFetching ? (
           <section className="flex min-h-74 w-full max-w-190 items-center justify-center rounded-md border border-gray-200 bg-white p-6">
             <Spinner />
           </section>
