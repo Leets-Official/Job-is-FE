@@ -36,6 +36,7 @@ src/
 │   └── {PageName}/        # 페이지별 폴더 (예: pages/HomePage/HomePage.tsx)
 ├── providers/            # 앱 전역 Provider (QueryProvider 등)
 ├── routes/               # createBrowserRouter 라우트 정의
+├── store/                # 도메인 경계를 넘어 앱 전역에서 참조하는 Zustand 스토어 (useAuthStore 등)
 ├── styles/               # 전역 스타일, Tailwind 진입점(index.css, 컬러 토큰 @theme)
 ├── utils/                # 공용 유틸리티 함수 (cn.ts 등)
 ├── App.tsx
@@ -71,6 +72,7 @@ src/
 | `components/common`, `components/feedback`, `components/layout` | 도메인 데이터 모델을 모르는 순수 재사용 UI. props로만 데이터를 받는다                                                                                                                                                           |
 | `hooks`                                                         | 도메인에 종속되지 않는 공용 로직                                                                                                                                                                                                |
 | `api`                                                           | API 클라이언트와 요청 함수. React 컴포넌트를 import하지 않는다. 컴포넌트는 endpoint 경로를 직접 알지 못하고 이 레이어를 통해서만 호출한다. 계약 타입은 `api/types/{domain}.types.ts`, 클라이언트 공통 로직은 `api/base/`에 둔다 |
+| `store`                                                         | 도메인 경계를 넘어 앱 전역에서 참조하는 Zustand 스토어. 특정 도메인에서만 쓰는 로컬 상태는 `features/{domain}`에 둔다                                                                                                           |
 | `utils`, `constants`, `assets`, `styles`                        | 순수 유틸/상수/자산/전역 스타일                                                                                                                                                                                                 |
 
 ## 5. 도메인 폴더 정책
@@ -101,8 +103,8 @@ src/
 | 폼 입력 중인 값                               | 해당 컴포넌트/훅의 local state            |
 | URL로 표현 가능한 값                          | route params 또는 search params           |
 | 모달 열림/닫힘                                | 해당 컴포넌트의 local state               |
-| 여러 라우트에서 공유하는 순수 클라이언트 상태 | Zustand                                   |
-| 인증 세션 식별·라우팅 상태                    | Zustand                                   |
+| 여러 라우트에서 공유하는 순수 클라이언트 상태 | Zustand (`src/store`)                     |
+| 인증 세션 식별·라우팅 상태                    | Zustand (`src/store/useAuthStore.ts`)     |
 
 TanStack Query key는 `src/constants/queryKey.ts`의 `QUERY_KEYS` 객체에서 도메인별로
 계층적으로 관리한다. 개별 훅에서 문자열 배열을 직접 작성하지 않는다.
@@ -115,14 +117,21 @@ mutation과 cache를 우선 검토한다. 폼 입력·드롭다운·모달처럼
 결정하는 클라이언트 세션 상태이므로 Zustand에 유지한다. 이 값은 `/api/auth/me` 등으로
 재검증할 수 있으며, 프로필·공고처럼 일반 서버 응답을 Zustand에 복제하는 용도로 확장하지 않는다.
 
-그 외 Zustand 스토어는 실제로 여러 라우트가 공유해야 하는 API 비종속 클라이언트 상태가
-생기는 시점에만 만든다. 미리 빈 스토어를 만들어두지 않는다.
+도메인 경계를 넘어 앱 전역에서 참조하는 Zustand 스토어는 `src/store/{useXxxStore}.ts`에
+flat하게 모은다(예: `useAuthStore`, 토스트류 알림 상태를 담는 `useAlertStore`). 특정
+도메인 안에서만 읽고 쓰는 로컬 상태는 계속 `features/{domain}`에 둔다. 새 전역 스토어는
+실제로 여러 라우트/도메인이 공유해야 하는 시점에만 만들고, 미리 빈 스토어를 만들어두지
+않는다.
 
 ## 9. Testing Policy
 
-테스트 도구는 아직 설치되어 있지 않다. 도입하면 구현 파일이 있는 폴더의 `__tests__/`에 둔다.
+Jest + `@testing-library/react` + `@jest/globals`가 설치되어 있다. 단위 테스트는 구현
+파일이 있는 폴더의 `__tests__/`에 `.test.ts`/`.test.tsx`로 둔다.
 
 ```text
-src/utils/cn.ts
-src/utils/__tests__/cn.test.ts
+src/utils/formatDDayLabel.ts
+src/utils/__tests__/formatDDayLabel.test.ts
 ```
+
+query key, 순수 유틸리티, API 응답 매퍼(`mapJobDetail` 등), 상태 전이처럼 회귀 위험이 큰
+로직을 우선 검증한다. UI 스냅샷 테스트는 우선순위가 아니다.
