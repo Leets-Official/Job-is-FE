@@ -49,16 +49,19 @@ export default function LandingFeatureGrid({
     <section
       ref={ref}
       aria-label="서비스 특징"
-      className={cn('mt-12 grid w-full max-w-[910px] grid-cols-3 gap-x-[65px] gap-y-5', className)}
+      className={cn('mt-12 w-full max-w-[910px]', className)}
       {...props}
     >
-      {FEATURE_CARDS.map((card, index) => (
-        <LandingFeatureCard
-          key={card.lines[0]}
-          {...card}
-          className={cn(revealClassName, CARD_DELAY_CLASSES[index])}
-        />
-      ))}
+      <h2 className="sr-only">Job.is 주요 기능</h2>
+      <div className="grid grid-cols-3 gap-x-[65px] gap-y-5">
+        {FEATURE_CARDS.map((card, index) => (
+          <LandingFeatureCard
+            key={card.lines[0]}
+            {...card}
+            className={cn(revealClassName, CARD_DELAY_CLASSES[index])}
+          />
+        ))}
+      </div>
     </section>
   );
 }
