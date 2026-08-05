@@ -1,11 +1,11 @@
 import { useState } from 'react';
+import type { RecommendationLetterStatus } from '@/store/useRecommendationDeckStore';
 import RecommendationLetterCard from './RecommendationLetterCard';
 import RecommendationLetterCarousel from './RecommendationLetterCarousel';
 import RecommendationQueryState from './RecommendationQueryState';
 import RecommendationScreenLayout from './RecommendationScreenLayout';
 import RecommendationStatusTabs from './RecommendationStatusTabs';
 import useRecommendationDeck from '../hooks/useRecommendationDeck';
-import type { RecommendationLetterStatus } from '../store/useRecommendationDeckStore';
 
 const STATUS_TABS: { label: string; status: RecommendationLetterStatus }[] = [
   { label: '저장됨', status: 'saved' },

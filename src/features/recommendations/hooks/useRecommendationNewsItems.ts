@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useContents } from './useContents';
-import { mapContentSummary } from '../utils/mapContent';
+import { mapContentSummary } from '../mapContent';
 
 export default function useRecommendationNewsItems() {
   const contentsQuery = useContents();
