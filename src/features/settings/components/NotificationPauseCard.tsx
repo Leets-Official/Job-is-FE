@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router';
 import type { NotificationSnooze } from '@/api/types/notification.types';
 import useNotificationPause, {
   type PausePeriod,
@@ -15,6 +16,7 @@ interface NotificationPauseCardProps {
 }
 
 export default function NotificationPauseCard({ initialSnooze }: NotificationPauseCardProps) {
+  const navigate = useNavigate();
   const {
     pauseState,
     pauseMessage,
@@ -27,16 +29,17 @@ export default function NotificationPauseCard({ initialSnooze }: NotificationPau
 
   return (
     <section className="flex flex-col gap-5 rounded-md border border-gray-200 bg-white p-6">
-      <h2 className="text-heading-medium text-text-primary">잠시 쉬기(일시 정지)</h2>
+      <h2 className="text-heading-medium text-text-primary">브리핑 일시 정지</h2>
 
       <div className="flex items-center justify-between gap-5 max-sm:flex-col max-sm:items-start">
         <p className="text-label-medium font-medium text-text-primary">
-          받는 것을 잠깐 멈출 수 있어요
+          오늘의 공고 추천을 잠시 멈춰요
         </p>
         <div
           className="flex flex-wrap gap-2.5 px-2.5"
           role="radiogroup"
           aria-label="알림 일시정지 기간"
+          aria-busy={isUpdating}
         >
           {PAUSE_OPTIONS.map((option) => (
             <button
@@ -44,10 +47,18 @@ export default function NotificationPauseCard({ initialSnooze }: NotificationPau
               type="button"
               role="radio"
               aria-checked={pauseState?.period === option.value}
-              disabled={isUpdating}
-              onClick={() => handlePausePeriodChange(option.value)}
+              onClick={() => {
+                if (isUpdating) return;
+
+                if (option.value === 'indefinite') {
+                  navigate('/unsubscribe');
+                  return;
+                }
+
+                handlePausePeriodChange(option.value);
+              }}
               className={cn(
-                'h-10 cursor-pointer rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-500 disabled:hover:bg-white',
+                'h-10 cursor-pointer rounded-full border border-gray-200 bg-white px-3 text-label-large font-normal text-text-primary transition-colors hover:bg-gray-50',
                 pauseState?.period === option.value &&
                   'border-primary-600 bg-primary-600 hover:bg-primary-600',
               )}
